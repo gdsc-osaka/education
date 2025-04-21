@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-04-21T12:33:15Z",
+  "id": "first-portfolio-workshop-2hr",
+  "duration": 195,
+  "title": "ポートフォリオ Web サイト作成ワークショップ",
+  "authors": "GDG on Campus University of Osaka",
+  "summary": "In this codelab, you'll build an installable, Progressive Web App, which loads quickly, even on flaky networks, and when launched looks like any other installed app.",
+  "source": "1H_qLbb4dGcHHDk-RuwxJKfDkKmiTQFkK-vZQk0wkc50",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "web"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/googlecodelabs/your-first-pwapp/issues",
+  "url": "first-portfolio-workshop-2hr"
+}

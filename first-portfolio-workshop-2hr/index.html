@@ -1,0 +1,715 @@
+
+
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>ポートフォリオ Web サイト作成ワークショップ</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="/libs/codelab-elements.css">
+  <link rel="stylesheet" href="/libs/prettify.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab title="ポートフォリオ Web サイト作成ワークショップ"
+                  id="first-portfolio-workshop-2hr"
+                  environment="web"
+                  feedback-link="https://github.com/googlecodelabs/your-first-pwapp/issues">
+    
+      <google-codelab-step label="ワークショップ の概要" duration="0">
+        <p><strong>Last Updated:</strong> 2025-04-21</p>
+<p class="image-container"><img style="width: 1244.00px" src="img\\4f0e449ba41b279a.png"></p>
+<p>この Codelab では、プログラミングや Web 制作の経験がない方を対象に、2 時間という短い時間で簡単な自分のポートフォリオサイトを作成し、インターネット上に公開する手順を体験します。</p>
+<p><strong>学習内容:</strong></p>
+<ul>
+<li>簡単な Web ページの構造 (HTML)</li>
+<li>Web ページの見た目を整える方法 (CSS)</li>
+<li>開発ツール (VSCode) の基本的な使い方</li>
+<li>GitHub を使った Web サイトの公開 (GitHub Pages)</li>
+</ul>
+<p><strong>必要なもの:</strong></p>
+<ul>
+<li>インターネットに接続された PC (Windows または Mac)</li>
+<li>メールアドレス (GitHub アカウント作成用)</li>
+</ul>
+<p><strong>注意:</strong> この Codelab は時間短縮のため、駆け足での進行となります。<strong>まずは Web サイトの公開を体験し、動くものを作る達成感を味わいましょう！</strong> 時間に余裕のある方は、更なるカスタマイズに挑戦してみてください。<strong>最低限 Step 3 までの完了を目指しますが、Step 4 以降にも積極的にチャレンジしてみましょう。</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 1: 開発環境の準備" duration="30">
+        <p>はじめに、Web サイトを作成するための道具を準備します。</p>
+<h2 is-upgraded><strong>VSCode のインストール</strong></h2>
+<p>Web サイトの設計図 (コード) を書くためのエディタ「Visual Studio Code (VSCode)」をインストールします。</p>
+<ol type="1" start="1">
+<li>お使いの Web ブラウザ (Chrome, Edge, Safari など) を開きます。</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode 公式サイト</a> にアクセスします。<br><a href="https://code.visualstudio.com/download" target="_blank"><paper-button class="colored" raised><iron-icon icon="cloud_download"></iron-icon>Download VSCode</paper-button></a></li>
+<li>お使いの OS (Windows, Mac) に合ったインストーラーをダウンロードします。</li>
+<li>ダウンロードしたファイルを開き、画面の指示に従ってインストールを完了します。</li>
+</ol>
+<aside class="warning"><p><strong>Troubleshooting:</strong> インストールがうまくいかない場合は、遠慮なくメンターに声をかけてください！</p>
+</aside>
+<h2 is-upgraded><strong>作業フォルダの作成</strong></h2>
+<p>Web サイトの作成を始める前に、成果物を保存するフォルダを作っておきましょう。</p>
+<ol type="1" start="1">
+<li>パソコン上の好きな場所に新規フォルダを作成してください。</li>
+<li>VSCode を開きます。</li>
+<li>左上の「ファイル」→「フォルダを開く...」から、今作成したフォルダを開いてください。</li>
+</ol>
+<h2 is-upgraded><strong>GitHub アカウントの作成</strong></h2>
+<p>作成した Web サイトのバージョンを管理したり、インターネット上に公開したりするために、GitHub というサービスを使います。そのためのアカウントを作成しましょう。</p>
+<ol type="1" start="1">
+<li>Web ブラウザで <a href="https://github.com/" target="_blank">GitHub 公式サイト</a> にアクセスします。</li>
+<li>画面右上の「Sign up」ボタンをクリックします。</li>
+<li>画面の指示に従って、ユーザー名、メールアドレス、パスワードを設定します。</li>
+</ol>
+<ul>
+<li><strong>ユーザー名:</strong> 半角英数字とハイフンのみ使用可能です。これがあなたの Web サイトの URL の一部になります。</li>
+<li><strong>メールアドレス: </strong><code>@</code> マークの入った、受信可能なメールアドレスを入力してください。確認メールが届きます。</li>
+</ul>
+<ol type="1" start="4">
+<li>簡単なパズル認証やプラン選択（Free プランを選択）などを行います。</li>
+<li>登録したメールアドレスに GitHub から確認メールが届きます。メールを開き、「Verify email address」ボタンをクリックして認証を完了します。</li>
+</ol>
+<aside class="warning"><p><strong>Troubleshooting:</strong> 確認メールが届かない場合や、手順で迷った場合は、メンターにサポートを求めてください。</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2-1: [HTML] Web ページの骨組みを作ろう" duration="20">
+        <p>いよいよ Web サイトの中身を作っていきます。Web ページの構造を定義するには、HTML (HyperText Markup Language) を使います。HTML は「タグ」と呼ばれる要素を使って、テキストや画像などのコンテンツを構造化します。</p>
+<h2 is-upgraded>3 つの主要なタグ - <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code></h2>
+<p>HTML には <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code> という 3 つの主要なタグがあります。</p>
+<ul>
+<li><code>&lt;html&gt;</code> タグは、HTML 文書全体を囲むタグです。</li>
+<li><code>&lt;head&gt;</code> タグは、Web ページのタイトルや、CSS ファイルのリンクなどの情報を記述するタグです。</li>
+<li><code>&lt;body&gt;</code> タグは、実際にブラウザに表示される内容を記述するタグです。</li>
+</ul>
+<p>まずはこれらのタグを使って、Web ページの基本的な構造を作ってみましょう。</p>
+<h2 is-upgraded><code>index.html</code><strong> ファイルを作成</strong></h2>
+<ol type="1" start="1">
+<li>VSCode の左側にあるエクスプローラーパネルで、フォルダ名の横に表示される「新しいファイル」アイコンをクリックします。</li>
+<li>ファイル名を <code>index.html</code> と入力して Enter キーを押します。</li>
+<li>中央のエディタ画面に <code>index.html</code> が開かれるので、以下のコードを<strong>正確に</strong>入力（またはコピー＆ペースト）します。</li>
+<li><code>Ctrl+S</code> (Windows) または <code>Cmd+S</code> (Mac) でファイルを保存しましょう。</li>
+</ol>
+<p><code>index.html</code></p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&#34;UTF-8&#34;&gt;
+    &lt;title&gt;わたしのポートフォリオ&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<aside class="special"><p><strong>補足:</strong> コード中のタグについて</p>
+<ul>
+<li><code>&lt;!DOCTYPE html&gt;</code> はこのファイルが HTML5 であることを示しています。</li>
+<li><code>&lt;meta charset=&#34;...&#34;&gt;</code> はこのファイルの文字コードを表していて、文字化けを防ぎます。</li>
+<li><code>&lt;title&gt;</code> はこのページのタイトルで、ブラウザのタブに表示されます。</li>
+</ul>
+</aside>
+<h2 is-upgraded><strong>実際に表示してみよう！</strong></h2>
+<p>今作成した Web ページがどのように見えるか、ブラウザで確認してみましょう。VSCode の拡張機能を使うと、編集した HTML ファイルをリアルタイムで表示できます。</p>
+<ol type="1" start="1">
+<li>VSCode の左側にある四角が積み重なったような「拡張機能」アイコンをクリックします。</li>
+<li>検索ボックスに <code>Live Server</code> と入力します。</li>
+<li>検索結果に表示された <code>Live Server</code> (Ritwick Dey 作) を選択し、「インストール (Install)」ボタンをクリックします。</li>
+<li>インストールが完了したら、<code>index.html</code> のエディタ画面に戻ります。</li>
+<li>画面右下のステータスバーにある Go Live ボタンをクリックします。</li>
+<li>自動的に Web ブラウザが起動します。</li>
+</ol>
+<p>真っ白な画面が表示されたら OK です。次の Step から内容を追加していきます！</p>
+<aside class="special"><p><strong>Tips:</strong> VSCode とブラウザを並べて表示しておくと、この後の作業がわかりやすいです。</p>
+</aside>
+<aside class="warning"><p><strong>Troubleshooting:</strong> Step 2-1 はトラブルが発生することが多いので、わからないことがあったら気軽に声をかけてください！</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2-2: [HTML] 見出しを追加しよう" duration="10">
+        <p>Web ページに見出しをつけるには、<code>&lt;h1&gt;</code> タグを使います。<code>&lt;h1&gt;</code> タグは、Web ページの中で最も重要な見出しを表します。</p>
+<ol type="1" start="1">
+<li><code>index.html</code> ファイルの <code>&lt;body&gt;</code> の中に、以下のコードを追加してください。</li>
+</ol>
+<pre><code>&lt;h1&gt;ここをあなたの名前に変更&lt;/h1&gt;</code></pre>
+<ol type="1" start="2">
+<li>ファイルを保存しましょう。</li>
+<li>先ほど起動したブラウザの画面に文字が表示されましたか？</li>
+<li><code>&lt;h1&gt;</code> タグの中身をあなたの名前に書き換えてみましょう！</li>
+</ol>
+<h3 is-upgraded><strong>最終的なコード (例)</strong></h3>
+<ul>
+<li><code>index.html</code></li>
+</ul>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=&#34;UTF-8&#34;&gt;
+  &lt;title&gt;わたしのポートフォリオ&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;いたこす&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2-3: [HTML] 自己紹介文を追加しよう" duration="10">
+        <p>Web ページに段落を追加するには、<code>&lt;p&gt;</code> タグを使います。<code>&lt;p&gt;</code> タグは、Web ページの中で文章の段落を表します。</p>
+<ol type="1" start="1">
+<li><code>index.html</code> ファイルの <code>&lt;body&gt;</code> の中で、先程の <code>&lt;h1&gt;</code> タグの下に以下のコードを追加してください。</li>
+</ol>
+<pre><code>&lt;p&gt;ここをあなたの自己紹介文に変更。Web開発に興味があります！&lt;/p&gt;</code></pre>
+<ol type="1" start="2">
+<li>ファイルを保存しましょう。ブラウザの画面に文章が表示されましたか？</li>
+<li><code>&lt;p&gt;</code> タグの中身をあなたの自己紹介文に書き換えてみましょう！</li>
+</ol>
+<h3 is-upgraded><strong>最終的なコード (例)</strong></h3>
+<ul>
+<li><code>index.html</code></li>
+</ul>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=&#34;UTF-8&#34;&gt;
+  &lt;title&gt;わたしのポートフォリオ&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;いたこす&lt;/h1&gt;
+  &lt;p&gt;単純にプログラミングが好きなだけ。&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2-4: [HTML] 表を追加しよう (少し難)" duration="20">
+        <p>だんだん HTML の書き方には慣れてきましたか？</p>
+<p>次は、Web ページ上で表を表示する <code>&lt;table&gt;</code>, <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code> について紹介します。</p>
+<aside class="warning"><p><strong>Warn: </strong>この内容は少し難しいです。ワークショップの後に時間がありますので、とりあえずコピーだけして次の手順に進んでいただいても大丈夫です。</p>
+</aside>
+<h2 is-upgraded><strong>表に関連するタグたち</strong></h2>
+<ul>
+<li><code>&lt;table&gt;</code> タグは、表全体を囲むタグです。表を作成する際は、まずこの <code>&lt;table&gt;</code> タグを記述します。</li>
+<li><code>&lt;thead&gt;</code> タグは、表の見出し部分を表します。</li>
+<li><code>&lt;tbody&gt;</code> タグは、表のデータ部分を表します。</li>
+<li><code>&lt;tr&gt;</code> タグは、表の行を表すタグです。</li>
+<li><code>&lt;th&gt;</code> タグは、表の見出しのセルを表すタグです。通常、表の最初の行に記述し、各列のタイトルを示します。</li>
+<li><code>&lt;td&gt;</code> タグは、表のデータセルを表すタグです。各行のデータが入る部分です。</li>
+</ul>
+<p>文章だけ読んでもわかりにくいと思うので、実際の HTML を見てみましょう。</p>
+<h2 is-upgraded><strong>簡単な表の例</strong></h2>
+<ol type="1" start="1">
+<li><code>index.html</code> ファイルの <code>&lt;body&gt;</code> の中で、先程の <code>&lt;p&gt;</code> タグの下に以下のコードを追加してください。</li>
+</ol>
+<pre><code>&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;とくせい&lt;/th&gt;
+      &lt;th&gt;value&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;すきなもの&lt;/td&gt;
+      &lt;td&gt;Google&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;サークル&lt;/td&gt;
+      &lt;td&gt;GDG on Campus University of Osaka&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+<ol type="1" start="2">
+<li>このコードを保存して、ブラウザで表示を確認してください。簡単な表が表示されるはずです。</li>
+<li>ファイルを保存しましょう。ブラウザの画面に表が表示されましたか？</li>
+<li><code>&lt;th&gt;</code> や <code>&lt;td&gt;</code> の中身を変えたり、<code>&lt;tr&gt;</code> で行を増やしたりして、自分のプロフィールを書いてみましょう！</li>
+</ol>
+<aside class="special"><p><strong>補足:</strong> HTML の改行について</p>
+<p>HTML では、基本的に値 (タグとタグの間) で好きなように改行ができます。<br>逆に、HTML 上で改行をしても表示される文字列は改行されません。</p>
+<p>自分の見やすいように適宜改行を入れるのがオススメです。<br>(自動で見やすいように整えてくれるツールもあります)</p>
+</aside>
+<h3 is-upgraded><strong>最終的なコード (例)</strong></h3>
+<ul>
+<li><code>index.html</code></li>
+</ul>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=&#34;UTF-8&#34;&gt;
+  &lt;title&gt;わたしのポートフォリオ&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;いたこす&lt;/h1&gt;
+  &lt;p&gt;単純にプログラミングが好きなだけ。&lt;/p&gt;
+  &lt;table&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th&gt;とくせい&lt;/th&gt;
+        &lt;th&gt;value&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;すきなもの&lt;/td&gt;
+        &lt;td&gt;Google&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;サークル&lt;/td&gt;
+        &lt;td&gt;GDG on Campus University of Osaka&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2-5: [HTML] リンクを追加しよう" duration="10">
+        <p>ここでは、Web ページにリンクを追加する方法を紹介します。リンクは、Web ページ同士をつなぐ大切な要素で、例えば皆さんのお使いの SNS へのリンクを貼ることができます。</p>
+<p>HTML でリンクを作成するには <code>&lt;a&gt;</code> タグを使います。リンクの基本的な書き方は、以下の通りです。</p>
+<pre><code>&lt;a href=&#34;リンク先のURL&#34;&gt;リンクのテキスト&lt;/a&gt;</code></pre>
+<p>では、これを元にみなさんの SNS などへのリンクを貼ってみましょう！</p>
+<ol type="1" start="1">
+<li>Step 2-4 で作成した表の <code>&lt;tr&gt;</code> を、以下の例のように書き換えてください。</li>
+</ol>
+<pre><code>&lt;tr&gt;
+  &lt;td&gt;すきなもの&lt;/td&gt;
+  &lt;td&gt;
+    &lt;a href=&#34;https://www.google.com/&#34;&gt;
+      Google
+    &lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+<ol type="1" start="2">
+<li>ファイルを保存しましょう。ブラウザの画面にリンクが表示されましたか？</li>
+<li>リンク先の URL やリンクテキストを変えて、自分の SNS などへのリンクを貼ってみましょう！</li>
+</ol>
+<aside class="special"><p><strong>補足:</strong> HTML の入れ子</p>
+<p>このように、HTML ではタグ同士を入れ子にして組み合わせることができます。<br>少し難しい書き方をしているので、わからない点があればぜひ聞いてください！</p>
+</aside>
+<p>まだまだ HTML には面白い機能がありますが、本日のワークショップでは一旦ここまででとしておきます。</p>
+<p>では、これまでに作成したレイアウトにもっとオリジナリティを出すにはどうすればいいでしょうか？<br>次の Step からは、CSS を用いて Web ページの見た目を調整してみます。</p>
+<h3 is-upgraded><strong>最終的なコード (例)</strong></h3>
+<ul>
+<li><code>index.html</code></li>
+</ul>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=&#34;UTF-8&#34;&gt;
+  &lt;title&gt;わたしのポートフォリオ&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;いたこす&lt;/h1&gt;
+  &lt;p&gt;単純にプログラミングが好きなだけ。&lt;/p&gt;
+  &lt;table&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th&gt;とくせい&lt;/th&gt;
+        &lt;th&gt;value&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;すきなもの&lt;/td&gt;
+        &lt;td&gt;
+          &lt;a href=&#34;https://www.google.com/&#34;&gt;
+            Google
+          &lt;/a&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;サークル&lt;/td&gt;
+        &lt;td&gt;
+          &lt;a href=&#34;https://gdsc-osaka.jp/&#34;&gt;
+            GDG on Campus University of Osaka
+          &lt;/a&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3-1: [CSS] CSS の基本を知ろう" duration="15">
+        <p>CSS (Cascading Style Sheets) は、Web ページの見た目 (スタイル) を定義するための言語です。CSS を使うことで、文字の色や大きさ、背景色、要素の配置など、Web ページの様々な要素を装飾することができます。</p>
+<h2 is-upgraded><strong>CSS の 3 つの構成要素</strong></h2>
+<p>CSS は、<strong>セレクタ (selector)</strong>、<strong>プロパティ (property)</strong>、<strong>値 (value)</strong> の 3 つの要素で構成されています。</p>
+<pre><code>セレクタ {
+  プロパティ: 値;
+}</code></pre>
+<ul>
+<li><strong>セレクタ:</strong> スタイルをどこに適用するかを指定します。 (例: <code>body</code>, <code>h1</code>, <code>p</code>)</li>
+<li><strong>プロパティ:</strong> 変更したいスタイルの種類を指定します。 (例: <code>background-color</code>, <code>color</code>, <code>font-size</code>)</li>
+<li><strong>値:</strong> プロパティに設定する値を指定します。 (例: <code>red</code>, <code>20px</code>, <code>bold</code>)</li>
+</ul>
+<h2 is-upgraded><strong>CSS ファイルを作成</strong></h2>
+<p>CSS のコードを見たほうが分かりやすいと思うので、実際に書いてみましょう。まずは CSS ファイルを作成します。</p>
+<ol type="1" start="1">
+<li>VSCode のエクスプローラーパネルで、<code>index.html</code> と同じ場所に新しいファイルを作成します。</li>
+<li>ファイル名を <code>style.css</code> と入力して Enter キーを押します</li>
+</ol>
+<h2 is-upgraded><strong>CSS ファイルを HTML に読込</strong></h2>
+<p>先ほど <code>style.css</code> を作成しましたが、ただファイルを作成するだけでは反映されません。HTML で CSS ファイルの存在を教えてあげる必要があるので、以下のようなコードを <code>index.html</code> の <code>&lt;head&gt;</code> の中に書き加えてください。</p>
+<pre><code>&lt;link rel=&#34;stylesheet&#34; href=&#34;style.css&#34;&gt;</code></pre>
+<h3 is-upgraded><strong>最終的なコード (例)</strong></h3>
+<ul>
+<li><code>index.html</code></li>
+</ul>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=&#34;UTF-8&#34;&gt;
+  &lt;title&gt;わたしのポートフォリオ&lt;/title&gt;
+  &lt;link rel=&#34;stylesheet&#34; href=&#34;style.css&#34;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;いたこす&lt;/h1&gt;
+  &lt;p&gt;単純にプログラミングが好きなだけ。&lt;/p&gt;
+  &lt;table&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th&gt;とくせい&lt;/th&gt;
+        &lt;th&gt;value&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;すきなもの&lt;/td&gt;
+        &lt;td&gt;
+          &lt;a href=&#34;https://www.google.com/&#34;&gt;
+            Google
+          &lt;/a&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;サークル&lt;/td&gt;
+        &lt;td&gt;
+          &lt;a href=&#34;https://gdsc-osaka.jp/&#34;&gt;
+            GDG on Campus University of Osaka
+          &lt;/a&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<ul>
+<li><code>style.css</code>: 空のファイル</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3-2: [CSS] 背景色を設定しよう" duration="10">
+        <p>Web ページ全体のデザインを設定してみましょう。以下の例では <code>&lt;body&gt;</code> の背景色を薄い水色にしています。</p>
+<ol type="1" start="1">
+<li><code>style.css</code> ファイルに、以下のコードを追加してください。</li>
+</ol>
+<pre><code>body {
+  background-color: #d0f0ff; /* 背景色を薄い水色に */
+}</code></pre>
+<ol type="1" start="2">
+<li>ファイルを保存しましょう。ブラウザの画面上に反映されましたか？</li>
+<li><code>background-color</code> の値を好きな色に変更してみましょう！色の名前やコードはこちらのサイトなどが参考になります: <a href="https://htmlcolorcodes.com/" target="_blank">HTML Color Codes</a></li>
+</ol>
+<aside class="special"><p><strong>補足:</strong> 色の表現方法</p>
+<p><code>#d0f0ff</code> は、2桁ごとに 16 進数を表しています。左から赤、緑、青の色の強さを表していて、00 ~ ff の 256 段階の強さがあります。</p>
+<ul>
+<li><code>#000000</code>: 黒色</li>
+<li><code>#cccccc</code>: 灰色</li>
+<li><code>#ff0000</code>: 赤色</li>
+<li><code>#00ffff</code>: 水色 (シアン)</li>
+</ul>
+</aside>
+<aside class="special"><p><strong>補足:</strong> CSS のコメント</p>
+<p>上記の CSS の <code>/* ... */</code> の部分はコメントです。<br>実際のデザインには影響しませんが、わかりにくい部分に書いておくと、後で見返したときに理解しやすくなります。</p>
+</aside>
+<h3 is-upgraded><strong>最終的なコード (例)</strong></h3>
+<ul>
+<li><code>index.html</code>: 変更なし</li>
+<li><code>style.css</code></li>
+</ul>
+<pre><code>body {
+  background-color: #d0f0ff; /* 背景色を薄い水色に */
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3-3: [CSS] 文字色を設定しよう" duration="10">
+        <p>見出し (<code>&lt;h1&gt;</code> など) や段落 (<code>&lt;p&gt;</code> など) の文字色を変えてみましょう。</p>
+<ol type="1" start="1">
+<li><code>style.css</code> ファイルに、以下のコードを追加してください。</li>
+</ol>
+<pre><code>h1 {
+  color: #229954; /* 見出しの文字色を緑色に */
+}
+
+p {
+  color: #2e86c1; /* 段落の文字色を青色に */
+}</code></pre>
+<ol type="1" start="2">
+<li>ファイルを保存しましょう。文字の色が変わりましたか？</li>
+<li><code>color</code> の値を好きな色に変更してみましょう！</li>
+</ol>
+<h3 is-upgraded><strong>最終的なコード (例)</strong></h3>
+<ul>
+<li><code>index.html</code>: 変更なし</li>
+<li><code>style.css</code></li>
+</ul>
+<pre><code>body {
+  background-color: #d0f0ff; /* 背景色を薄い水色に */
+}
+
+h1 {
+  color: #229954; /* 見出しの文字色を緑色に */
+}
+
+p {
+  color: #2e86c1; /* 段落の文字色を青色に */
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3-4: [CSS] フォントを設定しよう" duration="10">
+        <p>皆さんの中には、これまでにプレゼン資料やレポートを作ったことがある人も多いと思いますが、その際にフォント (文字の形) を変更した経験のある方もいるのではないでしょうか。Web 上でも自分の好きなフォントを選んで表示することができます。</p>
+<ol type="1" start="1">
+<li><code>style.css</code> ファイルに、以下のコードを追加してください。</li>
+</ol>
+<pre><code>body {
+  font-family: serif; /* セリフ体 (≒ 明朝体) */
+}</code></pre>
+<ol type="1" start="2">
+<li>ファイルを保存しましょう。文字の形が変わりましたか？</li>
+<li><code>font-family</code> の値を好きなフォントに変更してみましょう！フォントの値は <a href="https://developer.mozilla.org/ja/docs/Web/CSS/font-family" target="_blank">こちらのドキュメント</a> が参考になります。</li>
+</ol>
+<aside class="special"><p><strong>補足:</strong> 総称フォントファミリー</p>
+<p>上記の例で指定した「serif」は総称フォントファミリーと言って、特定のフォントを指定しているわけではありません。環境によって表示されるフォントが変わりますが、一定のルールがあります。以下に一例を挙げます。</p>
+<ul>
+<li><code>serif</code>: セリフ体 (≒ 明朝体)</li>
+<li><code>sans-serif</code>: サンセリフ体 (≒ ゴシック体)</li>
+<li><code>monospace</code>: 等幅フォント (プログラミングでよく使われる)</li>
+</ul>
+</aside>
+<aside class="special"><p><strong>補足:</strong> フォントの世界</p>
+<p>世の中には数多くのフォントが存在しますが、ブラウザや OS、言語によって対応するフォントは異なります。例えば、Windows に搭載されている「游明朝」は、Android や macOS などには標準搭載されていません。逆に、macOS に搭載されている「ヒラギノ明朝」は他の OS には標準搭載されていません。<br>そのため、フォントの名前を直接指定する際には、そのフォントが存在しない場合も想定して、以下のようにいくつか指定する場合が多いです。</p>
+<p><code>font-family: &#39;游明朝&#39;, &#39;Yu Mincho&#39;, YuMincho, &#39;Hiragino Mincho Pro&#39;, serif;</code></p>
+</aside>
+<p>ここまでで HTML と CSS の話は一旦終了としますが、Web サイトの仕組みについてなんとなく理解ができたでしょうか？</p>
+<p>次の Step からは、これまでに作成した Web サイトを公開する方法について説明します。</p>
+<h3 is-upgraded><strong>最終的なコード (例)</strong></h3>
+<ul>
+<li><code>index.html</code>: 変更なし</li>
+<li><code>style.css</code></li>
+</ul>
+<pre><code>body {
+  background-color: #d0f0ff; /* 背景色を薄い水色に */
+}
+
+h1 {
+  color: #229954; /* 見出しの文字色を緑色に */
+}
+
+p {
+  color: #2e86c1; /* 段落の文字色を青色に */
+}
+
+body {
+  font-family: serif; /* セリフ体 (≒ 明朝体) */
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 4-1: [GitHub] リポジトリを作成しよう" duration="20">
+        <p>ここまで皆さん、お疲れ様でした！いよいよ作成した Web サイトをこれから公開してみたいと思います。</p>
+<p>公開する方法はたくさんあるのですが、今回はその中でも無料で簡単にできる GitHub Pages を使いたいと思います。</p>
+<h2 is-upgraded><strong>GitHub って何？</strong></h2>
+<p>GitHub は、ソフトウェア開発に欠かせない「<strong>バージョン管理</strong>」と「<strong>共同作業</strong>」ができるプラットフォームです。コードの変更履歴を管理し、複数人での共同作業を円滑に進めることができます。</p>
+<aside class="special"><p><strong>補足:</strong> Git とは</p>
+<p>似たような名前で「Git」を聞いたことがある人もいるのではないでしょうか。Git は、ファイルの変更履歴を管理するシステムで、パソコン上で動作します。それに対して GitHub は、 Git を利用したプロジェクトを共有し、共同作業するためのプラットフォームです。</p>
+</aside>
+<h2 is-upgraded><strong>新しいリポジトリの作成</strong></h2>
+<p>GitHub では、それぞれのプロジェクトを「リポジトリ」という単位でまとめています。それでは、今回作成した Web サイトを管理する新しい「リポジトリ」を作成してみましょう。</p>
+<ol type="1" start="1">
+<li>Web ブラウザで <a href="https://github.com/" target="_blank">GitHub</a> にアクセスし、ログインします。</li>
+<li>画面右上の「+」アイコンをクリックし、「New repository」を選択します。</li>
+<li>以下の項目を設定します。</li>
+</ol>
+<ul>
+<li>Repository name: <code>[your-GitHub-username].github.io</code> と<strong>正確に</strong>入力します。<br>例: ユーザー名が <code>taro-yamada</code> なら <code>taro-yamada.github.io</code></li>
+<li><strong>Description:</strong> (任意) 簡単な説明を入力します (例: My portfolio site)。</li>
+<li><strong>Public</strong> を選択します (Private だと GitHub Pages が使えません)。</li>
+<li><strong>Initialize this repository with:</strong> の下のチェックボックスは<strong>すべてチェックを外した状態</strong>にします (README などは不要)。</li>
+<li>その他の部分もデフォルト (None や No) のままで大丈夫です。</li>
+</ul>
+<ol type="1" start="4">
+<li>「Create repository」ボタンをクリックします。</li>
+</ol>
+<h2 is-upgraded><strong>ファイルのアップロード</strong></h2>
+<p>リポジトリが作成されると、「Quick setup」などの画面が表示されます。ここにファイルをアップロードします。</p>
+<ol type="1" start="1">
+<li>画面に表示されている「uploading an existing file」というリンクをクリックします。</li>
+<li>ファイル選択画面が表示されるので、先ほど VSCode で作成した <code>index.html</code> と <code>style.css</code> の <strong>2 つのファイル</strong>を、画面の点線枠の中にドラッグ＆ドロップします。(間違えてフォルダごとアップロードしないように気をつけましょう)</li>
+<li>ファイルがアップロードされると、画面下に「Commit changes」というセクションが表示されます。特に変更せず、緑色の「Commit changes」ボタンをクリックします。</li>
+</ol>
+<aside class="special"><p><strong>補足:</strong> コミット (commit) とは</p>
+<p>リポジトリに加えた変更内容を記録する作業をコミットと呼びます。コミットを行うことで、変更履歴を保存し、過去の状態に戻したり、他の人と変更内容を共有したりすることができます。</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 4-2: [GitHub] GitHub Pages で公開しよう" duration="20">
+        <h2 is-upgraded><strong>GitHub Pages の設定</strong></h2>
+<p>ファイルを置いただけではまだ公開されません。GitHub Pages の機能を有効にします。</p>
+<ol type="1" start="1">
+<li>アップロードが完了したら、リポジトリのページ上部にある「Settings」タブをクリックします。</li>
+<li>左側のメニューから「Pages」を選択します。</li>
+<li>「Build and deployment」セクションで、「Source」が「Deploy from a branch」になっていることを確認します。</li>
+<li>「Branch」の項目で、「Branch: <code>main</code>」（または <code>master</code>）、「Folder: <code>/</code> (root)」が選択されていることを確認し、「Save」ボタンをクリックします。</li>
+</ol>
+<h2 is-upgraded><strong>公開の確認</strong></h2>
+<p>設定が完了すると、「Your site is live at ...」のようなメッセージが表示されます（表示されるまで少し時間がかかる場合があります）。</p>
+<p>表示された URL (<code>https://[your-GitHub-username].github.io</code>) をクリックして、作成した Web サイトがインターネット上で見られるか確認しましょう！</p>
+<aside class="warning"><p><strong>Troubleshooting:</strong> もし &#34;Page not found&#34; (404) が表示される場合は、以下の点を確認してください。</p>
+<ul>
+<li>数分待ってみる</li>
+<li>リポジトリ名が <code>[your-GitHub-username].github.io</code> と正確に一致しているか</li>
+<li>間違えてフォルダごとアップロードしていないか</li>
+<li>ファイル名 (<code>index.html</code>) が正しいか</li>
+<li>Pages の設定が正しいか</li>
+</ul>
+<p>不明な場合はメンターに質問しましょう。</p>
+</aside>
+<p><strong>おめでとうございます！これであなたのポートフォリオサイトが完成し、世界中に公開されました！</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 5: まとめと次のステップ" duration="10">
+        <p>皆さん、大変お疲れ様でした！このワークショップでは、たった 1 時間半で以下のことを達成しました。</p>
+<ul>
+<li>VSCode を使って HTML と CSS ファイルを作成・編集した。</li>
+<li>簡単な Web ページの構造と見た目を作った。</li>
+<li>GitHub アカウントを作成し、リポジトリを作成した。</li>
+<li>GitHub Pages を使って、作成した Web サイトをインターネットに公開した。</li>
+</ul>
+<h2 is-upgraded><strong>今回の手法について</strong></h2>
+<p>今回は時間短縮のため、ページに画像を表示したり、動きのあるコンテンツを作成したりすることはしていません。こちらも非常に楽しい内容なので、今後ぜひ体験してみてください。</p>
+<p>また、今回は GitHub に直接ファイルをアップロードしました。これは手軽ですが、実際の Web 開発では <strong>Git</strong> というバージョン管理システムを使って、変更履歴を記録しながら GitHub と連携するのが一般的です。こちらも慣れると非常に強力なツールとなります。</p>
+<h2 is-upgraded><strong>Next Steps (初心者向け)</strong></h2>
+<ul>
+<li><strong>コンテンツを充実させる: </strong><code>index.html</code> にもっと詳しい自己紹介や、作品紹介（もしあれば）を追加してみましょう。画像 (<code>&lt;img&gt;</code> タグ) を追加するのも良いですね。</li>
+<li><strong>CSS でデザインを凝る: </strong>style.css で、もっと色々なプロパティ (例: <code>border</code>, <code>font-size</code>, <code>margin</code>, <code>padding</code>) を試して、デザインを改善してみましょう。 <a href="https://developer.mozilla.org/ja/docs/Web/CSS" target="_blank">MDN Web Docs - CSS</a> が参考になります。</li>
+<li><strong>Git を学ぶ:</strong> Web 開発の基本スキルである Git の使い方を学んでみましょう。今日作ったサイトを Git で管理できるようにするのも良い練習になります。</li>
+</ul>
+<h2 is-upgraded><strong>Next Steps (中級者向け)</strong></h2>
+<p>もし Web 開発の経験が少しあるなら、以下の課題に挑戦してみるのも面白いでしょう。(詳細は別途資料を参照)</p>
+<ul>
+<li>Flexbox や Grid を使ったレイアウト作成</li>
+<li>メディアクエリを使ったレスポンシブデザイン対応</li>
+<li>JavaScript を使った簡単なインタラクションの実装 (例: ボタンクリック)</li>
+<li>今日試した「直接アップロード」ではなく、Git コマンド (<code>git add</code>, <code>git commit</code>, <code>git push</code>) を使って GitHub にファイルを送信し、GitHub Pages を更新してみる。</li>
+</ul>
+<h2 is-upgraded><strong>Next Steps (さらなる上へ)</strong></h2>
+<p>もし Web 開発の経験が少しあるなら、以下の課題に挑戦してみるのも面白いでしょう。</p>
+<ul>
+<li><a href="https://react.dev/" target="_blank"><strong>React</strong></a><strong>:</strong> UI 構築のための JavaScript ライブラリ。コンポーネントベースで効率的な開発が可能。</li>
+<li><a href="https://nextjs.org/" target="_blank"><strong>Next.js</strong></a><strong>:</strong> React ベースのフルスタックフレームワーク。サーバーサイドレンダリングで SEO 対策も万全。</li>
+<li><a href="https://vuejs.org/" target="_blank"><strong>Vue.js</strong></a><strong>:</strong> シンプルで学習しやすい JavaScript フレームワーク。</li>
+</ul>
+<p>これらのフレームワークを使うことで、より高度なポートフォリオサイトを構築できます。例えば、以下のような機能を追加できます。</p>
+<ul>
+<li>コンポーネントの再利用による効率的な開発</li>
+<li>動的なコンテンツの表示</li>
+<li>API との連携</li>
+<li>高度な UI/UX の実現</li>
+</ul>
+<p>ぜひ、これらのフレームワークを学んで、あなたのポートフォリオサイトをさらに進化させてください！</p>
+<h2 is-upgraded><strong>最後に</strong></h2>
+<p>今日の体験が、皆さんの Web 開発への興味の入口となれば幸いです。ぜひ、今日作ったサイトをベースに、どんどん自分だけのポートフォリオサイトを作り込んでいってください！</p>
+
+
+      </google-codelab-step>
+    
+
+    
+
+  </google-codelab>
+
+  <script async>
+    document.addEventListener("DOMContentLoaded", function() {
+      var pubBtn = document.getElementById('publishButton');
+      var pubForm = document.getElementById('publishForm');
+      var pubStatus = document.getElementById('publishButtonStatus');
+
+      pubForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        pubBtn.disabled = true;
+        pubStatus.textContent = '';
+        pubStatus.classList.remove('success');
+        pubStatus.classList.remove('error');
+
+        var req = new XMLHttpRequest();
+
+        var onError = function() {
+          var msg = 'Request failed';
+          if (req.statusText) {
+            msg += ' with status "' + req.statusText + '"';
+          }
+          if (req.responseText) {
+            msg += ': ' + req.responseText;
+          }
+          pubStatus.classList.add('error');
+          pubStatus.textContent = msg;
+          pubBtn.disabled = false;
+        };
+
+        req.addEventListener('load', function() {
+          if (req.status != 200) {
+            onError();
+            return;
+          }
+          pubStatus.textContent = ('Publication request submitted' +
+            ' (reload preview to re-publish)');
+          pubStatus.classList.add('success');
+        });
+        req.addEventListener('error', onError);
+        req.addEventListener('abort', onError);
+        req.open("post", pubForm.action);
+        req.send(new FormData(pubForm));
+      });
+    });
+  </script>
+
+  <script src="/libs/native-shim.js"></script>
+  <script src="/libs/custom-elements.min.js"></script>
+  <script src="/libs/prettify.js"></script>
+  <script src="/libs/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+</body>
+</html>
