@@ -1,0 +1,23 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-05-14T07:48:40Z",
+  "id": "vibe-coding-hands-on",
+  "duration": 105,
+  "title": "[20250514] [BwAI] Vibe coding hands-on w/ Cline, Cursor",
+  "authors": "GDG on Campus University of Osaka",
+  "summary": "Cline, Cursor, Firebase Studio の Vibe coding ツールのハンズオン勉強会です！ Gemini 2.5 Pro Preview API を使用します。",
+  "source": "15Qmibpo1MG2NmvtRBdqHy3KKXyPhl1cZKq-XWW3zreM",
+  "theme": "dev",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "dev"
+  ],
+  "tags": [],
+  "feedback": "https://github.com/gdsc-osaka/education/issues",
+  "url": "vibe-coding-hands-on"
+}

@@ -1,0 +1,245 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>ポートフォリオ Web サイト作成ワークショップ</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="first-portfolio-workshop-2hr-nogit"
+                  title="ポートフォリオ Web サイト作成ワークショップ"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Codelab の概要" duration="5">
+        <p>この Codelab では、プログラミングや Web 制作の経験がない方を対象に、2 時間という短い時間で簡単な自分のポートフォリオサイトを作成し、インターネット上に公開する手順を体験します。</p>
+<p><strong>学習内容:</strong></p>
+<ul>
+<li>簡単な Web ページの構造 (HTML)</li>
+<li>Web ページの見た目を整える方法 (CSS)</li>
+<li>開発ツール (VSCode) の基本的な使い方</li>
+<li>GitHub を使った Web サイトの公開 (GitHub Pages) ※Git コマンドは使いません</li>
+</ul>
+<p><strong>必要なもの:</strong></p>
+<ul>
+<li>インターネットに接続された PC (Windows または Mac)</li>
+<li>メールアドレス (GitHub アカウント作成用)</li>
+</ul>
+<p><strong>注意:</strong> この Codelab は非常に短い時間で多くのことを体験するため、駆け足での進行となります。細かい部分の理解よりも、まずは「自分で Web サイトを公開できた！」という達成感を得ることを目標にしましょう。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 1: 開発環境の準備" duration="30">
+        <p>はじめに、Web サイトを作成するための道具を準備します。</p>
+<h2 is-upgraded>VSCode のインストール</h2>
+<p>Web サイトの設計図 (コード) を書くためのエディタ「Visual Studio Code (VSCode)」をインストールします。</p>
+<ol type="1">
+<li>お使いの Web ブラウザ (Chrome, Edge, Safari など) を開きます。</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode 公式サイト</a> にアクセスします。</li>
+<li>お使いの OS (Windows, Mac) に合ったインストーラーをダウンロードします。</li>
+<li>ダウンロードしたファイルを開き、画面の指示に従ってインストールを完了します。</li>
+</ol>
+<p><strong>Troubleshooting:</strong> インストールがうまくいかない場合は、遠慮なくメンターに声をかけてください！</p>
+<h2 is-upgraded>GitHub アカウントの作成</h2>
+<p>作成した Web サイトをインターネット上に公開するために、GitHub というサービスを使います。そのためのアカウントを作成しましょう。</p>
+<ol type="1">
+<li>Web ブラウザで <a href="https://github.com/" target="_blank">GitHub 公式サイト</a> にアクセスします。</li>
+<li>画面右上の「Sign up」ボタンをクリックします。</li>
+<li>画面の指示に従って、ユーザー名、メールアドレス、パスワードを設定します。 <ul>
+<li><strong>ユーザー名:</strong> 半角英数字とハイフンのみ使用可能です。これがあなたの Web サイトの URL の一部になります。</li>
+<li><strong>メールアドレス: </strong><code>@</code> マークの入った、受信可能なメールアドレスを入力してください。確認メールが届きます。</li>
+</ul>
+</li>
+<li>簡単なパズル認証やプラン選択（Free プランを選択）などを行います。</li>
+<li>登録したメールアドレスに GitHub から確認メールが届きます。メールを開き、「Verify email address」ボタンをクリックして認証を完了します。</li>
+</ol>
+<p><strong>Troubleshooting:</strong> 確認メールが届かない場合や、手順で迷った場合は、メンターにサポートを求めてください。</p>
+<p>これで開発環境の準備は完了です！</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 2: Web ページの骨組みを作る (HTML)" duration="25">
+        <p>いよいよ Web サイトの中身を作っていきます。まずは VSCode を使って、ページの構造を定義する HTML ファイルを作成しましょう。</p>
+<h2 is-upgraded>作業フォルダの準備</h2>
+<ol type="1">
+<li>PC の分かりやすい場所（例: デスクトップ）に、このワークショップ用の新しいフォルダを作成します。フォルダ名は自由ですが、<code>my-portfolio</code> などが分かりやすいでしょう。</li>
+<li>VSCode を起動します。</li>
+<li>メニューバーの「ファイル (File)」&gt;「フォルダーを開く (Open Folder...)」を選択し、先ほど作成したフォルダ (<code>my-portfolio</code>) を開きます。</li>
+</ol>
+<h2 is-upgraded>HTML ファイルの作成と編集</h2>
+<ol type="1">
+<li>VSCode の左側にあるエクスプローラーパネルで、フォルダ名 (<code>my-portfolio</code>) の横に表示される「新しいファイル」アイコンをクリックします。</li>
+<li>ファイル名を <code>index.html</code> と入力して Enter キーを押します。</li>
+<li>中央のエディタ画面に <code>index.html</code> が開かれるので、以下のコードを<strong>正確に</strong>入力（またはコピー＆ペースト）します。</li>
+</ol>
+<pre><code language="language-html" class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&#34;UTF-8&#34;&gt;
+    &lt;title&gt;わたしのポートフォリオ&lt;/title&gt;
+    &lt;link rel=&#34;stylesheet&#34; href=&#34;style.css&#34;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;ここをあなたの名前に変更&lt;/h1&gt;
+    &lt;p&gt;ここをあなたの自己紹介文に変更。Web開発に興味があります！&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<ol type="1" start="4">
+<li><code><h1></code> タグの中身を<strong>あなたの名前</strong>に、<code><p></code> タグの中身を<strong>簡単な自己紹介文</strong>に書き換えてください。</li>
+<li><code>Ctrl+S</code> (Windows) または <code>Cmd+S</code> (Mac) を押して、ファイルを保存します。</li>
+</ol>
+<h2 is-upgraded>Live Server でプレビュー</h2>
+<p>作成した Web ページがどのように見えるか、ブラウザで確認してみましょう。</p>
+<ol type="1">
+<li>VSCode の左側にある四角が積み重なったような「拡張機能」アイコンをクリックします。</li>
+<li>検索ボックスに <code>Live Server</code> と入力します。</li>
+<li>検索結果に表示された <code>Live Server</code> (Ritwick Dey 作) を選択し、「インストール (Install)」ボタンをクリックします。</li>
+<li>インストールが完了したら、<code>index.html</code> のエディタ画面に戻ります。</li>
+<li>画面右下のステータスバーにある <code>Go Live</code> ボタンをクリックします。</li>
+<li>自動的に Web ブラウザが起動し、作成した <code>index.html</code> の内容が表示されれば成功です！ <code>h1</code> や <code>p</code> の内容が書き換えた通りになっているか確認しましょう。</li>
+</ol>
+<p><strong>Note:</strong> Live Server を使うと、HTML や CSS ファイルを保存するたびに、ブラウザの表示が自動で更新されるので非常に便利です。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 3: Web ページの見た目を整える (CSS)" duration="25">
+        <p>次に、Web ページの見た目を調整する CSS ファイルを作成します。</p>
+<h2 is-upgraded>CSS ファイルの作成と編集</h2>
+<ol type="1">
+<li>VSCode のエクスプローラーパネルで、<code>index.html</code> と同じ場所に新しいファイルを作成します。</li>
+<li>ファイル名を <code>style.css</code> と入力して Enter キーを押します。</li>
+<li><code>style.css</code> が開かれるので、以下のコードを入力（またはコピー＆ペースト）します。</li>
+</ol>
+<pre><code language="language-css" class="language-css">body {
+    background-color: #f0f8ff; /* 背景色を薄い水色に */
+    font-family: sans-serif;   /* 文字のフォントを指定 */
+    padding: 20px;             /* ページ全体の余白 */
+}
+
+h1 {
+    color: #000080;          /* 見出しの文字色を紺色に */
+    text-align: center;       /* 見出しを中央揃えに */
+}
+
+p {
+    color: #333333;          /* 段落の文字色を濃い灰色に */
+    line-height: 1.6;         /* 行の高さを少し広げる */
+}
+</code></pre>
+<ol type="1" start="4">
+<li><code>Ctrl+S</code> (Windows) または <code>Cmd+S</code> (Mac) を押して、ファイルを保存します。</li>
+</ol>
+<h2 is-upgraded>スタイルの確認と変更</h2>
+<p><code>style.css</code> を保存すると、Live Server で開いているブラウザの表示が自動で更新されるはずです。背景色や文字色が変わったことを確認しましょう。</p>
+<p>試しに、<code>style.css</code> の色の値 (<code>#f0f8ff</code> や <code>#000080</code> など) を別の値（例: <code>pink</code>, <code>green</code>, <code>#ffcc00</code> など）に変更して保存してみてください。リアルタイムで見た目が変わるのを確認できます。</p>
+<p><strong>Tip:</strong> 色の名前やコードはこちらのサイトなどが参考になります: <a href="https://htmlcolorcodes.com/" target="_blank">HTML Color Codes</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 4: GitHub で Web サイトを公開する" duration="25">
+        <p>いよいよ、作成した Web サイトをインターネット上に公開します！GitHub の Web インターフェースを使って、ファイルをアップロードしましょう。</p>
+<h2 is-upgraded>新しいリポジトリの作成</h2>
+<ol type="1">
+<li>Web ブラウザで <a href="https://github.com/" target="_blank">GitHub</a> にアクセスし、ログインします。</li>
+<li>画面右上の「+」アイコンをクリックし、「New repository」を選択します。</li>
+<li>以下の項目を設定します。 <ul>
+<li><strong>Repository name: </strong><code>あなたのGitHubユーザー名.github.io</code> と<strong>正確に</strong>入力します。 <ul>
+<li>例: ユーザー名が <code>taro-yamada</code> なら <code>taro-yamada.github.io</code></li>
+</ul>
+</li>
+<li><strong>Description:</strong> (任意) 簡単な説明を入力します（例: My portfolio site）。</li>
+<li><strong>Public</strong> を選択します (Private だと GitHub Pages が使えません)。</li>
+<li><strong>Initialize this repository with:</strong> の下のチェックボックスは<strong>すべてチェックを外した状態</strong>にします (README などは不要)。</li>
+</ul>
+</li>
+<li>「Create repository」ボタンをクリックします。</li>
+</ol>
+<h2 is-upgraded>ファイルのアップロード</h2>
+<p>リポジトリが作成されると、「Quick setup」などの画面が表示されます。ここにファイルをアップロードします。</p>
+<ol type="1">
+<li>画面に表示されている「uploading an existing file」というリンクをクリックします。</li>
+<li>ファイル選択画面が表示されるので、先ほど VSCode で作成した <code>index.html</code> と <code>style.css</code> の <strong>2 つのファイル</strong>を、画面の点線枠の中にドラッグ＆ドロップします。（または、「choose your files」リンクからファイルを選択します）</li>
+<li>ファイルがアップロードされると、画面下に「Commit changes」というセクションが表示されます。特に変更せず、緑色の「Commit changes」ボタンをクリックします。</li>
+</ol>
+<h2 is-upgraded>GitHub Pages の設定</h2>
+<p>ファイルを置いただけではまだ公開されません。GitHub Pages の機能を有効にします。</p>
+<ol type="1">
+<li>アップロードが完了したら、リポジトリのページ上部にある「Settings」タブをクリックします。</li>
+<li>左側のメニューから「Pages」を選択します。</li>
+<li>「Build and deployment」セクションで、「Source」が「Deploy from a branch」になっていることを確認します。</li>
+<li>「Branch」の項目で、「Branch: <code>main</code>」（または <code>master</code>）、「Folder: `/ (root)」が選択されていることを確認し、「Save」ボタンをクリックします。</li>
+</ol>
+<h2 is-upgraded>公開の確認</h2>
+<p>設定が完了すると、「Your site is live at ...」のようなメッセージが表示されます（表示されるまで少し時間がかかる場合があります）。</p>
+<p>表示された URL ( <code>https://あなたのGitHubユーザー名.github.io</code> ) をクリックして、作成した Web サイトがインターネット上で見られるか確認しましょう！</p>
+<p><strong>Troubleshooting:</strong> もし &#34;Page not found&#34; (404) が表示される場合は、数分待ってみるか、リポジトリ名が <code>ユーザー名.github.io</code> と正確に一致しているか、ファイル名 (<code>index.html</code>) が正しいか、Pages の設定が正しいかを確認してください。不明な場合はメンターに質問しましょう。</p>
+<p><strong>おめでとうございます！これであなたのポートフォリオサイトが完成し、世界中に公開されました！</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 5: まとめと次のステップ" duration="15">
+        <p>このワークショップでは、たった 2 時間で以下のことを達成しました。</p>
+<ul>
+<li>VSCode を使って HTML と CSS ファイルを作成・編集した。</li>
+<li>簡単な Web ページの構造と見た目を作った。</li>
+<li>GitHub アカウントを作成し、Web インターフェースからファイルをアップロードした。</li>
+<li>GitHub Pages を使って、作成した Web サイトをインターネットに公開した。</li>
+</ul>
+<h2 is-upgraded>今回の手法について</h2>
+<p>今回は時間短縮のため、Git コマンドを使わずに GitHub に直接ファイルをアップロードしました。これは手軽ですが、実際の Web 開発では <strong>Git</strong> というバージョン管理システムを使って、変更履歴を記録しながら GitHub と連携するのが一般的です。</p>
+<h2 is-upgraded>Next Steps (初心者向け)</h2>
+<ul>
+<li><strong>コンテンツを充実させる: </strong><code>index.html</code> にもっと詳しい自己紹介や、作品紹介（もしあれば）を追加してみましょう。画像 (<code><img></code> タグ) を追加するのも良いですね。</li>
+<li><strong>CSS でデザインを凝る: </strong><code>style.css</code> で、もっと色々なプロパティ (例: <code>border</code>, <code>font-size</code>, <code>margin</code>, <code>padding</code>) を試して、デザインを改善してみましょう。 <ul>
+<li>参考: <a href="https://developer.mozilla.org/ja/docs/Web/CSS" target="_blank">MDN Web Docs - CSS</a></li>
+</ul>
+</li>
+<li><strong>Git を学ぶ:</strong> Web 開発の基本スキルである Git の使い方を学んでみましょう。今日作ったサイトを Git で管理できるようにするのも良い練習になります。</li>
+</ul>
+<h2 is-upgraded>Next Steps (経験者向け / 発展課題)</h2>
+<p>もし Web 開発の経験が少しあるなら、以下の課題に挑戦してみるのも面白いでしょう（詳細は別途資料を参照）。</p>
+<ul>
+<li>Flexbox や Grid を使ったレイアウト作成</li>
+<li>メディアクエリを使ったレスポンシブデザイン対応</li>
+<li>JavaScript を使った簡単なインタラクションの実装 (例: ボタンクリック)</li>
+<li>今日試した「直接アップロード」ではなく、Git コマンド (<code>git add</code>, <code>git commit</code>, <code>git push</code>) を使って GitHub にファイルを送信し、GitHub Pages を更新してみる。</li>
+</ul>
+<h2 is-upgraded>最後に</h2>
+<p>今日の体験が、皆さんの Web 開発への興味の入口となれば幸いです。ぜひ、今日作ったサイトをベースに、どんどん自分だけのポートフォリオサイトを作り込んでいってください！</p>
+<p><strong>(ここにサークル紹介や連絡先などを追記)</strong></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

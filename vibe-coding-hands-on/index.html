@@ -1,0 +1,450 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>[20250514] [BwAI] Vibe coding hands-on w/ Cline, Cursor</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="vibe-coding-hands-on"
+                  title="[20250514] [BwAI] Vibe coding hands-on w/ Cline, Cursor"
+                  environment="web"
+                  feedback-link="https://github.com/gdsc-osaka/education/issues">
+    
+      <google-codelab-step label="ハンズオンの概要" duration="5">
+        <p><strong>Last Updated:</strong> 2025-04-21</p>
+<p class="image-container"><img style="width: 1244.00px" src="img\\4f0e449ba41b279a.png"></p>
+<h2 is-upgraded><strong>Vibe Coding の世界へようこそ</strong></h2>
+<p>本日はご参加いただき、ありがとうございます！今回のハンズオンでは、ソフトウェア開発の現場に革新をもたらすと言われる「Vibe Coding」(雰囲気コーディング) と呼ばれる新しい開発方法に取り組みます。</p>
+<p>AI アシストツールを活用することで、開発者はコードの生成や編集、デバッグといった作業を効率化し、より創造的なタスクに集中できるようになります。Cline や Cursor のようなツールは、まるで熟練したペアプログラマーが隣にいるかのように、リアルタイムで的確な提案を行い、開発プロセスを加速させます。また、Gemini 2.5 Pro API は、高度な自然言語処理能力とコーディング能力を兼ね備えており、Cline や Cursor を通じて、様々な開発ニーズに対応することができます。</p>
+<p>それでは、最先端のソフトウェア開発を体感してみましょう！</p>
+<h2 is-upgraded><strong>使用するツールの概要</strong></h2>
+<p>本日のハンズオンでは、以下の主要なツールについて取り組みます。</p>
+<ul>
+<li><strong>Cursor:</strong> VS Code をベースに開発された、AI ファーストのコードエディタ。AI による強力な支援を受けながら、より生産的なコーディング体験を提供</li>
+<li><strong>Cline:</strong> VS Code に統合された強力な AI アシスタント拡張機能。様々な AI プロバイダーを柔軟に選択可能</li>
+<li><strong>Gemini 2.5 Pro API:</strong> Google が提供する最先端の AI モデル。Cursor や Cline からこの API を呼び出すことで、様々な AI を活用したタスクを実行可能</li>
+</ul>
+<h2 is-upgraded><strong>学習目標</strong></h2>
+<p>本ハンズオンを通じて、皆さんは以下のことができるようになります。</p>
+<ul>
+<li>Cline と Cursor を開発環境にセットアップする</li>
+<li>Gemini API キーを取得し、Cline に設定する。</li>
+<li><code>.clinerules</code> の書き方や基本的なコマンドなど、Cline の基本的な使い方を理解する。</li>
+<li>Cursor のインターフェースを操作し、主要なAI機能を活用する。</li>
+<li>AIの支援を受けながら、簡単なハンズオンコーディングタスクを実行する。</li>
+</ul>
+<aside class="special"><p><strong>このイベントについて:</strong></p>
+<p>本ハンズオンは1時間半という限られた時間ではありますが、これらのツールの基本的な概念と実践的な使い方を体験していただくことを目的としています。もし不明な点や質問などがありましたら、イベント中でもイベント後でも Discord 等で受け付けております！</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 0: 開発環境のセットアップ" duration="20">
+        <p>まずは今回のハンズオンに必要となる開発環境の準備をしましょう。</p>
+<h2 is-upgraded><strong>前提条件</strong></h2>
+<ul>
+<li>Google アカウント</li>
+<li>Windows / macOS / Linux</li>
+</ul>
+<h2 is-upgraded><strong>Gemini API キーの取得</strong></h2>
+<p>まず Cline をセットアップしますが、その前に Cline で Gemini を使用するために必要な Gemini API キーを取得する必要があります。まだ API キーを持っていない方は以下の手順に従って API キーを取得してください。</p>
+<ol type="1" start="1">
+<li>Google AI Studio にアクセスしてください。<br><a href="https://aistudio.google.com/app/apikey" target="_blank"><paper-button class="colored" raised>Get API key</paper-button></a></li>
+<li>Google アカウントでログインし、「API キーを作成」をクリックし、「新しいプロジェクトで API キーを作成」をクリックして新しい API キーを作成します</li>
+<li>この API キーは、Gemini API へのアクセスを認証するために使用されます。作成した API キーは安全な場所で管理しましょう</li>
+</ol>
+<aside class="special"><p><strong>Note: お金はかからない？<br></strong>API キーの表の「プラン」の列に「Free」と書かれている API キーを使えば課金されることはありません！ご安心ください。</p>
+<p class="image-container"><img style="width: 972.00px" src="img\\e5c27706c0955800.png"></p>
+</aside>
+<h2 is-upgraded><strong>Cline のセットアップ</strong></h2>
+<ol type="1" start="1">
+<li>VS Code を開きます</li>
+<li>アクティビティバーの拡張機能アイコン (Ctrl+Shift+X またはCmd+Shift+X) をクリックします</li>
+<li>検索バーに「Cline」と入力し、表示された Cline 拡張機能の「インストール」ボタンをクリックします</li>
+<li>インストールが完了したら、アクティビティバーに Cline のアイコンが表示されますので、クリックして Cline を開きましょう</li>
+<li>「Use your own API Key」を選択します</li>
+<li>API Provider は Google Gemini<br>Gemini API Key に先ほど取得した API キーを入力し、「Let&#39;s go!」deで進みます</li>
+<li>[Optional] Cline の返答を日本語に設定できます。Cline の画面の右上の「⚙」から設定を開き、一番下までスクロールして「Advanced Settings」を押します。「Cline: Preferred Language」で「Japanese - 日本語」を選択します</li>
+</ol>
+<h2 is-upgraded><strong>Cursor のセットアップ</strong></h2>
+<ol type="1" start="1">
+<li>Cursor のウェブサイト にアクセスし、「Download」ボタンをクリックして Cursor IDE をダウンロードします。<br><a href="https://www.cursor.com/ja" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download Cursor</paper-button></a></li>
+<li>ダウンロードが完了したら、インストーラーを実行して Cursor IDE をインストールします</li>
+<li>Cursor IDE には、Hobby (無料)、Pro、Business の 3 つの料金プランがあります。本ハンズオンでは無料の Hobby プランを利用します。Hobby プランには、Pro プランの 2 週間のトライアル、2000 回の補完、50 回の低速リクエストが含まれます。無料プランでは、高度な機能や高速なリクエストには制限があることに注意してください。</li>
+<li>Cursor IDE を初めて起動すると、キーボードショートカットの設定や VS Code の設定のインポートなどの初期設定を行うことができます。必要に応じて設定を行ってください。</li>
+</ol>
+<p>これで環境構築はひとまず完了です。お疲れ様でした！</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 1-1: Cline の概要" duration="10">
+        <p>Cline は IDE 内で直接実行される自律コーディング エージェントです。実際に Cline を使ってみる前に、まずは基本的な機能について知っておきましょう。</p>
+<h2 is-upgraded><strong>Cline の仕組み</strong></h2>
+<p>Cline はユーザーの指示に基づいて自律的にコーディングをできますが、<strong>実は Cline 自体に AI が搭載されているわけではない</strong> のです。<a href="https://zenn.dev/codeciao/articles/6d0a83e234a34a" target="_blank">codeciaoテックブログ</a> さんの記事が非常に分かりやすいので、図を以下に引用します。</p>
+<p class="image-container"><img style="width: 1016.00px" src="img\\df06f949453eefc9.png"></p>
+<p>[ <a href="https://zenn.dev/codeciao/articles/6d0a83e234a34a" target="_blank">codeciaoテックブログ</a> より引用 ]</p>
+<p>Cline は AI を搭載しておらず、実際にコーディングや思考を行うのは Gemini などの外部の AI アシスタントです。この仕組みのおかげで、Gemini に限らず様々な AI ツールとの柔軟な連携が可能になります。</p>
+<p>では、実際に使う場面を想定してみましょう。ユーザーは Cline に指示を出しますが、その文章のままではプロジェクトの構成を AI が把握することができません。そこで、<strong>Cline はユーザーと AI との中継役</strong> となってプロジェクトのファイル構造などを <strong>追加情報</strong> として AI に教えます。</p>
+<p>ただ、AI は基本的に文字ベースでしか出力ができないので、直接パソコン上のファイルを閲覧したりコマンドを実行したりすることはできません。そこで、<strong>Cline が中継役</strong> となって代わりに <strong>コマンド実行</strong> や <strong>ファイル内容の閲覧・編集</strong> を行うことで、AI が人間と同じようにコーディングを行うことが可能となるのです。</p>
+<h2 is-upgraded><strong>2 種類の動作モード – Plan / Act</strong></h2>
+<p>Cline には 2 種類の動作モードがあり、作業内容に応じて切り替えて使います。</p>
+<p class="image-container"><img style="width: 847.00px" src="img\\44c8975840e77ade.jpeg"></p>
+<p>[ <a href="https://docs.cline.bot/exploring-clines-tools/plan-and-act-modes-a-guide-to-effective-ai-development" target="_blank">公式ドキュメント</a> より引用 ]</p>
+<h3 is-upgraded><strong>Plan Mode</strong></h3>
+<ul>
+<li>コンテキスト収集と戦略に最適化</li>
+<li>コードの編集は不可</li>
+<li>要件の理解と実装計画の作成に重点を置く</li>
+<li>ファイル読み取りが可能で、プロジェクトを包括的に理解できる</li>
+</ul>
+<h3 is-upgraded><strong>Act Mode</strong></h3>
+<ul>
+<li>Plan Mode で確立された計画に基づいて実装を合理化</li>
+<li>Cline の全ての機能が利用可能</li>
+<li>コードの編集ができる</li>
+</ul>
+<p>Cline を使い始める際はまず Plan Mode に設定し、Cline とプロジェクトの概要についての理解を深めると良いでしょう。Cline との対話を通じてプロジェクトへの理解が深まると、Cline 側から Act Mode に変更するように勧められます。</p>
+<p>詳しく知りたい方は、ぜひ <a href="https://docs.cline.bot/exploring-clines-tools/plan-and-act-modes-a-guide-to-effective-ai-development" target="_blank">公式ドキュメント</a> をお読みください。</p>
+<h2 is-upgraded><code>.clinerules</code><strong> ファイル</strong></h2>
+<p>Cline に精度良く指示をするには、プロジェクトに応じて <code>.clinerules</code> ファイルを適切に設定すると良いです。このファイルの内容は前提条件として Cline に渡されます。具体例を見てみましょう。</p>
+<p><code>.clinerules</code></p>
+<pre><code># プロジェクトのガイドライン
+
+## ドキュメントの要件
+
+-   機能修正時は、/docs 内の関連ドキュメントを更新すること
+-   新しい機能に合わせて README.md を常に最新の状態に保つこと
+-   CHANGELOG.md に変更履歴を記録すること
+
+## アーキテクチャ決定記録 (ADR)
+
+以下の場合は、/docs/adr に ADR を作成すること
+
+-   主要な依存関係の変更
+-   アーキテクチャパターンの変更
+-   新しい連携パターンの導入
+-   データベーススキーマの変更
+    /docs/adr/template.md のテンプレートに従うこと
+
+## コーディングスタイルとパターン
+
+-   API クライアントは OpenAPI Generator を使用して生成すること
+-   TypeScript axios テンプレートを使用すること
+-   生成されたコードは /src/generated に配置すること
+-   継承よりもコンポジションを優先すること
+-   データアクセスにはリポジトリパターンを使用すること
+-   /src/utils/errors.ts に定義されたエラーハンドリングパターンに従うこと
+
+## テストの基準
+
+-   ビジネスロジックには単体テストが必須
+-   API エンドポイントには結合テストが必須
+-   重要なユーザーフローには E2E テストが必須</code></pre>
+<p>[ <a href="https://docs.cline.bot/improving-your-prompting-skills/prompting" target="_blank">公式ドキュメント</a> を翻訳 ]</p>
+<p>かなりプロジェクトに応じた内容を細かく記載していることが分かると思います。細かく指示を出すことで、既存のプロジェクトやガイドラインに上手く統合することができます。</p>
+<p>もっと詳しく知りたい方は、ぜひ <a href="https://docs.cline.bot/improving-your-prompting-skills/prompting" target="_blank">公式ドキュメント</a> を読んでみてください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 1-2: Cline を使ってみよう" duration="20">
+        <p>それでは、いよいよ Cline を使ってみましょう！</p>
+<ol type="1" start="1">
+<li>VS Code で任意の新規フォルダを開いてください。ここが Cline の作業フォルダとなります</li>
+<li>AI のモデルを選択しましょう。Cline の設定「⚙」を開き、「Model」を選択します<br><code>gemini-2.0-flash-*</code>: Gemini の最新の安定版のうち、高速な返答が得られるモデル。無料枠が大きい<br><code>gemini-2.0-flash-thinking-exp-*</code>: Gemini 2.0 Flash に「思考プロセス」が加わる。無料枠が大きい<br><code>gemini-2.5-pro-exp-*</code>: 現在利用できる最高の Gemini。無料枠が少ないので、実行速度が遅くなる</li>
+<li><strong>Plan Mode に設定</strong> して、何か指示を出してみましょう。<br>例：TypeScript を使って、電卓 Web アプリを作ってください。</li>
+<li>Cline から返答が返ってきます。作成したいプロダクトの詳細を聞かれると思うので、Cline と一緒に内容を深めていきましょう。<br>電卓アプリの例では「どのような技術スタックを採用するか」「どのような機能を実装するか」「デザインはどうするか」といったことを Cline から聞かれると思います。</li>
+<li>内容が煮詰まったら、いよいよコード生成に移ります。<strong>Act Mode</strong> に切り替えてみましょう</li>
+<li>実行の最初の方では、環境構築のためにいくつかコマンドの実行を依頼されると思うので、実行してあげてください。<br>コードの生成に映ると自動で画面が動き、ものすごいスピードでコードが生成されているのがわかると思います。</li>
+<li>完成して Web サーバーを立てる段階になると、サーバーを立てるコマンドが実行されます。このコマンドはサーバーを閉じるまで終了しないので「Proceed While Running」ボタンを押して、コマンドを裏で動かしつつ先に進みましょう。</li>
+<li>完了したら緑色の文字で「<strong>Task Completed</strong>」と表示されると思います。成果物を見てみましょう！<br><img style="width: 323.00px" src="img\\3328fa74acbe3cf1.png"></li>
+</ol>
+<aside class="warning"><p><strong>Note: 上手くいかない時のコツ</strong></p>
+<p>Cline と AI、Workspace の連携がうまく行かず、無限ループや Too many request に陥ることがあります。その際には指示の直後に表示されている「Restore」ボタンを押して復元し、指示の文章を変えてみましょう。<br>Plan モードでしっかりと方針を話し合うことが成功の鍵です！</p>
+<p>ただ、Cline は CSS のようなレイアウト系の修正などで無限ループになりがちなので、何度やっても上手く行かないこともあります</p>
+</aside>
+<p>アプリはできましたか？次の Step に進むまで、Cline とともにアプリを修正・改善してみましょう！</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2-1: Cursor について" duration="15">
+        <p><strong>Cursorの概要説明</strong></p>
+<p>Cursorは、AIを利用してコード補完・生成を行うコードエディタです。</p>
+<p>VSCodeをベースに開発されており、Visual Studio Codeの機能に追加する形で、自然言語プロンプトによるコード生成・編集、マルチライン補完、コードベース全体へのクエリ、そして&#34;Chat&#34;、&#34;Agent&#34;という2種類のAIモードを提供します。</p>
+<p>Privacyモードも搭載しており、ユーザのコードをリモートに一切保存しないことも可能です。</p>
+<p><strong>他のAIエディタとの区別点</strong></p>
+<p>・CursorはVisual Studio Codeをフォークした独立アプリケーションとして提供される</p>
+<p>・Composer機能により、自然言語で指示した内容をそのままファイル編集としてインライン適用可能</p>
+<p>・Cursorはプロジェクト全体をインデックス化し、自然言語で「このAPIを呼び出している箇所を教えて」といったクエリが可能</p>
+<p><strong>主なモード</strong></p>
+<p>・自然言語によるコード編集（Chat／Composerモード）</p>
+<p>自然言語プロンプトをそのままエディタのサイドパネルに入力し、小規模な修正から複数ファイルにまたがる変更までをインラインで実行できます。</p>
+<p>・マルチライン補完（Tab機能）</p>
+<p>単一行ではなく、直近の編集履歴や周辺コンテキストを踏まえた複数行にわたるコード補完候補をTabキーだけで表示することができます。</p>
+<p>・エンドツーエンド自動化（Agentモード）</p>
+<p>AIがコードベース全体を横断してタスクを&#34;計画→実行&#34;します。</p>
+<p>新規ファイルの作成や既存コードのリファクタリング、ターミナルコマンドの実行までを連携しながら自律的に完遂することが出来ます。</p>
+<p>・スマートリライト＆大規模リファクタリング(Ctrl K)</p>
+<p>自分で選択した範囲を対象に、どのように変更したいかを記述すれば自動で最適化・整形・構造変更を行うことが出来ます。</p>
+<p><strong>Rules</strong></p>
+<p>Cursorには、clineと同様に、AIの振る舞いをプロジェクトや個人の好みによって制御したり、精度を上昇させるカスタムルールを設定することが出来ます。また、このルールは、全プロジェクトに適用するUser Rulesと、プロジェクトごとに設定できるProject Rulesがあります。</p>
+<p>設定方法は、左上のFile &gt; Preferences &gt; Cursor Settings &gt; Rulesです。</p>
+<p class="image-container"><img style="width: 423.50px" src="img\\fb2c321784b5aa09.png"></p>
+<p><strong>User Rules</strong>は、テキストで書くことが出来ます。</p>
+<p>以下の例では、User Rulesに&#34;Always respond in Japanese&#34;と記載しています。</p>
+<p class="image-container"><img style="width: 955.50px" src="img\\37b8bee604f5eaf6.png"></p>
+<p><strong>Project Rules</strong>は、テキストに加えファイルのシンボルが使用できます。</p>
+<p>また、以下の４つのパターンがあり、ルールが発動するタイミングを制御できます。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>タイプ</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>説明</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Always</strong></p>
+</td><td colspan="1" rowspan="1"><p>モデル呼び出し時に必ずコンテキストに含まれる</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Auto Attached</strong></p>
+</td><td colspan="1" rowspan="1"><p>globs で指定したファイルパターンにマッチするファイルが参照された際に自動適用される</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Agent Requested</strong></p>
+</td><td colspan="1" rowspan="1"><p>AI（Agent モード）が必要と判断した場合にのみ適用。description は必須</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Manual</strong></p>
+</td><td colspan="1" rowspan="1"><p>本文内で @ruleName と明示的にタグ付けされたときのみ適用される</p>
+</td></tr>
+</table>
+<p>Project Rulesを追加するには、 &#34;+Add new rule&#34;を選択し、ruleの名前を入力することで出来ます。</p>
+<p>以下の例では、&#34;demo-rules&#34;という名前のruleが追加しています。</p>
+<p>これらの手順を実行すると、.mdc 形式のファイルとして記録されます。</p>
+<p class="image-container"><img style="width: 801.00px" src="img\\c91e77e462678c4c.png"></p>
+<p><code>以下は特定のファイルに言及されたとき自動適用される</code><strong>Auto Attached</strong>のルールです。</p>
+<pre><code>---
+description: &#34;API層用バリデーションルール&#34;
+globs:
+  - &#34;src/api/**/*.ts&#34;
+alwaysApply: false
+---
+
+- すべてのエンドポイント関数に入力チェックを実装する
+- `zod` ライブラリを使用し、スキーマ定義を行う
+
+</code></pre>
+<p>実際には、このようなRulesが使われています。</p>
+<p>こちらはCursorチームメンバーの <a href="https://qiita.com/shaoruu" target="_blank">@shaoruu</a> さんが共有したルール設定です。</p>
+<p>DO NOT GIVE ME HIGH LEVEL SHIT, IF I ASK FOR FIX OR EXPLANATION, I WANT ACTUAL CODE OR EXPLANATION!!! I DON&#39;T WANT &#34;Here&#39;s how you can blablabla&#34;</p>
+<p>- Be casual unless otherwise specified</p>
+<p>- Be terse</p>
+<p>- Suggest solutions that I didn&#39;t think about—anticipate my needs</p>
+<p>- Treat me as an expert</p>
+<p>- Be accurate and thorough</p>
+<p>- Give the answer immediately. Provide detailed explanations and restate my query in your own words if necessary after giving the answer</p>
+<p>- Value good arguments over authorities, the source is irrelevant</p>
+<p>- Consider new technologies and contrarian ideas, not just the conventional wisdom</p>
+<p>- You may use high levels of speculation or prediction, just flag it for me</p>
+<p>- No moral lectures</p>
+<p>- Discuss safety only when it&#39;s crucial and non-obvious</p>
+<p>- If your content policy is an issue, provide the closest acceptable response and explain the content policy issue afterward</p>
+<p>- Cite sources whenever possible at the end, not inline</p>
+<p>- No need to mention your knowledge cutoff</p>
+<p>- No need to disclose you&#39;re an AI</p>
+<p>- Please respect my prettier preferences when you provide code.</p>
+<p>- Split into multiple responses if one response isn&#39;t enough to answer the question.</p>
+<p>If I ask for adjustments to code I have provided you, do not repeat all of my code unnecessarily. Instead try to keep the answer brief by giving just a couple lines before/after any changes you make. Multiple code blocks are ok.</p>
+<pre><code></code></pre>
+<p>以下は和訳です。</p>
+<p>象的な説明はいらない。修正や説明を求めた場合は、具体的なコードや説明が欲しい。「〜のようにできます」という説明は不要。</p>
+<p>- 特に指定がない限りカジュアルに接して</p>
+<p>- 簡潔に</p>
+<p>- 思いつかなかった解決策も提案して—ニーズを予測して</p>
+<p>- 専門家として扱って</p>
+<p>- 正確かつ徹底的に</p>
+<p>- すぐに答えを出して。必要な場合は、答えを出した後で詳細な説明や質問の言い換えを提供して</p>
+<p>- 権威よりも良い議論を重視し、情報源は重要視しない</p>
+<p>- 従来の常識だけでなく、新しい技術や反対意見も考慮して</p>
+<p>- 高度な推測や予測を使用してもよい、ただしその旨を明示して</p>
+<p>- 道徳的な説教はしないで</p>
+<p>- 安全性については、重要で自明でない場合のみ議論して</p>
+<p>- コンテンツポリシーに問題がある場合は、許容される最も近い回答を提供し、その後でポリシーの問題を説明して</p>
+<p>- 可能な限り出典を示すが、それは最後にまとめて行い、文中には入れない</p>
+<p>- 知識の期限について言及する必要なし</p>
+<p>- AIであることを明かす必要なし</p>
+<p>- コードを提供する際は、私のprettier設定を尊重して</p>
+<p>- 一つの回答で足りない場合は、複数の回答に分割して</p>
+<p>コードの調整を依頼した場合、不必要にすべてのコードを繰り返さないでください。代わりに、変更箇所の前後数行だけを示して簡潔な回答を心がけてください。複数のコードブロックの使用は問題ありません。</p>
+<pre><code></code></pre>
+<p>[<a href="https://qiita.com/tichise/items/751d7a6c01a4d74b766c" target="_blank">tichise(Ichise Takuya)さんのブログ</a>より引用]</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2-2: Cursorを使ってみよう" duration="0">
+        <p>ここからは実際にCursorを使ってみましょう。</p>
+<p>今回はCursorを用いて、簡単なWebページをつくってみましょう。</p>
+<ol type="1" start="1">
+<li>まずCursor Rulesを設定してみましょう。</li>
+</ol>
+<p>左上のFile &gt; Preferences &gt; Cursor Settings &gt; Rulesを選択し、&#34;Always respond in Japanese&#34;と書いてください。</p>
+<p class="image-container"><img style="width: 955.00px" src="img\\37b8bee604f5eaf6.png"></p>
+<ol type="1" start="2">
+<li>つぎに、実際にcursorを使ってwebページを作っていきます。</li>
+</ol>
+<ol type="1" start="3">
+<li>まずctrl + I で<strong>Composer サイドパネル</strong>を表示します。</li>
+</ol>
+<p class="image-container"><img style="width: 420.00px" src="img\\852293156b2b99f8.png"></p>
+<p>chat送信欄の左下にAgentと表示されていると思います。<br>これを選択すると、Agent, Ask, Manualの3つのモードが表示されます。</p>
+<p>これらは、どうやってAIがコードを変更するかを表しています。</p>
+<p>Agent           : ファイルの作成・編集・ターミナルコマンドの実行など、AIが自動で実行</p>
+<p>Ask                : AIの回答を確認したうえで、手動の「Apply」操作により変更を適用</p>
+<p>Manual  : カーソル位置や選択したコード範囲のみをコンテキストに、ピンポイントの編集を実行 </p>
+<p>今回は &#34;Agent&#34; を選択してみましょう。</p>
+<p>また、上の写真では、Agentを選択するボタンの右には、&#34;Auto&#34;と表示されていることがわかります。これを選択すると、使用するAIのモデルを選択することができます。</p>
+<p>今回は、&#34;Auto&#34; を選択してください。</p>
+<ol type="1" start="4">
+<li>chatで、&#34;webページを作りたい&#34;と送信してみてください。</li>
+</ol>
+<p>自動でコードを作成してくれると思います。</p>
+<ol type="1" start="5">
+<li>エクスプローラーから<code>index.htmlを選択し、ブラウザで表示してみましょう。</code></li>
+</ol>
+<p><code>シンプルな</code>webページが作成されていると思います。<img style="width: 537.74px" src="img\\e3e670458744e3e2.png"></p>
+<ol type="1" start="6">
+<li>まだ機能としては、表示するだけですので、ご自身で様々な機能を追加してみましょう！</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3: デモアプリ制作" duration="30">
+        <p><a href="mailto:h-kojima@msp-lab.org" target="_blank">Hayate Kojima</a></p>
+<p>Vibe Coding のイメージは掴めてきましたか？ここからは，これまでに構築した環境を使って，本格的なアプリを爆速で作ってみましょう．</p>
+<p>作るアプリは皆さんがご自身で決定していただいて大丈夫ですが，本資料では，「読んだ漫画の記録アプリ」を作っていきます．</p>
+<p>・完成品の例 (実際にvscode + clineで作成したもの)</p>
+<p><a href="https://drive.google.com/file/d/1jgqwTfaI6taPXLdZce6hmkOqACOQMLrm/view?usp=sharing" target="_blank">clineハンズオン.mp4</a></p>
+<p>それでは早速作っていきましょう！</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3-1: どんなアプリを作りたいかを考える" duration="0">
+        <p>Vibe Codingでは，プロンプトエンジニアリング (注：AIモデルが望ましい出力を生成するように、指示や質問（プロンプト）を設計、最適化すること)が大事になってきます．</p>
+<p>そのため，まずは自分がどんなアプリを作っていきたいかを言語化してみましょう．</p>
+<p>プログラミング初心者の方はぜひclineのplanモードを使って良い構成を考えてみてください．</p>
+<p>エージェントに対して最低限必要な情報は以下の通りです．</p>
+<p><strong>要件 (最低限)</strong></p>
+<p>・動作環境</p>
+<p> PCのブラウザ</p>
+<p>・使用するプログラミング言語</p>
+<p> Python + Streamlit</p>
+<p>・機能</p>
+<p> 漫画を登録できる</p>
+<p> 登録した漫画のリストを表示できる</p>
+<p>このままでも所望のアプリを作ってくれるかもしれませんが，より細かい情報を付与することで成功率が高まります．</p>
+<p>特に，機能部分に関しては詳細を書く/書かないで初期段階の完成度に差が出ます．</p>
+<p>例えば以下のような要件が考えられます</p>
+<p><strong>要件 (詳細)</strong></p>
+<p>・動作環境</p>
+<p> PCのブラウザ</p>
+<p>・使用するプログラミング言語</p>
+<p> Python + Streamlit</p>
+<p>・機能</p>
+<p>  登録機能</p>
+<p>  ① 検索欄に入力したタイトルから，外部のAPIを用いて選択可能な書籍のリストを表示</p>
+<p>  ② 検索結果をユーザーに選択してもらい，その書籍の作者・タイトル・表紙を表示</p>
+<p>  ③ ステータス (読了・未読・積読)および評価をユーザーに入力してもらう</p>
+<p>  ④ 登録ボタンが押されたらデータをデータベースに保存</p>
+<p> 閲覧機能</p>
+<p>  過去に登録したデータを閲覧可能．</p>
+<p>  記録の削除，編集が可能．</p>
+<p>  評価の値によってデータを並び替え．</p>
+<p><strong>要件決定のコツ</strong></p>
+<p>使用するプログラミング言語についての知識が少ない/環境に対しての知識が少ない場合には，簡単なアプリから作成するのがおすすめです．</p>
+<p>上の例で言えば，検索機能を除いたアプリの制作が完了してから，検索機能を追加する，などが考えられます．</p>
+<p><strong>要件 (簡易版)</strong></p>
+<p>・動作環境</p>
+<p> PCのブラウザ</p>
+<p>・使用するプログラミング言語</p>
+<p> Python + Streamlit</p>
+<p>・機能</p>
+<p>  登録機能</p>
+<p>  ① ユーザーにタイトル，書籍の作者，ステータス (読了・未読・積読)および評価を入力してもらう</p>
+<p>  ② 登録ボタンが押されたらデータをデータベースに保存</p>
+<p> 閲覧機能</p>
+<p>  過去に登録したデータを閲覧可能．</p>
+<p>  記録の削除，編集が可能．</p>
+<p>  評価の値によってデータを並び替え．</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3-2: clineを使ったコーディング" duration="0">
+        <p>次に，上で考えた構成を使ってclineにコーディングを依頼していきます．</p>
+<p>といっても，特に人間がやることはなく，ただコーディングを眺める対話を繰り返しながら共創していくだけです．</p>
+<p>Clineがコーディングを完了したら，作成したアプリを触って動作を確認していきましょう！</p>
+<p>AIコーディングの特性上，ここからのフローチャートは異なると思うので，自分に合うもののみ読んでください．</p>
+<h2 is-upgraded><strong>自分が思った通りの完璧なアプリが作成できた時</strong></h2>
+<p>素晴らしいです．</p>
+<p>あなたの設計のクオリティの高さとエージェントの使いこなしの賜物だと思います．</p>
+<p>自分が理解できていないコードにコメントを書いてもらう・公開のためのドキュメントを準備してもらうなどをやっていくのが良いと思います．</p>
+<h2 is-upgraded><strong>アプリ自体は正しく動作しているが機能を追加したいとき</strong></h2>
+<p>追加する機能をさらにエージェントに依頼できます．</p>
+<p>依頼する際には設計段階と同じように，なるべく詳しく依頼することが求められます．</p>
+<p>例)</p>
+<p>記録一覧の機能に日付によるソート機能を追加したいです．</p>
+<p>登録時に「読了日」として日付の入力を求めてください．</p>
+<p>ソートの機能は，日付が入力されていない場合の処理も書いてください．</p>
+<h2 is-upgraded><strong>アプリ自体は正しく動作していない時</strong></h2>
+<p>Webページ上に赤い枠でエラーが表示される場合など，ソフトウェアが正しく動いていない場合があります．</p>
+<p>その場合には，エラーの修正をエージェントに依頼することができます．</p>
+<p>修正の際も，なるべく詳しくエラーの状況を執筆することが求められます．</p>
+<p>例)</p>
+<p>検索結果から書籍を選択した後，登録ボタンを押下すると「File not found」というエラーが表示される．</p>
+<p>例)</p>
+<p>検索クエリを検索欄に入力しても本の候補が表示されない．(エラーは出ていないが期待の動作をしていない)</p>
+<h2 is-upgraded><strong>ハンズオンまとめ</strong></h2>
+<p>人によってアプリの完成度はまちまちかと思いますが，一旦終了となります．</p>
+<p>初めて使う言語/フレームワークでも簡単にアプリ制作が可能になることが分かったのではないでしょうか？</p>
+<p>Clineをはじめとしたツールを利用することで，簡単に・短時間でアプリ開発ができるようになります．</p>
+<p>今回のハンズオンに留まらず，授業・インターンなど様々な場所で使ってみてください！</p>
+<p>(注：企業等ではAIエージェントの利用規約が定められている場合があるのでお気をつけください)</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめと次のステップ" duration="5">
+        <p>これで本ハンズオンは終了です。お疲れ様でした！そして最後までご参加いただき、ありがとうございます！</p>
+<p>今回のハンズオンでは、Cline や Cursor、そして Gemini API を使って、話題の開発手法「Vibe Coding」を皆さんに体験していただきました。これからの製品開発や AI の未知なる可能性の一端を体感していただけたのではないでしょうか。</p>
+<p>今回扱った機能は、Cline や Cursor のごく一部の機能です。AI アシストコーディングの世界には、「MCP サーバー」や「ブラウザ自動化」など、現場に合わせて高度にカスタマイズをできる機能が存在します。<br>これからのプログラマーには、単にコードを書く能力だけでなく、AI を上手に使う能力も求められてきます。今日うまくいった方もうまくいかなかった方も、ぜひこれからも AI アシストコーディングについて探求してみてください！</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
