@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-04-14T17:07:16+09:00",
+  "id": "first-portfolio-workshop-2hr-nogit",
+  "duration": 125,
+  "title": "ポートフォリオ Web サイト作成ワークショップ",
+  "summary": "2時間で完成！はじめてのポートフォリオサイト作成",
+  "source": "web\\03_portfolio.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "web",
+    "入門"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "first-portfolio-workshop-2hr-nogit"
+}
