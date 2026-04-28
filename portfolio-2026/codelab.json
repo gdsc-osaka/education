@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-04-28T13:33:53+09:00",
+  "id": "first-portfolio-workshop-2hr",
+  "duration": 200,
+  "title": "ポートフォリオ Web サイト作成ワークショップ",
+  "summary": "2時間で完成！はじめてのポートフォリオサイト作成",
+  "source": "portfolio-2026.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "web"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/googlecodelabs/your-first-pwapp/issues",
+  "url": "first-portfolio-workshop-2hr"
+}
