@@ -57,7 +57,7 @@ GDG on Campus University of Osaka
 | 3     | CSS で見た目を整える                      | 45 分 |
 | 4     | GitHub Pages で公開                      | 40 分 |
 | 5     | まとめ & 次のステップ                     | 10 分 |
-| 6 〜 8 | 発展編 (デザイン / レスポンシブ / Git) | 任意   |
+| 6 〜 9 | 発展編 (デザイン / レスポンシブ / Git / React) | 任意   |
 
 ---
 
@@ -452,16 +452,16 @@ URL: `https://あなたのユーザー名.github.io`
 
 ## この先の学び方
 
-ここからは **発展編 (Step 6 〜 8)**。気になるテーマから自分のペースで！
+ここからは **発展編 (Step 6 〜 9)**。気になるテーマから自分のペースで！
 
 | Step | テーマ                              |
 | ---- | ---------------------------------- |
 | 6    | コンテンツとデザインを充実させる        |
 | 7    | レスポンシブ対応 & JavaScript で動き    |
 | 8    | Git でバージョン管理する                |
+| 9    | React の世界に飛び込もう              |
 
-> さらに先へ: **React / Next.js / Vue.js** などのフレームワーク。
-> 詳しくは codelab の Step 9 へ！
+> さらに先へ: **Next.js / Vue.js** などのフレームワーク。
 
 ---
 
@@ -734,6 +734,129 @@ git push
 
 > **困ったら:** push 時にパスワードを聞かれたら **Personal Access Token (PAT)** が必要。
 > [GitHub 公式ドキュメント](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) を参照、またはメンターへ。
+
+---
+
+<!-- _class: section -->
+
+# Step 9
+## React の世界に飛び込もう
+
+---
+
+## Step 9 でやること
+
+世界中で使われる **React** に触れてみよう！
+
+- **React** = UI を「コンポーネント」として組み立てる JavaScript ライブラリ
+- **Node.js** をインストール
+- **Vite** で React プロジェクトを作成
+- **state** を使ってボタンに動きをつける
+
+---
+
+## React って何？
+
+Meta (旧 Facebook) が開発した JavaScript ライブラリ。
+
+- **コンポーネントベース:** UI を小さな部品に分けて再利用しやすい
+- **宣言的 (declarative):** 「こういう状態のときはこう表示」と書くだけ
+- **エコシステムが豊富:** Next.js などのフレームワークや便利ライブラリが多数
+
+---
+
+## Node.js のインストール
+
+React を動かすには JavaScript の実行環境 **Node.js** が必要。
+
+1. [Node.js 公式サイト](https://nodejs.org/) にアクセス
+2. **LTS** (長期サポート版) をダウンロードしてインストール
+3. ターミナルで以下を実行してバージョン表示を確認
+
+```bash
+node --version
+npm --version
+```
+
+---
+
+## Vite で React プロジェクトを作る
+
+プロジェクトを手早く立ち上げる **Vite (ヴィート)** を使う。
+
+```bash
+npm create vite@latest my-react-portfolio
+```
+
+画面の指示で `React` → `JavaScript` を選択。
+
+```bash
+cd my-react-portfolio
+npm install
+npm run dev
+```
+
+表示された `http://localhost:5173/` を開いて、React のサンプルが出れば成功！
+
+---
+
+## コンポーネントを編集してみよう
+
+`src/App.jsx` を開いて中身をまるごと書き換え。
+
+```jsx
+function App() {
+  return (
+    <div>
+      <h1>いたこすのポートフォリオ (React 版)</h1>
+      <p>React で作り直してみました！</p>
+    </div>
+  );
+}
+
+export default App;
+```
+
+保存するとブラウザが自動更新 (Hot Reload)！
+
+> **補足:** `return ( ... )` の中の HTML 風の記法は **JSX**。
+> `class` の代わりに `className` を使うなど、HTML と少し違う点があります。
+
+---
+
+## state でボタンに動きを
+
+```jsx
+import { useState } from 'react';
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <h1>いたこすのポートフォリオ</h1>
+      <p>ボタンが押された回数: {count}</p>
+      <button onClick={() => setCount(count + 1)}>+1 する</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- `useState(0)` = 初期値 `0` の状態を作る
+- `setCount(...)` を呼ぶと React が自動で再描画
+- `{count}` で JSX に JavaScript の値を埋め込み
+
+---
+
+## さらに学ぶには？
+
+- [React 公式ドキュメント (日本語)](https://ja.react.dev/learn) がとてもおすすめ
+- 公開するには **ビルド** や `vite.config.js` の `base` 設定など追加作業が必要
+  - 「**Vite GitHub Pages デプロイ**」で検索 / メンターに質問
+
+> ここまでお疲れさまでした！今日のワークショップから始まった皆さんの Web 開発の旅が、これからどんどん広がっていきますように 🌱
 
 ---
 
