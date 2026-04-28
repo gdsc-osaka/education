@@ -4,12 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository purpose
 
-Educational content for GDG on Campus University of Osaka. The repo produces two kinds of artifacts:
+Educational content for GDG on Campus University of Osaka. The repo produces two kinds of artifacts, both served from GitHub Pages at `https://gdsc-osaka.github.io/education/<content-name>/...`:
 
-1. **Claat codelabs** — markdown → static HTML site, published to GitHub Pages at `https://gdsc-osaka.github.io/education/<codelab-dir>`. Each codelab lives in its own directory (`portfolio-2025/`, `portfolio-2026/`, `vibe-coding-hands-on/`, `first-portfolio-workshop-2hr-nogit/`).
+1. **Claat codelabs** — markdown → static HTML site.
 2. **Marp slide decks** — markdown → HTML/PDF presentations.
 
-Source markdown lives at the repo root or under `web/`.
+## Directory convention
+
+Each piece of content has its own directory following this layout:
+
+```
+<content-name>/
+  claat.md          # Codelab source
+  slide.md          # Marp slide source
+  index.html        # Generated codelab site (committed)
+  slide/index.html  # Generated slide site (committed)
+  libs/             # codelab-elements assets (committed)
+  img/              # images referenced from claat.md / slide.md
+```
+
+Older content does not yet match this layout: `portfolio-2025/codelab.md`, root-level `portfolio-2026.md`, `vibe-coding-hands-on/` (HTML only), `web/` (legacy 2025 markdown), and `first-portfolio-workshop-2hr-nogit/`. New work should follow the convention above; do not rename old directories without being asked, since the published URLs point at them.
 
 ## Build commands
 
@@ -17,10 +31,10 @@ Both build flows go through the root `Makefile` and use positional args (not `KE
 
 ```bash
 # Export a claat codelab (the output directory is fully replaced)
-make claat path/to/source.md path/to/output-dir
+make claat <content-name>/claat.md <content-name>
 
 # Render a Marp deck (HTML output defaults to <input>.html)
-make slide path/to/deck.md [path/to/deck.html]
+make slide <content-name>/slide.md <content-name>/slide/index.html
 ```
 
 For PDFs, invoke Marp CLI directly: `npx -p @marp-team/marp-cli@latest marp --theme-set .marp/gdg.css --html source.md -o source.pdf`.
@@ -48,5 +62,4 @@ A new codelab directory needs its own `libs/` or must override `LIBS_SRC` (the d
 
 ## Repository conventions
 
-- `.gitignore` only excludes `.kiri` (Kiri MCP workspace cache). Generated `index.html` / `libs/` directories and PDFs are committed (they are served via GitHub Pages).
-- Markdown under `web/` is older content (pre-2025). The current convention for new workshops is `<topic>-<year>.md` at the root, exported into a sibling `<topic>-<year>/` directory.
+- `.gitignore` only excludes `.kiri` (Kiri MCP workspace cache). Generated `index.html` / `libs/` directories and slide HTML/PDFs are committed because GitHub Pages serves them directly.
