@@ -33,9 +33,10 @@ claat:
 	TMPDIR=$$(mktemp -d); \
 	$(CLAAT) export -o "$$TMPDIR" "$$MD"; \
 	EXPORTED=$$(ls "$$TMPDIR"); \
-	rm -rf "$$OUT"; \
-	mv "$$TMPDIR/$$EXPORTED" "$$OUT"; \
-	rmdir "$$TMPDIR"; \
+	mkdir -p "$$OUT"; \
+	cp -R "$$TMPDIR/$$EXPORTED"/. "$$OUT/"; \
+	rm -rf "$$TMPDIR"; \
+	rm -rf "$$OUT/libs"; \
 	cp -R "$(LIBS_SRC)" "$$OUT/libs"; \
 	sed -i '' 's|https://storage.googleapis.com/claat-public/|libs/|g' "$$OUT/index.html"; \
 	$(PYTHON) $(POSTFIX) "$$OUT/index.html"

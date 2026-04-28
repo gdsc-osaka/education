@@ -30,7 +30,7 @@ Older content does not yet match this layout: `portfolio-2025/codelab.md`, root-
 Both build flows go through the root `Makefile` and use positional args (not `KEY=value` style):
 
 ```bash
-# Export a claat codelab (the output directory is fully replaced)
+# Export a claat codelab (only claat-generated files in the output directory are overwritten; siblings like slide.md, slide/, img/ are left in place)
 make claat <content-name>/claat.md <content-name>
 
 # Render a Marp deck (HTML output defaults to <input>.html)
@@ -43,9 +43,9 @@ For PDFs, invoke Marp CLI directly: `npx -p @marp-team/marp-cli@latest marp --th
 
 `make claat` is not a plain `claat export`. It runs these steps in order:
 
-1. `claat export` into a temp directory (claat forces the output directory name to match the `id` field in `codelab.json`, so a temp dir + rename is needed to get a stable output name).
-2. Move the exported directory to the requested path.
-3. Copy `portfolio-2025/libs` (overridable via `LIBS_SRC`) into the output and rewrite `https://storage.googleapis.com/claat-public/` references to relative `libs/`. This switches from Google-hosted codelab-elements assets to the local copy.
+1. `claat export` into a temp directory (claat forces the output directory name to match the `id` field in `codelab.json`, so a temp dir is needed to get a stable output name).
+2. Copy the exported contents into the requested path, overwriting existing claat outputs but leaving unrelated sibling files (e.g. `slide.md`, `slide/`, `img/`) in place.
+3. Replace `libs/` with a fresh copy of `portfolio-2025/libs` (overridable via `LIBS_SRC`) and rewrite `https://storage.googleapis.com/claat-public/` references to relative `libs/`. This switches from Google-hosted codelab-elements assets to the local copy.
 4. Run `.claat/fix-claat-codespans.py` against the generated `index.html`.
 
 The postfix script (`.claat/fix-claat-codespans.py`) fixes two claat-output issues:
