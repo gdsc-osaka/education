@@ -1,0 +1,166 @@
+/* =========================================================
+   06. Brutalist — Stark, harsh, defiantly raw.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Archivo+Black&display=swap');
+
+body {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 32px;
+  font-family: 'Space Mono', "Hiragino Sans", monospace;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #000;
+  background: #f3f1ec;
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0 28px,
+      rgba(0, 0, 0, 0.04) 28px 29px);
+}
+
+h1 {
+  font-family: 'Archivo Black', "Hiragino Sans", sans-serif;
+  font-size: clamp(48px, 10vw, 96px);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin: 0 0 16px;
+  color: #000;
+  background: #ff4500;
+  display: inline-block;
+  padding: 8px 16px;
+  border: 4px solid #000;
+}
+
+h2 {
+  font-family: 'Archivo Black', "Hiragino Sans", sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 56px 0 16px;
+  background: #000;
+  color: #fff;
+  padding: 8px 14px;
+  display: inline-block;
+}
+
+p {
+  margin: 0 0 18px;
+  background: #fff;
+  padding: 16px 20px;
+  border: 3px solid #000;
+  max-width: 60ch;
+}
+
+img {
+  display: block;
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border: 4px solid #000;
+  filter: grayscale(100%) contrast(1.15);
+  margin: 24px 0;
+  background: #ff4500;
+}
+
+img:hover {
+  filter: none;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 24px 0;
+  background: #fff;
+  border: 4px solid #000;
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+}
+
+th {
+  background: #000;
+  color: #fff;
+  text-align: left;
+  padding: 12px 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-right: 2px solid #fff;
+}
+
+th:last-child { border-right: none; }
+
+td {
+  padding: 12px 14px;
+  border-top: 2px solid #000;
+  border-right: 2px solid #000;
+}
+
+td:last-child { border-right: none; }
+
+tbody tr:nth-child(even) td {
+  background: #f3f1ec;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 16px 0;
+  border: 3px solid #000;
+  background: #fff;
+}
+
+li {
+  padding: 12px 16px;
+  border-bottom: 2px solid #000;
+  position: relative;
+}
+
+li:last-child { border-bottom: none; }
+
+li::before {
+  content: "■ ";
+  color: #ff4500;
+  font-weight: 700;
+}
+
+a {
+  color: #000;
+  background: #ffeb00;
+  text-decoration: none;
+  padding: 1px 4px;
+  border: 2px solid #000;
+  font-weight: 700;
+}
+
+a:hover {
+  background: #ff4500;
+  color: #fff;
+}
+
+button {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 16px 32px;
+  background: #ff4500;
+  color: #000;
+  border: 4px solid #000;
+  cursor: pointer;
+  margin-top: 24px;
+  box-shadow: 8px 8px 0 #000;
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+
+button:hover {
+  background: #000;
+  color: #ff4500;
+}
+
+button:active {
+  transform: translate(8px, 8px);
+  box-shadow: 0 0 0 #000;
+}

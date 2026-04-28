@@ -1,0 +1,149 @@
+/* =========================================================
+   07. Forest — Earth tones, organic, calm.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;700&family=Outfit:wght@400;500;600&display=swap');
+
+body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 32px 120px;
+  font-family: 'Crimson Pro', "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 19px;
+  line-height: 1.75;
+  color: #2d3a2a;
+  background: #f4eedb;
+  background-image:
+    radial-gradient(ellipse at top left, rgba(120, 145, 90, 0.15), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(160, 110, 60, 0.12), transparent 50%);
+}
+
+h1 {
+  font-family: 'Outfit', "Hiragino Sans", sans-serif;
+  font-size: 52px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #344a2a;
+  margin: 0 0 8px;
+  position: relative;
+  padding-bottom: 16px;
+}
+
+h1::after {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #6b8b46 0%, #c79b6f 100%);
+  border-radius: 999px;
+}
+
+h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #344a2a;
+  margin: 56px 0 18px;
+  padding-left: 16px;
+  border-left: 4px solid #6b8b46;
+}
+
+p {
+  margin: 0 0 18px;
+}
+
+img {
+  display: block;
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50% 40% 50% 40% / 40% 50% 40% 50%;
+  border: 6px solid #fff;
+  margin: 24px 0;
+  box-shadow: 0 16px 36px rgba(60, 80, 40, 0.2);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 28px 0;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  background: rgba(255, 252, 245, 0.6);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th {
+  background: #344a2a;
+  color: #f4eedb;
+  text-align: left;
+  padding: 14px 18px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #d8c9a3;
+  color: #2d3a2a;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 16px 0;
+}
+
+li {
+  position: relative;
+  padding: 8px 0 8px 32px;
+  border-bottom: 1px dashed #c79b6f;
+}
+
+li:last-child { border-bottom: none; }
+
+li::before {
+  content: "🌿";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  font-size: 16px;
+  filter: hue-rotate(-10deg);
+}
+
+a {
+  color: #6b8b46;
+  text-decoration: none;
+  border-bottom: 1px solid #c79b6f;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #344a2a;
+}
+
+button {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 32px;
+  background: #344a2a;
+  color: #f4eedb;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: 28px;
+  box-shadow: 0 6px 18px rgba(52, 74, 42, 0.3);
+  transition: background 0.2s, transform 0.2s;
+}
+
+button:hover {
+  background: #6b8b46;
+  transform: translateY(-2px);
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Styles Preview</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 "Hiragino Sans", "Noto Sans JP", sans-serif;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: #111;
+    color: #fff;
+  }
+  header {
+    padding: 12px 16px;
+    background: #0d0d0d;
+    border-bottom: 1px solid #2a2a2a;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  header > strong {
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #888;
+    flex-shrink: 0;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+  }
+  nav button {
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 12px;
+    background: #1f1f1f;
+    color: #ddd;
+    border: 1px solid #333;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  nav button:hover {
+    background: #2a2a2a;
+    border-color: #555;
+    color: #fff;
+  }
+  nav button[aria-pressed="true"] {
+    background: #4f8cff;
+    border-color: #4f8cff;
+    color: #fff;
+  }
+  iframe {
+    border: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+  }
+</style>
+</head>
+<body>
+<header>
+  <strong>Portfolio Styles</strong>
+  <nav id="picker"></nav>
+</header>
+<iframe id="preview" title="Portfolio preview"></iframe>
+
+<script>
+const STYLES = [
+  ["01-minimal.css",       "01 Minimal"],
+  ["02-dark-neon.css",     "02 Dark Neon"],
+  ["03-retro-pop.css",     "03 Retro Pop"],
+  ["04-magazine.css",      "04 Magazine"],
+  ["05-pastel-dream.css",  "05 Pastel Dream"],
+  ["06-brutalist.css",     "06 Brutalist"],
+  ["07-forest.css",        "07 Forest"],
+  ["08-glassmorphism.css", "08 Glassmorphism"],
+  ["09-newspaper.css",     "09 Newspaper"],
+  ["10-vaporwave.css",     "10 Vaporwave"],
+];
+
+// Inline SVG placeholder so the preview works without an actual profile image.
+const PROFILE_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#g)"/>
+  <circle cx="100" cy="80" r="34" fill="#fff" opacity="0.95"/>
+  <path d="M40,180 Q40,120 100,120 Q160,120 160,180 Z" fill="#fff" opacity="0.95"/>
+</svg>
+`);
+
+function buildSample(styleHref) {
+  // The base href makes the stylesheet path resolve against this index.html
+  // even though the iframe is loaded via srcdoc (about:srcdoc).
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<base href="${location.href}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>わたしのポートフォリオ</title>
+<link rel="stylesheet" href="${styleHref}">
+</head>
+<body>
+  <h1>いたこす</h1>
+  <img src="${PROFILE_SVG}" alt="プロフィール画像">
+  <p>単純にプログラミングが好きなだけ。</p>
+  <table>
+    <thead>
+      <tr>
+        <th>とくせい</th>
+        <th>value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>すきなもの</td>
+        <td><a href="https://www.google.com/">Google</a></td>
+      </tr>
+      <tr>
+        <td>サークル</td>
+        <td><a href="https://gdsc-osaka.jp/">GDG on Campus University of Osaka</a></td>
+      </tr>
+      <tr>
+        <td>得意な言語</td>
+        <td>TypeScript / Python</td>
+      </tr>
+    </tbody>
+  </table>
+  <h2>自己紹介</h2>
+  <p>
+    大阪大学に通う 1 年生です。
+    普段は Web 開発と機械学習に興味を持って勉強しています。
+    好きな食べ物はラーメンです。
+  </p>
+  <h2>作品紹介</h2>
+  <ul>
+    <li>はじめてのポートフォリオサイト (今ここ！)</li>
+    <li>大学の課題で作った Python のじゃんけんゲーム</li>
+    <li>友達と作ったクイズアプリ</li>
+  </ul>
+  <button onclick="alert('こんにちは！ポートフォリオを見てくれてありがとう。')">
+    クリックしてね
+  </button>
+</body>
+</html>`;
+}
+
+const iframe = document.getElementById("preview");
+const picker = document.getElementById("picker");
+
+function load(file) {
+  iframe.srcdoc = buildSample(file);
+  for (const b of picker.querySelectorAll("button")) {
+    b.setAttribute("aria-pressed", b.dataset.file === file ? "true" : "false");
+  }
+  const url = new URL(location.href);
+  url.searchParams.set("style", file);
+  history.replaceState(null, "", url);
+}
+
+for (const [file, label] of STYLES) {
+  const btn = document.createElement("button");
+  btn.textContent = label;
+  btn.dataset.file = file;
+  btn.setAttribute("aria-pressed", "false");
+  btn.addEventListener("click", () => load(file));
+  picker.appendChild(btn);
+}
+
+const initial = new URLSearchParams(location.search).get("style");
+const startFile = STYLES.some(([f]) => f === initial) ? initial : STYLES[0][0];
+load(startFile);
+</script>
+</body>
+</html>

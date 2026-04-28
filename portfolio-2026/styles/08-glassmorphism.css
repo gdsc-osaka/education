@@ -1,0 +1,164 @@
+/* =========================================================
+   08. Glassmorphism — Modern gradients with frosted glass.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+html {
+  background: #1a0b3d;
+}
+
+body {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 120px;
+  font-family: 'Plus Jakarta Sans', "Hiragino Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #f0f0ff;
+  background:
+    radial-gradient(circle at 20% 10%, #ff6ec7 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, #6ed5ff 0%, transparent 40%),
+    radial-gradient(circle at 60% 30%, #b76eff 0%, transparent 50%),
+    linear-gradient(135deg, #1a0b3d 0%, #2d1670 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: clamp(44px, 7vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin: 0 0 12px;
+  background: linear-gradient(135deg, #fff 0%, #ffd6f5 50%, #6ed5ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 56px 0 20px;
+  color: #ffd6f5;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0 0 18px;
+  color: rgba(240, 240, 255, 0.85);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 18px 22px;
+  border-radius: 18px;
+}
+
+img {
+  display: block;
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  margin: 24px 0;
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin: 24px 0;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+th {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffd6f5;
+  text-align: left;
+  padding: 14px 18px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(240, 240, 255, 0.9);
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 16px 0;
+}
+
+li {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 12px 18px 12px 42px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  position: relative;
+}
+
+li::before {
+  content: "✦";
+  position: absolute;
+  left: 16px;
+  top: 12px;
+  color: #6ed5ff;
+}
+
+a {
+  color: #6ed5ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(110, 213, 255, 0.4);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+a:hover {
+  color: #ff6ec7;
+  border-bottom-color: #ff6ec7;
+}
+
+button {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #ff6ec7 0%, #b76eff 50%, #6ed5ff 100%);
+  background-size: 200% 100%;
+  background-position: 0 0;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: 28px;
+  box-shadow: 0 12px 28px rgba(183, 110, 255, 0.5);
+  transition: background-position 0.4s, transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  background-position: 100% 0;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(110, 213, 255, 0.5);
+}

@@ -1,0 +1,166 @@
+/* =========================================================
+   03. Retro Pop — 90s pop art, bright colors, playful.
+   ========================================================= */
+
+body {
+  max-width: 720px;
+  margin: 32px auto;
+  padding: 32px;
+  font-family: "Trebuchet MS", "Comic Sans MS", "Hiragino Maru Gothic ProN",
+               "Yu Gothic", sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #2b1d4a;
+  background:
+    repeating-linear-gradient(45deg,
+      #ffe66d 0 20px,
+      #fff5b8 20px 40px);
+  border: 4px solid #2b1d4a;
+  box-shadow: 12px 12px 0 #2b1d4a;
+}
+
+h1 {
+  font-size: 52px;
+  font-weight: 900;
+  color: #ff3d7f;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  -webkit-text-stroke: 2px #2b1d4a;
+  text-shadow: 4px 4px 0 #2b1d4a;
+  margin: 0 0 12px;
+  transform: rotate(-1.5deg);
+}
+
+h2 {
+  display: inline-block;
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  background: #00b4d8;
+  padding: 6px 16px;
+  margin: 48px 0 18px;
+  border: 3px solid #2b1d4a;
+  box-shadow: 4px 4px 0 #2b1d4a;
+  transform: rotate(-1deg);
+}
+
+p {
+  margin: 0 0 18px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 12px 16px;
+  border: 2px dashed #2b1d4a;
+  border-radius: 8px;
+}
+
+img {
+  display: block;
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border: 4px solid #2b1d4a;
+  border-radius: 50%;
+  background: #ff3d7f;
+  box-shadow: 6px 6px 0 #2b1d4a;
+  margin: 24px 0;
+  transform: rotate(2deg);
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin: 24px 0;
+  background: #fff;
+  border: 3px solid #2b1d4a;
+  box-shadow: 6px 6px 0 #2b1d4a;
+}
+
+th {
+  background: #ff3d7f;
+  color: #fff;
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-bottom: 3px solid #2b1d4a;
+}
+
+th + th {
+  border-left: 3px solid #2b1d4a;
+}
+
+td {
+  padding: 12px 14px;
+  border-bottom: 2px dashed #2b1d4a;
+}
+
+td + td {
+  border-left: 2px dashed #2b1d4a;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 16px 0;
+}
+
+li {
+  background: #fff;
+  padding: 10px 14px 10px 40px;
+  margin-bottom: 10px;
+  border: 2px solid #2b1d4a;
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 #2b1d4a;
+  position: relative;
+}
+
+li::before {
+  content: "★";
+  position: absolute;
+  left: 12px;
+  color: #ff3d7f;
+  font-size: 20px;
+}
+
+a {
+  color: #ff3d7f;
+  text-decoration: underline wavy #00b4d8;
+  text-underline-offset: 4px;
+  font-weight: 700;
+}
+
+a:hover {
+  color: #00b4d8;
+  text-decoration-color: #ff3d7f;
+}
+
+button {
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  background: #ff3d7f;
+  color: #fff;
+  border: 3px solid #2b1d4a;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: 24px;
+  box-shadow: 5px 5px 0 #2b1d4a;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+button:hover {
+  background: #00b4d8;
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 #2b1d4a;
+}
+
+button:active {
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 #2b1d4a;
+}
