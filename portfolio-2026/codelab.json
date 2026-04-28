@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2026-04-28T14:32:21+09:00",
+  "updated": "2026-04-28T17:06:05+09:00",
   "id": "first-portfolio-workshop-2hr",
   "duration": 350,
   "title": "ポートフォリオ Web サイト作成ワークショップ",
   "summary": "2時間で完成！はじめてのポートフォリオサイト作成",
-  "source": "portfolio-2026/codelab.md",
+  "source": "portfolio-2026/claat.md",
   "theme": "",
   "status": [
     "published"
