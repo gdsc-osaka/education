@@ -9,11 +9,8 @@ CLAAT  ?= claat
 PYTHON ?= python3
 MARP   ?= npx --yes -p @marp-team/marp-cli@latest marp
 
-POSTFIX := scripts/fix-claat-codespans.py
-LIBS_SRC := portfolio-2025/libs
-
-# Codelab id (must match the `id:` field in the markdown front matter)
-PORTFOLIO_2026_ID := first-portfolio-workshop-2hr
+POSTFIX  := scripts/fix-claat-codespans.py
+LIBS_SRC ?= portfolio-2025/libs
 
 # Marp theme. Slides can live in any directory; pass the path via INPUT=.
 MARP_THEME := .marp/gdg.css
@@ -23,17 +20,25 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 %:
 	@:
 
-.PHONY: all portfolio-2026 slide clean
+.PHONY: claat slide
 
-all: portfolio-2026
-
-portfolio-2026: portfolio-2026.md $(POSTFIX) | $(LIBS_SRC)
-	$(CLAAT) export $<
-	rm -rf $@
-	mv $(PORTFOLIO_2026_ID) $@
-	cp -R $(LIBS_SRC) $@/libs
-	sed -i '' 's|https://storage.googleapis.com/claat-public/|libs/|g' $@/index.html
-	$(PYTHON) $(POSTFIX) $@/index.html
+# Export a claat codelab. Usage:
+#   make claat path/to/codelab.md path/to/output
+claat:
+	@MD=$(word 1,$(ARGS)); OUT=$(word 2,$(ARGS)); \
+	if [ -z "$$MD" ] || [ -z "$$OUT" ]; then \
+	  echo "Usage: make claat path/to/codelab.md path/to/output"; \
+	  exit 2; \
+	fi; \
+	TMPDIR=$$(mktemp -d); \
+	$(CLAAT) export -o "$$TMPDIR" "$$MD"; \
+	EXPORTED=$$(ls "$$TMPDIR"); \
+	rm -rf "$$OUT"; \
+	mv "$$TMPDIR/$$EXPORTED" "$$OUT"; \
+	rmdir "$$TMPDIR"; \
+	cp -R "$(LIBS_SRC)" "$$OUT/libs"; \
+	sed -i '' 's|https://storage.googleapis.com/claat-public/|libs/|g' "$$OUT/index.html"; \
+	$(PYTHON) $(POSTFIX) "$$OUT/index.html"
 
 # Render a Marp deck. Usage:
 #   make slide path/to/deck.md [path/to/deck.html]
@@ -43,6 +48,3 @@ slide:
 	  exit 2; \
 	fi
 	$(MARP) --theme-set $(MARP_THEME) --html "$(word 1,$(ARGS))" -o "$(if $(word 2,$(ARGS)),$(word 2,$(ARGS)),$(patsubst %.md,%.html,$(word 1,$(ARGS))))"
-
-clean:
-	rm -rf portfolio-2026
