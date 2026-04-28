@@ -50,13 +50,14 @@ GDG on Campus University of Osaka
 
 ## 全体スケジュール
 
-| Step | 内容                          | 時間   |
-| ---- | ---------------------------- | ----- |
-| 1    | 開発環境の準備                 | 30 分 |
-| 2    | HTML でページを作る            | 70 分 |
-| 3    | CSS で見た目を整える            | 45 分 |
-| 4    | GitHub Pages で公開            | 40 分 |
-| 5    | まとめ & 次のステップ           | 10 分 |
+| Step  | 内容                                    | 時間   |
+| ----- | -------------------------------------- | ----- |
+| 1     | 開発環境の準備                           | 30 分 |
+| 2     | HTML でページを作る                       | 70 分 |
+| 3     | CSS で見た目を整える                      | 45 分 |
+| 4     | GitHub Pages で公開                      | 40 分 |
+| 5     | まとめ & 次のステップ                     | 10 分 |
+| 6 〜 8 | 発展編 (デザイン / レスポンシブ / Git) | 任意   |
 
 ---
 
@@ -429,36 +430,290 @@ URL: `https://あなたのユーザー名.github.io`
 
 ---
 
-## Next Steps (初心者向け)
+## この先の学び方
 
-- **コンテンツを充実させる**
-  - 自己紹介や作品紹介を追加 / `<img>` で画像を表示
-- **CSS でデザインを凝る**
-  - `border`, `font-size`, `margin`, `padding` などを試す
-  - 参考: [MDN — CSS](https://developer.mozilla.org/ja/docs/Web/CSS)
-- **Git を学ぶ**
-  - 直接アップロードではなく Git コマンドで更新できるように
+ここからは **発展編 (Step 6 〜 8)**。気になるテーマから自分のペースで！
 
----
+| Step | テーマ                              |
+| ---- | ---------------------------------- |
+| 6    | コンテンツとデザインを充実させる        |
+| 7    | レスポンシブ対応 & JavaScript で動き    |
+| 8    | Git でバージョン管理する                |
 
-## Next Steps (中級者向け)
-
-- **Flexbox / Grid** を使ったレイアウト
-- **メディアクエリ** でレスポンシブ対応
-- **JavaScript** で簡単なインタラクション
-- `git add` / `git commit` / `git push` で更新を試す
+> さらに先へ: **React / Next.js / Vue.js** などのフレームワーク。
+> 詳しくは codelab の Step 9 へ！
 
 ---
 
-## さらなる上へ — フレームワーク
+<!-- _class: section -->
 
-| 名前        | 特徴                                          |
-| ---------- | -------------------------------------------- |
-| [React](https://react.dev/)     | UI 構築の JS ライブラリ。コンポーネント指向     |
-| [Next.js](https://nextjs.org/)  | React ベースのフルスタックフレームワーク         |
-| [Vue.js](https://vuejs.org/)    | シンプルで学習しやすい JS フレームワーク         |
+# Step 6
+## コンテンツとデザインを充実させよう
 
-コンポーネント再利用 / 動的コンテンツ / API 連携 / 高度な UI へ。
+---
+
+## Step 6 でやること
+
+`index.html` と `style.css` をもう一段グレードアップ！
+
+- 見出し `<h2>` で **セクション分け**
+- 箇条書き `<ul>` `<li>` で **リスト表示**
+- `<img>` で **プロフィール画像** を表示
+- CSS で **レイアウト** をきれいに整える
+
+---
+
+## セクション分け `<h2>` & リスト
+
+`</table>` の下に追加。
+
+```html
+<h2>自己紹介</h2>
+<p>
+  大阪大学に通う 1 年生です。
+  好きな食べ物はラーメンです。
+</p>
+
+<h2>作品紹介</h2>
+<ul>
+  <li>はじめてのポートフォリオサイト (今ここ！)</li>
+  <li>大学の課題で作った Python のじゃんけんゲーム</li>
+</ul>
+```
+
+> **補足:** 番号付きリストは `<ul>` の代わりに `<ol>` を使う。
+
+---
+
+## 画像を表示しよう `<img>`
+
+1. プロフィール画像を 1 枚用意 (写真 / アイコン OK)
+2. `index.html` と同じ場所に `img` フォルダを作って画像を入れる
+   - 例: `img/profile.png`
+3. `<h1>` の下に追加
+
+```html
+<img src="img/profile.png" alt="プロフィール画像">
+```
+
+> **困ったら:** `index.html` から見た **相対パス** が正しいか / 大文字・小文字が合っているかを確認。
+
+---
+
+## CSS でレイアウトを整える
+
+`style.css` の末尾に追加。
+
+```css
+body {
+  max-width: 720px;          /* 横幅を制限して読みやすく */
+  margin: 0 auto;            /* 左右中央揃え */
+  padding: 24px;             /* 内側に余白 */
+  line-height: 1.7;          /* 行間を広めに */
+}
+h2 {
+  border-bottom: 2px solid #229954;
+  padding-bottom: 4px;
+  margin-top: 32px;
+}
+img { max-width: 200px; border-radius: 50%; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid #888; padding: 6px 12px; }
+```
+
+> `margin` = **外側** の余白 / `padding` = **内側** の余白
+
+---
+
+<!-- _class: section yellow -->
+
+# Step 7
+## レスポンシブ対応と JavaScript で動きをつけよう
+
+---
+
+## Step 7 でやること
+
+PC では OK でも、スマホで見ると崩れる…を解消！
+
+- `<meta viewport>` で **スマホ表示** を整える
+- **メディアクエリ** で画面サイズ別の CSS
+- **JavaScript** でボタンに動きを
+- **CSS だけ** でホバーアニメーション
+
+---
+
+## viewport の設定
+
+`<head>` 内に 1 行追加するだけ。
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+```
+
+> **補足:** ブラウザに「画面の幅にあわせて表示してね」と伝えるおまじない。
+> スマホ対応サイトには **必ず** 入れる。
+
+---
+
+## メディアクエリで画面サイズ別 CSS
+
+`style.css` の末尾に追加。
+
+```css
+/* 画面の横幅が 600px 以下のときだけ適用 */
+@media (max-width: 600px) {
+  body {
+    padding: 12px;
+    font-size: 14px;
+  }
+  img { max-width: 120px; }
+  h1  { font-size: 24px; }
+}
+```
+
+ブラウザの **ウィンドウ幅** を変えて、切り替わるか確認！
+
+---
+
+## JavaScript でボタンに動きを
+
+`</body>` の直前に追加。
+
+```html
+<button onclick="sayHello()">クリックしてね</button>
+
+<script>
+  function sayHello() {
+    alert('こんにちは！ポートフォリオを見てくれてありがとう。');
+  }
+</script>
+```
+
+ボタンを押してメッセージが出れば成功！
+
+> `function 〜() { … }` = 「関数」のまとまり / `onclick` = クリック時に呼ぶ関数を指定
+
+---
+
+## CSS だけでホバーアニメーション
+
+```css
+button {
+  background-color: #229954;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+button:hover {
+  background-color: #1e8449;
+  transform: scale(1.05); /* 少し大きくする */
+}
+```
+
+> `transition` で変化を **なめらか** に。`opacity` や `color` にも使える。
+
+---
+
+<!-- _class: section green -->
+
+# Step 8
+## Git を使ってバージョン管理しよう
+
+---
+
+## Step 8 でやること
+
+Step 4 では Web 画面から直接アップロードしました。
+ここでは **プロも使う Git** でスマートに管理しよう！
+
+- **Git** をインストール & 初期設定
+- リポジトリを **clone** (パソコンに持ってくる)
+- **add → commit → push** の流れを覚える
+
+---
+
+## Git のインストール
+
+**Windows:**
+1. [Git for Windows 公式サイト](https://git-scm.com/download/win) からインストーラーをダウンロード
+2. 基本的に **デフォルトのまま** Next を押し進める
+
+**Mac:** 多くの場合は最初から入っています。ターミナルで確認:
+
+```bash
+git --version
+```
+
+`git version 2.xx.x` のように表示されれば OK！
+
+---
+
+## Git の初期設定
+
+「誰が変更したか」を記録するため、名前とメールを設定。
+Windows は **Git Bash**、Mac は **ターミナル** を開いて実行。
+
+```bash
+git config --global user.name "あなたの名前"
+git config --global user.email "あなたのメールアドレス"
+```
+
+> GitHub に登録した名前 / メールに揃えるのがおすすめ。
+
+---
+
+## リポジトリを clone する
+
+GitHub 上のリポジトリをパソコンにダウンロードする = **clone**。
+
+1. リポジトリページの緑色 **Code** ボタン → URL をコピー
+2. 置きたいフォルダにターミナルで移動 (例: `cd Desktop`)
+3. clone を実行
+
+```bash
+git clone https://github.com/[your-username]/[your-username].github.io.git
+```
+
+4. できたフォルダを VSCode で開く
+
+---
+
+## add → commit → push の流れ
+
+ファイルを編集して GitHub に反映するまでの **基本 3 ステップ**。
+
+```bash
+# 1. どのファイルが変わったか確認
+git status
+
+# 2. 変更を「次のコミットに含める」状態に
+git add .
+
+# 3. 変更を 1 つの履歴として記録
+git commit -m "自己紹介を更新"
+
+# 4. ローカルの履歴を GitHub に送信
+git push
+```
+
+数十秒〜数分待つと `https://[your-username].github.io` に反映されます。
+
+---
+
+## add / commit / push まとめ
+
+| コマンド       | 役割                                      |
+| ------------- | ---------------------------------------- |
+| `git add`     | 「この変更を記録対象にする」と Git に伝える     |
+| `git commit`  | ステージングされた変更を **1 つの履歴** に保存   |
+| `git push`    | ローカルの履歴を **GitHub に送信**             |
+
+> **困ったら:** push 時にパスワードを聞かれたら **Personal Access Token (PAT)** が必要。
+> [GitHub 公式ドキュメント](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) を参照、またはメンターへ。
 
 ---
 
