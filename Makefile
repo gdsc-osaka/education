@@ -12,6 +12,14 @@ MARP   ?= npx --yes -p @marp-team/marp-cli@latest marp
 POSTFIX  := .claat/fix-claat-codespans.py
 LIBS_SRC ?= portfolio-2025/libs
 
+# In-place sed differs between BSD (macOS) and GNU (Linux): BSD requires an
+# explicit backup-suffix argument after -i, GNU treats it as the script.
+ifeq ($(shell uname -s),Darwin)
+  SED_INPLACE := sed -i ''
+else
+  SED_INPLACE := sed -i
+endif
+
 # Marp theme. Slides can live in any directory; pass the path via INPUT=.
 MARP_THEME := .marp/gdg.css
 OUTPUT     ?= $(INPUT:.md=.html)
@@ -38,7 +46,7 @@ claat:
 	rm -rf "$$TMPDIR"; \
 	rm -rf "$$OUT/libs"; \
 	cp -R "$(LIBS_SRC)" "$$OUT/libs"; \
-	sed -i '' 's|https://storage.googleapis.com/claat-public/|libs/|g' "$$OUT/index.html"; \
+	$(SED_INPLACE) 's|https://storage.googleapis.com/claat-public/|libs/|g' "$$OUT/index.html"; \
 	$(PYTHON) $(POSTFIX) "$$OUT/index.html"
 
 # Render a Marp deck. Usage:
