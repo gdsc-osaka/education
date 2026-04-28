@@ -9,7 +9,7 @@ CLAAT  ?= claat
 PYTHON ?= python3
 MARP   ?= npx --yes -p @marp-team/marp-cli@latest marp
 
-POSTFIX  := scripts/fix-claat-codespans.py
+POSTFIX  := .claat/fix-claat-codespans.py
 LIBS_SRC ?= portfolio-2025/libs
 
 # Marp theme. Slides can live in any directory; pass the path via INPUT=.
