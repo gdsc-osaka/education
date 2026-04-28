@@ -35,6 +35,9 @@ Web サイトの設計図 (コード) を書くためのエディタ「Visual St
 
 1.  お使いの Web ブラウザ (Chrome, Edge, Safari など) を開きます。
 2.  [VSCode 公式サイト](https://code.visualstudio.com/download) にアクセスします。
+   <button>
+     [Download VSCode](https://code.visualstudio.com/download)
+   </button>
 3.  お使いの OS (Windows, Mac) に合ったインストーラーをダウンロードします。
 4.  ダウンロードしたファイルを開き、画面の指示に従ってインストールを完了します。
 
