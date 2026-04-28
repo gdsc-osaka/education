@@ -587,6 +587,7 @@ body {
 </ul>
 <h2 is-upgraded><strong>今回の手法について</strong></h2>
 <p>今回は時間短縮のため、ページに画像を表示したり、動きのあるコンテンツを作成したりすることはしていません。こちらも非常に楽しい内容なので、今後ぜひ体験してみてください。 また、今回は GitHub に直接ファイルをアップロードしました。これは手軽ですが、実際の Web 開発では <strong>Git</strong> というバージョン管理システムを使って、変更履歴を記録しながら GitHub と連携するのが一般的です。こちらも慣れると非常に強力なツールとなります。</p>
+<aside class="special"><p><strong>Tips:</strong> Step 6 以降の内容について 以下に紹介する「Next Steps」は、Step 6 〜 Step 9 で実際にハンズオン形式で体験できるように用意しています。気になるテーマから、自分のペースでぜひ挑戦してみてください！</p></aside>
 <h2 is-upgraded><strong>Next Steps (初心者向け)</strong></h2>
 <ul>
 <li><strong>コンテンツを充実させる: </strong><code>index.html</code> にもっと詳しい自己紹介や、作品紹介（もしあれば）を追加してみましょう。画像 (<code>&lt;img&gt;</code> タグ) を追加するのも良いですね。</li>
@@ -619,8 +620,330 @@ body {
 <li>高度な UI/UX の実現</li>
 </ul>
 <p>ぜひ、これらのフレームワークを学んで、あなたのポートフォリオサイトをさらに進化させてください！</p>
+<h2 is-upgraded><strong>ワークショップ部分はここまで！</strong></h2>
+<p>本日のメインのワークショップはここで一区切りです。本当にお疲れ様でした！</p>
+<p>時間に余裕のある方や、ワークショップ後にさらに学びたい方は、ぜひ以下の Step 6 〜 Step 9 にもチャレンジしてみてください。それぞれの「Next Steps」を実際にハンズオンで体験できる構成になっています。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 6: コンテンツとデザインを充実させよう" duration="30">
+        <p>ここからは、Step 5 で紹介した「Next Steps」を実際に手を動かしながら体験していきます。まずは、ポートフォリオの中身をもっと充実させながら、HTML と CSS をもう少し深く触ってみましょう。</p>
+<h2 is-upgraded><strong>見出しでセクション分けしよう (</strong><strong><code>&lt;h2&gt;</code></strong><strong>)</strong></h2>
+<p><code>&lt;h1&gt;</code> よりも一段下の見出しには <code>&lt;h2&gt;</code> タグを使います。「自己紹介」「作品紹介」のようなセクション分けに便利です。</p>
+<ol type="1">
+<li><code>index.html</code> の <code>&lt;body&gt;</code> の中、表 (<code>&lt;/table&gt;</code>) の下に以下のコードを追加してください。</li>
+</ol>
+<pre><code language="language-html" class="language-html">&lt;h2&gt;自己紹介&lt;/h2&gt;
+&lt;p&gt;
+  大阪大学に通う 1 年生です。
+  普段は Web 開発と機械学習に興味を持って勉強しています。
+  好きな食べ物はラーメンです。
+&lt;/p&gt;
+
+&lt;h2&gt;作品紹介&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;はじめてのポートフォリオサイト (今ここ！)&lt;/li&gt;
+  &lt;li&gt;大学の課題で作った Python のじゃんけんゲーム&lt;/li&gt;
+  &lt;li&gt;友達と作ったクイズアプリ&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+<ol type="1" start="2">
+<li><code>&lt;ul&gt;</code> と <code>&lt;li&gt;</code> は箇条書き (リスト) を表すタグです。<code>&lt;ul&gt;</code> で囲んだ中に複数の <code>&lt;li&gt;</code> を並べます。</li>
+</ol>
+<aside class="special"><p><strong>補足:</strong> 番号付きリスト 番号付きの箇条書きにしたいときは、<code>&lt;ul&gt;</code> の代わりに <code>&lt;ol&gt;</code> を使います。</p></aside>
+<h2 is-upgraded><strong>画像を表示してみよう (</strong><strong><code>&lt;img&gt;</code></strong><strong>)</strong></h2>
+<p>Web ページに画像を表示するには <code>&lt;img&gt;</code> タグを使います。<code>&lt;img&gt;</code> は閉じタグが不要な特殊なタグです。</p>
+<ol type="1">
+<li>プロフィール用の画像を 1 枚用意しましょう (写真でもアイコンでも OK です)。</li>
+<li><code>index.html</code> と同じ場所に <code>img</code> という名前のフォルダを作り、その中に画像を入れます (例: <code>img/profile.png</code>)。</li>
+<li><code>&lt;h1&gt;</code> タグの下に以下のコードを追加してください。</li>
+</ol>
+<pre><code language="language-html" class="language-html">&lt;img src=&#34;img/profile.png&#34; alt=&#34;プロフィール画像&#34;&gt;
+</code></pre>
+<ul>
+<li><code>src</code> は画像のファイルパス、<code>alt</code> は画像が表示できないときに代わりに表示される説明文です。</li>
+</ul>
+<aside class="warning"><p><strong>Troubleshooting:</strong> 画像が表示されないとき ファイルパスが間違っていると画像が表示されません。<code>img/profile.png</code> のように、<code>index.html</code> から見た相対パスが正しく書けているか確認しましょう。ファイル名の大文字・小文字の違いにも注意してください。</p></aside>
+<h2 is-upgraded><strong>CSS でレイアウトを整える</strong></h2>
+<p>レイアウトをもう少しきれいにするための CSS を追加してみましょう。</p>
+<ol type="1">
+<li><code>style.css</code> の末尾に以下のコードを追加してください。</li>
+</ol>
+<pre><code language="language-css" class="language-css">body {
+  max-width: 720px;          /* 横幅を制限して読みやすく */
+  margin: 0 auto;            /* 左右中央揃え */
+  padding: 24px;             /* 内側に余白を作る */
+  line-height: 1.7;          /* 行間を広めに */
+}
+
+h2 {
+  border-bottom: 2px solid #229954; /* 下線を引く */
+  padding-bottom: 4px;
+  margin-top: 32px;
+}
+
+img {
+  max-width: 200px;
+  border-radius: 50%;        /* 円形にトリミング */
+}
+
+table {
+  border-collapse: collapse; /* セルの線を 1 本にまとめる */
+}
+
+th, td {
+  border: 1px solid #888;
+  padding: 6px 12px;
+}
+</code></pre>
+<ul>
+<li><code>margin</code> は要素の <strong>外側</strong>、<code>padding</code> は要素の <strong>内側</strong> の余白を表します。</li>
+<li><code>border-radius: 50%;</code> は要素の角を丸めるプロパティで、画像を円形に切り抜けます。</li>
+</ul>
+<aside class="special"><p><strong>Tips:</strong> CSS プロパティはとてもたくさん種類があります。気になったものは <a href="https://developer.mozilla.org/ja/docs/Web/CSS/Reference" target="_blank">MDN Web Docs - CSS</a> で調べると詳しい解説が見つかります。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 7: レスポンシブ対応と JavaScript で動きをつけよう" duration="40">
+        <p>これまでに作ったポートフォリオは、PC で見るとちょうど良い見た目ですが、スマホで見ると文字が小さくなったり、レイアウトが崩れたりすることがあります。ここでは、スマホでも見やすくする方法 (レスポンシブデザイン) と、JavaScript でちょっとした動きをつける方法を紹介します。</p>
+<h2 is-upgraded><strong>viewport の設定</strong></h2>
+<p>スマホで Web ページを正しく表示するには、<code>&lt;head&gt;</code> 内に viewport の指定が必要です。</p>
+<ol type="1">
+<li><code>index.html</code> の <code>&lt;head&gt;</code> 内に以下の 1 行を追加してください。</li>
+</ol>
+<pre><code language="language-html" class="language-html">&lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34;&gt;
+</code></pre>
+<aside class="special"><p><strong>補足:</strong> viewport って何？ ブラウザに対して「画面の幅にあわせて表示してね」と伝えるためのおまじないです。スマホ対応サイトには必ず入れるようにしましょう。</p></aside>
+<h2 is-upgraded><strong>メディアクエリで画面サイズに応じた CSS</strong></h2>
+<p>画面サイズによってスタイルを切り替えるには、CSS の <strong>メディアクエリ</strong> を使います。</p>
+<ol type="1">
+<li><code>style.css</code> の末尾に以下のコードを追加してください。</li>
+</ol>
+<pre><code language="language-css" class="language-css">/* 画面の横幅が 600px 以下のときだけ適用される */
+@media (max-width: 600px) {
+  body {
+    padding: 12px;
+    font-size: 14px;
+  }
+  img {
+    max-width: 120px;
+  }
+  h1 {
+    font-size: 24px;
+  }
+}
+</code></pre>
+<ol type="1" start="2">
+<li>ブラウザのウィンドウサイズを変えてみて、スタイルが切り替わるか確認してみましょう。</li>
+</ol>
+<h2 is-upgraded><strong>JavaScript でボタンに動きをつけよう</strong></h2>
+<p>JavaScript を使うと、Web ページに動きを加えることができます。簡単な例として、ボタンを押すとメッセージが出るプログラムを書いてみましょう。</p>
+<ol type="1">
+<li><code>index.html</code> の <code>&lt;body&gt;</code> の末尾 (閉じタグ <code>&lt;/body&gt;</code> の直前) に以下のコードを追加してください。</li>
+</ol>
+<pre><code language="language-html" class="language-html">&lt;button onclick=&#34;sayHello()&#34;&gt;クリックしてね&lt;/button&gt;
+
+&lt;script&gt;
+  function sayHello() {
+    alert(&#39;こんにちは！ポートフォリオを見てくれてありがとう。&#39;);
+  }
+&lt;/script&gt;
+</code></pre>
+<ol type="1" start="2">
+<li>ファイルを保存し、ブラウザでボタンをクリックしてみましょう。メッセージが表示されたら成功です！</li>
+</ol>
+<p><strong>補足: </strong><code>&lt;script&gt;</code> タグと関数 <code>&lt;script&gt;</code> タグの中には JavaScript のプログラムを書きます。<code>function 〜() { ... }</code> で「関数」というまとまりを定義し、<code>onclick</code> 属性でボタンを押したときに実行する関数を指定しています。</p>
+<h2 is-upgraded><strong>CSS だけでホバーアニメーション</strong></h2>
+<p>JavaScript を使わなくても、CSS だけでマウスカーソルが乗ったときの動きを表現できます。</p>
+<ol type="1">
+<li><code>style.css</code> に以下のコードを追加してください。</li>
+</ol>
+<pre><code language="language-css" class="language-css">button {
+  background-color: #229954;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s; /* 変化をなめらかに */
+}
+
+button:hover {
+  background-color: #1e8449;
+  transform: scale(1.05); /* ホバーで少し大きくする */
+}
+</code></pre>
+<ol type="1" start="2">
+<li>保存して、ブラウザでボタンにマウスカーソルを乗せてみましょう。ふわっとした動きがついたら成功です！</li>
+</ol>
+<p><strong>Tips: </strong><code>transition</code> プロパティは「変化をなめらかに見せる」プロパティです。<code>transform</code> の他にも、<code>opacity</code> (透明度) や <code>color</code> などにも使えます。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 8: Git を使ってバージョン管理しよう" duration="40">
+        <p>Step 4 では、GitHub の Web 画面からファイルを直接アップロードしました。実はこの方法は手軽ですが、ファイルが増えてくると大変です。ここでは、プロの Web 開発者も使っている <strong>Git</strong> というツールを使って、もっとスマートにファイルを管理する方法を学びます。</p>
+<h2 is-upgraded><strong>Git のインストール</strong></h2>
+<h3 is-upgraded><strong>Windows の場合</strong></h3>
+<ol type="1">
+<li><a href="https://git-scm.com/download/win" target="_blank">Git for Windows 公式サイト</a> にアクセスします。</li>
+<li>「Click here to download」と書かれたリンクから、インストーラーをダウンロードします。</li>
+<li>ダウンロードしたインストーラーを起動し、基本的にはデフォルトのまま「Next」を押し進めてインストールします。</li>
+</ol>
+<h3 is-upgraded><strong>Mac の場合</strong></h3>
+<p>Mac には多くの場合 Git が最初から入っています。確認するには、ターミナル (アプリケーション → ユーティリティ → ターミナル) を開いて以下を実行します。</p>
+<pre><code language="language-bash" class="language-bash">git --version
+</code></pre>
+<p><code>git version 2.xx.x</code> のように表示されれば OK です。表示されない場合は、画面の指示に従って Xcode Command Line Tools をインストールしてください。</p>
+<h2 is-upgraded><strong>Git の初期設定</strong></h2>
+<p>インストール後、自分の名前とメールアドレスを Git に教えます。これは、誰がコミット (変更を記録) したかの情報として残ります。</p>
+<ol type="1">
+<li>Windows なら「Git Bash」、Mac なら「ターミナル」を開きます。</li>
+<li>以下のコマンドを 1 行ずつ実行します (<code>"..."</code> の中身は GitHub に登録したものに合わせるのがおすすめです)。</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">git config --global user.name &#34;あなたの名前&#34;
+git config --global user.email &#34;あなたのメールアドレス&#34;
+</code></pre>
+<h2 is-upgraded><strong>リポジトリをクローンする</strong></h2>
+<p>GitHub 上にあるリポジトリを、自分のパソコンにダウンロードしてくることを「クローン (clone)」と言います。</p>
+<ol type="1">
+<li>Web ブラウザで Step 4 で作成した GitHub のリポジトリページを開きます。</li>
+<li>緑色の「Code」ボタンをクリックし、表示された URL (例: <code>https://github.com/[your-username]/[your-username].github.io.git</code>) をコピーします。</li>
+<li>ターミナル (または Git Bash) で、リポジトリを置きたいフォルダに移動します (例: <code>cd Desktop</code>)。</li>
+<li>以下のコマンドを実行します。</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/[your-username]/[your-username].github.io.git
+</code></pre>
+<ol type="1" start="5">
+<li>指定したフォルダの中に、リポジトリと同じ名前のフォルダができていれば成功です。</li>
+<li>VSCode で、そのフォルダを開いてください。</li>
+</ol>
+<h2 is-upgraded><strong>add → commit → push の流れ</strong></h2>
+<p>ファイルを編集してから GitHub に反映するまでの基本的な流れは「<strong>add → commit → push</strong>」の 3 ステップです。</p>
+<ol type="1">
+<li>VSCode で <code>index.html</code> などを編集して保存します。</li>
+<li>VSCode の「ターミナル」メニュー →「新しいターミナル」でターミナルを開きます。</li>
+<li>以下のコマンドを順に実行します。</li>
+</ol>
+<pre><code language="language-bash" class="language-bash"># どのファイルが変更されたか確認する
+git status
+
+# 変更したファイルを「次のコミットに含める」状態にする
+git add .
+
+# 変更内容を 1 つの履歴として記録する
+git commit -m &#34;自己紹介を更新&#34;
+
+# ローカルの履歴を GitHub に送信する
+git push
+</code></pre>
+<ol type="1" start="4">
+<li>数十秒〜数分待つと、<code>https://[your-username].github.io</code> に変更が反映されます。</li>
+</ol>
+<aside class="special"><p><strong>補足:</strong> add / commit / push の役割</p>
+<ul>
+<li><code>git add</code>: 「この変更を記録対象にしますよ」と Git に伝える操作</li>
+<li><code>git commit</code>: ステージングされた変更を 1 つの履歴として保存する操作</li>
+<li><code>git push</code>: ローカル (パソコン上) の履歴を GitHub に送信する操作</li>
+</ul></aside>
+<aside class="warning"><p><strong>Troubleshooting:</strong> push 時にユーザー名やパスワードを聞かれたら GitHub では通常のパスワードでの push はできません。代わりに「<strong>Personal Access Token (PAT)</strong>」を発行して、パスワードの代わりに入力する必要があります。詳細は <a href="https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank">GitHub 公式ドキュメント</a> を参照するか、メンターに質問してみてください。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 9: React の世界に飛び込もう" duration="40">
+        <p>最後に、世界中の Web 開発で広く使われている <strong>React</strong> というライブラリの基本に触れてみましょう。React を使うと、ボタンや入力欄などの UI 部品を「<strong>コンポーネント</strong>」として再利用しやすい形で組み立てられるようになります。</p>
+<h2 is-upgraded><strong>React って何？</strong></h2>
+<p>React は、Meta (旧 Facebook) が開発した JavaScript ライブラリです。次のような特徴があります。</p>
+<ul>
+<li><strong>コンポーネントベース:</strong> UI を小さな部品に分けて作り、再利用しやすい</li>
+<li><strong>宣言的 (declarative):</strong> 「こういう状態のときはこう表示する」と書くだけで、画面の更新は React がやってくれる</li>
+<li><strong>エコシステムが豊富:</strong> Next.js などの強力なフレームワークや、たくさんの便利ライブラリがある</li>
+</ul>
+<h2 is-upgraded><strong>Node.js のインストール</strong></h2>
+<p>React を動かすには、JavaScript をパソコン上で実行できる「<strong>Node.js</strong>」が必要です。</p>
+<ol type="1">
+<li><a href="https://nodejs.org/" target="_blank">Node.js 公式サイト</a> にアクセスします。</li>
+<li>「LTS」と書かれている方をダウンロードしてインストールしてください (LTS = 長期サポート版)。</li>
+<li>インストール後、ターミナルで以下を実行してバージョンが表示されれば OK です。</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">node --version
+npm --version
+</code></pre>
+<h2 is-upgraded><strong>Vite で React プロジェクトを作る</strong></h2>
+<p>React プロジェクトを手早く立ち上げるツール「<strong>Vite (ヴィート)</strong>」を使ってみます。</p>
+<ol type="1">
+<li>React プロジェクトを置きたいフォルダにターミナルで移動します。</li>
+<li>以下のコマンドを実行し、画面の指示 (フレームワークの選択など) に従って <code>React</code> → <code>JavaScript</code> を選びます。</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">npm create vite@latest my-react-portfolio
+</code></pre>
+<ol type="1" start="3">
+<li>作成されたフォルダに移動して、必要なライブラリをインストールします。</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">cd my-react-portfolio
+npm install
+</code></pre>
+<ol type="1" start="4">
+<li>開発用サーバーを起動します。</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">npm run dev
+</code></pre>
+<ol type="1" start="5">
+<li>ターミナルに表示された <code>http://localhost:5173/</code> のような URL をブラウザで開いてみましょう。React のロゴが回るサンプルページが表示されたら成功です！</li>
+</ol>
+<h2 is-upgraded><strong>コンポーネントを編集してみよう</strong></h2>
+<ol type="1">
+<li>VSCode で <code>my-react-portfolio</code> フォルダを開きます。</li>
+<li><code>src/App.jsx</code> を開いて、中身をまるごと以下のように書き換えてください。</li>
+</ol>
+<pre><code language="language-jsx" class="language-jsx">function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;いたこすのポートフォリオ (React 版)&lt;/h1&gt;
+      &lt;p&gt;React で作り直してみました！&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;
+</code></pre>
+<ol type="1" start="3">
+<li>保存すると、ブラウザの画面が自動的に更新されます (Hot Reload)。</li>
+</ol>
+<aside class="special"><p><strong>補足:</strong> JSX という書き方 <code>return ( ... )</code> の中に書かれた HTML のような記法は <strong>JSX</strong> と呼ばれ、JavaScript の中に HTML を書けるようにしたものです。<code>class</code> ではなく <code>className</code> を使うなど、いくつか HTML との違いがあります。</p></aside>
+<h2 is-upgraded><strong>状態 (state) を使ってみよう</strong></h2>
+<p>React の真価は「<strong>状態 (state)</strong>」と組み合わせたときに発揮されます。ボタンを押すたびにカウントが増えるサンプルを書いてみましょう。</p>
+<pre><code language="language-jsx" class="language-jsx">import { useState } from &#39;react&#39;;
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;いたこすのポートフォリオ&lt;/h1&gt;
+      &lt;p&gt;ボタンが押された回数: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+        +1 する
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;
+</code></pre>
+<ul>
+<li><code>useState(0)</code> で「初期値 0 の状態」を作っています。</li>
+<li><code>setCount(...)</code> を呼び出すと、React が自動的に画面を再描画してくれます。</li>
+<li><code>{count}</code> のように <code>{}</code> で囲むことで、JSX の中に JavaScript の値を埋め込めます。</li>
+</ul>
+<aside class="special"><p><strong>Tips:</strong> もっと React を学びたい方へ React の本格的な学習には、公式のチュートリアル <a href="https://ja.react.dev/learn" target="_blank">React 公式ドキュメント (日本語)</a> がとてもおすすめです。ぜひ自分のペースで読み進めてみてください。</p></aside>
+<h2 is-upgraded><strong>公開するには？</strong></h2>
+<p>React で作ったサイトを GitHub Pages で公開するには、ビルド (本番用ファイルの生成) や、<code>vite.config.js</code> の <code>base</code> 設定など、いくつか追加の作業が必要です。詳しく学びたい方は「<strong>Vite GitHub Pages デプロイ</strong>」などで検索してみたり、メンターに質問してみてください。</p>
 <h2 is-upgraded><strong>最後に</strong></h2>
-<p>今日の体験が、皆さんの Web 開発への興味の入口となれば幸いです。ぜひ、今日作ったサイトをベースに、どんどん自分だけのポートフォリオサイトを作り込んでいってください！</p>
+<p>ここまで読み終えた皆さん、本当にお疲れ様でした！今日のワークショップから始まった皆さんの Web 開発の旅が、これからどんどん広がっていくことを願っています。ぜひ、今日作ったサイトをベースに、自分だけのポートフォリオサイトを作り込んでいってください！</p>
 
 
       </google-codelab-step>
