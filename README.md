@@ -4,8 +4,9 @@ Educational content for GDG on Campus University of Osaka. Sources are markdown;
 
 Published codelabs:
 
-- [ポートフォリオ Web サイト Workshop 2025](https://gdsc-osaka.github.io/education/portfolio-2025)
-- [Vibe coding hands-on](https://gdsc-osaka.github.io/education/vibe-coding-hands-on)
+- [ポートフォリオ Web サイト Workshop 2025](https://gdsc-osaka.github.io/education/portfolio-2025/index.html)
+- [ポートフォリオ Web サイト Workshop 2026](https://gdsc-osaka.github.io/education/portfolio-2026/index.html)
+- [Vibe coding hands-on](https://gdsc-osaka.github.io/education/vibe-coding-hands-on/index.html)
 
 ## Setup
 
