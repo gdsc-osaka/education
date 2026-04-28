@@ -5,6 +5,23 @@ paginate: true
 size: 16:9
 ---
 
+<script>
+/* Scale .fit elements down so overflowing content fits the slide
+   (PowerPoint-style auto shrink). Wrap any block in <div class="fit">…</div>. */
+(() => {
+  const transformOrigin = "top left";
+  window.addEventListener("load", () => {
+    const fits = document.querySelectorAll(".fit");
+    for (const fit of fits) {
+      if (!fit.scrollHeight) continue;
+      const scaleRatio = Math.min(1, fit.clientHeight / fit.scrollHeight);
+      fit.style.transformOrigin = transformOrigin;
+      fit.style.transform = `scale(${scaleRatio})`;
+    }
+  });
+})();
+</script>
+
 <!-- _class: title -->
 
 # Google Developer Group
@@ -80,6 +97,24 @@ const message = await client.messages.create({
 
 console.log(message.content);
 ```
+
+---
+
+## Auto-fit overflowing content
+
+<div class="fit">
+
+Wrap a block in `<div class="fit">…</div>` and the embedded script scales it
+down to fit the remaining vertical space (PowerPoint-style). Useful when
+AI-generated content runs longer than expected.
+
+- Paste long bullet lists without manually trimming
+- Drop in verbose code samples
+- Keep generous prose without breaking layout
+- Combine with regular markdown — headings, lists, code, tables
+- The element must be a direct child of `section` for height to resolve
+
+</div>
 
 ---
 

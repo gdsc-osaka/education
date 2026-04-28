@@ -48,6 +48,9 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  /* Expose Marpit's page number as a CSS variable so it can be rendered
+     alongside the footer text via footer::after. */
+  --page-number: attr(data-marpit-pagination);
   /* 4-color accent strip along the top edge */
   border-top: 8px solid transparent;
   border-image: linear-gradient(
@@ -59,11 +62,11 @@ section {
   ) 1;
 }
 
-/* Brand block at bottom-right: GDG icon + "Google Developer Group" text */
+/* Brand block at bottom-left: GDG icon + "Google Developer Group" text */
 section::before {
   content: 'Google Developer Group';
   position: absolute;
-  right: 40px;
+  left: 40px;
   bottom: 24px;
   padding-left: 32px;
   height: 24px;
@@ -79,13 +82,19 @@ section::before {
   white-space: nowrap;
 }
 
-/* Pagination at bottom-left (Marpit renders the page number via section::after) */
+/* Pagination at bottom-right (Marpit renders the page number via section::after) */
 section::after {
-  left: 40px;
-  right: auto;
+  right: 40px;
+  left: auto;
   bottom: 24px;
   color: var(--gdg-muted);
   font-size: 14px;
+}
+
+/* When a footer is set, suppress the standalone page number — it is
+   rendered alongside the footer text via footer::after instead. */
+section:has(footer)::after {
+  content: none;
 }
 
 /* ---------- Headings ---------- */
@@ -196,8 +205,19 @@ tr:nth-child(even) td { background: var(--gdg-surface); }
 footer {
   color: var(--gdg-muted);
   font-size: 16px;
-  left: 80px;
+  left: auto;
+  right: 40px;
   bottom: 24px;
+  text-align: right;
+}
+
+/* Page number rendered to the right of the footer text. */
+footer::after {
+  content: var(--page-number);
+  display: inline-block;
+  margin-left: 0.6em;
+  font-size: 14px;
+  color: var(--gdg-muted);
 }
 
 /* ---------- Layout: title slide ---------- */
@@ -320,4 +340,22 @@ section.split {
 
 section.split h1, section.split h2 {
   grid-column: 1 / -1;
+}
+
+/* ---------- Auto-fit content (PowerPoint-style shrink-to-fit) ---------- */
+/* Wrap a block in <div class="fit">...</div>. The script embedded in the slide
+   markdown scales it down via transform: scale when its content overflows the
+   available vertical space.
+
+   Requirement: the .fit element must have a layout-determined clientHeight.
+   With section as a flex column, flex: 1 1 0 + min-height: 0 makes the .fit
+   element take the remaining space below preceding siblings (typically a
+   heading), so clientHeight is bounded while scrollHeight reflects the full
+   content height. .fit must therefore be a direct child of section. */
+.fit {
+  flex: 1 1 0;
+  min-height: 0;
+  align-self: stretch;
+  overflow: hidden;
+  transform-origin: top left;
 }
