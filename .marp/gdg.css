@@ -30,8 +30,10 @@
   --gdg-muted:   #5F6368;
   --gdg-line:    #DADCE0;
   --gdg-surface: #F8F9FA;
-  --gdg-bg:      #FFFFFF;
+  --gdg-bg:      #EEEEEE;
   --gdg-ink:     #1A1A1A;
+  --gdg-university: 'Editable University Name';
+  --gdg-university-color: var(--gdg-blue);
 }
 
 /* ---------- Base slide ---------- */
@@ -51,15 +53,6 @@ section {
   /* Expose Marpit's page number as a CSS variable so it can be rendered
      alongside the footer text via footer::after. */
   --page-number: attr(data-marpit-pagination);
-  /* 4-color accent strip along the top edge */
-  border-top: 8px solid transparent;
-  border-image: linear-gradient(
-    to right,
-    var(--gdg-blue)   0%,  var(--gdg-blue)   25%,
-    var(--gdg-red)    25%, var(--gdg-red)    50%,
-    var(--gdg-yellow) 50%, var(--gdg-yellow) 75%,
-    var(--gdg-green)  75%, var(--gdg-green)  100%
-  ) 1;
 }
 
 /* Brand block at bottom-left: GDG icon + "Google Developer Group" text */
@@ -220,38 +213,130 @@ footer::after {
   color: var(--gdg-muted);
 }
 
-/* ---------- Layout: title slide ---------- */
+/* ---------- Layout: title slide ----------
+   Renders Image #1 (default) or Image #2 (`title image` variant):
+   - Brand block (logo + "Google Developer Group" + university name) top-left
+   - Large chapter title centered-left, with optional subtitle paragraph
+   - Decorative arrow at bottom-right (blue) or bottom-left (red, `image` variant)
+   Customize the university name per-deck:
+       <style> :root { --gdg-university: 'University of Osaka'; } </style>
+*/
 section.title {
-  background-image:
-    radial-gradient(circle at 85% 15%, rgba(66,133,244,0.08), transparent 40%),
-    radial-gradient(circle at 15% 85%, rgba(52,168,83,0.08), transparent 40%);
-  background-repeat: no-repeat, no-repeat;
-  background-position: center, center;
-  background-size: cover, cover;
+  background-color: var(--gdg-bg);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 80'><path d='M10,30 L60,30 L60,15 L115,40 L60,65 L60,50 L10,50 Z' fill='%234285F4' stroke='%23000' stroke-width='5' stroke-linejoin='round' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 100px bottom 90px;
+  background-size: 200px auto;
   justify-content: center;
   text-align: left;
-  padding: 80px 100px 90px;
+  padding: 200px 100px 180px;
+}
+
+/* Top-left brand line. Inherits the GDG logo background from `section::before`;
+   we only override position, sizing, and text. */
+section.title::before {
+  content: 'Google Developer Group';
+  top: 56px;
+  bottom: auto;
+  left: 80px;
+  padding-left: 72px;
+  height: 56px;
+  background-size: 56px 56px;
+  background-position: left center;
+  display: flex;
+  align-items: center;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--gdg-text);
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+}
+
+/* University name renders below the brand line, replacing the page number
+   that `section::after` normally shows. */
+section.title::after {
+  content: var(--gdg-university);
+  top: 100px;
+  bottom: auto;
+  left: 152px;
+  right: auto;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gdg-university-color);
+  letter-spacing: 0.005em;
 }
 
 section.title h1 {
-  font-size: 72px;
-  line-height: 1.1;
+  font-size: 96px;
+  line-height: 1.05;
+  font-weight: 300;
   border-bottom: none;
-  margin-bottom: 0.3em;
+  margin: 0;
   color: var(--gdg-ink);
+  display: block;
+  max-width: 80%;
+  letter-spacing: -0.015em;
 }
+
+section.title h1 strong { font-weight: 700; }
 
 section.title h2 {
   font-size: 32px;
   font-weight: 400;
   color: var(--gdg-muted);
-  margin-bottom: 1.2em;
+  margin: 24px 0 0;
 }
 
 section.title p {
-  font-size: 22px;
-  color: var(--gdg-muted);
-  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gdg-ink);
+  margin: 36px 0 0;
+}
+
+/* ---------- Variant: title with right-side image ----------
+   Usage: <!-- _class: title image -->  then a `# Heading` and an `![](img.jpg)`.
+*/
+section.title.image {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  column-gap: 60px;
+  align-items: center;
+  padding: 200px 80px 200px 100px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 80'><path d='M10,30 L60,30 L60,15 L115,40 L60,65 L60,50 L10,50 Z' fill='%23EA4335' stroke='%23000' stroke-width='5' stroke-linejoin='round' stroke-linecap='round'/></svg>");
+  background-position: left 100px bottom 90px;
+  background-size: 180px auto;
+}
+
+section.title.image::after {
+  color: var(--gdg-red);
+}
+
+section.title.image h1 {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 72px;
+  align-self: center;
+  max-width: 100%;
+}
+
+section.title.image img {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  max-height: 70vh;
+  object-fit: cover;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-30 -30 260 260'><path d='M 16,0 L 85,0 A 15,15 0 0,0 115,0 L 184,0 A 16,16 0 0,1 200,16 L 200,85 A 15,15 0 0,0 200,115 L 200,184 A 16,16 0 0,1 184,200 L 115,200 A 15,15 0 0,0 85,200 L 16,200 A 16,16 0 0,1 0,184 L 0,115 A 15,15 0 0,0 0,85 L 0,16 A 16,16 0 0,1 16,0 Z' fill='%23000'/></svg>");
+          mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-30 -30 260 260'><path d='M 16,0 L 85,0 A 15,15 0 0,0 115,0 L 184,0 A 16,16 0 0,1 200,16 L 200,85 A 15,15 0 0,0 200,115 L 200,184 A 16,16 0 0,1 184,200 L 115,200 A 15,15 0 0,0 85,200 L 16,200 A 16,16 0 0,1 0,184 L 0,115 A 15,15 0 0,0 0,85 L 0,16 A 16,16 0 0,1 16,0 Z' fill='%23000'/></svg>");
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
 }
 
 /* ---------- Layout: lead (centered) ---------- */
@@ -286,13 +371,6 @@ section.section {
   background: var(--gdg-blue);
   color: #FFFFFF;
   justify-content: center;
-  border-image: linear-gradient(
-    to right,
-    #FFFFFF 0%, #FFFFFF 25%,
-    var(--gdg-yellow) 25%, var(--gdg-yellow) 50%,
-    var(--gdg-red) 50%, var(--gdg-red) 75%,
-    var(--gdg-green) 75%, var(--gdg-green) 100%
-  ) 1;
 }
 
 section.section h1,

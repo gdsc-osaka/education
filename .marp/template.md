@@ -22,13 +22,24 @@ size: 16:9
 })();
 </script>
 
+<style>
+/* Set once per deck — drives the colored university name on every title slide. */
+:root { --gdg-university: 'University of Osaka'; }
+</style>
+
 <!-- _class: title -->
 
-# Google Developer Group
-## Marp Presentation Template
+# Chapter **Title** Goes Here.
 
-GDG on Campus University of Osaka
-2026-04-28
+This is where the subtitle can be displayed.
+
+---
+
+<!-- _class: title image -->
+
+# Chapter **Title** Goes Here.
+
+![](assets/gdg_logo.png)
 
 ---
 
