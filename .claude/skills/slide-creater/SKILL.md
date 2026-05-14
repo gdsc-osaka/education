@@ -225,6 +225,100 @@ Card-style layout via CSS grid. Match top-border colors to GDG palette:
 
 Same class as the welcome lead. Typically `# Thank you!` + a "Questions?" line.
 
+## How often to include figures, and how to make them
+
+Slides that are all text lose the audience and feel monotonous. Add figures, tables, charts, and illustrations in the right proportion to reinforce the key points visually.
+
+### How many slides should carry a figure
+
+The right amount depends on the deck type. Measure by slide: "of the content slides, how many have a figure or table on them?" The cover (`title`), `section` dividers, and the closing `lead` (Thank you!) don't count toward the denominator.
+
+| Deck type                              |   Figure-bearing share | Figures that fit                                      |
+| -------------------------------------- | ---------------------: | ----------------------------------------------------- |
+| Executive / decision-making            |       30–50% of slides | Comparison tables, structure diagrams, roadmaps, KPI charts |
+| Proposal / sales                       |       50–70% of slides | Problem structures, impact, Before/After, case studies |
+| Training / explanatory                 |       40–60% of slides | Flow diagrams, concept diagrams, step diagrams, illustrative art |
+| Research / analysis                    |       60–80% of slides | Graphs, tables, model diagrams, experiment results    |
+| Live talk (spoken presentation)        |               70%+ ok  | Large figures, photos, simple charts                  |
+
+Decks built in this repo are almost always **training / explanatory** or **live talk**, so when unsure, aim for **50–70%**.
+
+### Picking the figure form — table first, inline second, generated image last
+
+Throwing every figure at image generation makes the deck stylistically uneven and heavy. Walk down this list in order:
+
+1. **Markdown table** — for comparisons and one-to-one mappings, see if a plain table is enough first (slide catalog #11).
+2. **Inline HTML / SVG** — simple structure diagrams, card grids, and bar charts fit the patterns in catalog #12–#14. Using `var(--gdg-*)` for colors makes them match the template automatically.
+3. **Generated image** — for complex concept diagrams, illustrations, Before/After figures, and anything the above can't express cleanly, generate an image with the `gen-image` skill and embed it (see below).
+
+### Generating figure images with the `gen-image` skill
+
+The quality of what `gen-image` (via codex CLI) returns depends almost entirely on the prompt. Keep these three rules at minimum:
+
+- **Match the in-figure text language to the slide language.** If the slide is in Japanese, the labels inside the figure must be in Japanese too; if the slide is in English, English. Mixing the two costs the reader cognitive effort. State this explicitly in the prompt (`All labels in Japanese` / `ラベルはすべて日本語`); codex defaults to English labels when left silent.
+- **Match the style to the template.** The GDG template is built around: white background, Google Sans-like sans-serif, four accent colors (blue `#4285F4`, red `#EA4335`, yellow `#FBBC04`, green `#34A853`), rounded corners, flat — no gradients or shadows. Specify this palette and the flat style every time. Photorealistic, watercolor, 3D, or heavy-gradient outputs will visibly clash with the rest of the deck.
+- **Be concrete enough.** A request like "a diagram of data flow" comes back as a decorative picture with no elements or arrows — "just a drawing." Spell out the element count, the label on each element, the arrow directions, and the layout (horizontal / vertical / 2x2 / radial).
+
+**Prompt template (English — codex is more stable in English):**
+
+```
+A [diagram type, e.g. flow diagram / Before-After comparison / concept map]
+illustrating [topic in one sentence].
+Language: [Japanese / English]   ← language used for every label in the figure
+Elements (left to right / top to bottom):
+- [element 1 with its label text]
+- [element 2 with its label text]
+- [element 3 with its label text]
+Relationships: [arrow from X to Y / X contains Y / ...].
+Layout: [horizontal flow / vertical stack / 2x2 matrix / radial / ...].
+Style: flat, clean, modern infographic on a pure white background,
+using the Google brand palette (blue #4285F4, red #EA4335,
+yellow #FBBC04, green #34A853) for accents, thin rounded
+rectangles, Google Sans-like sans-serif typography, no shadows
+or gradients.
+Aspect ratio: 16:9, designed to be embedded in a slide.
+All labels in the Language specified above. No logos, no watermark,
+no extra decorative text.
+```
+
+**Prompt template (Japanese version):**
+
+```
+[図の種類: フロー図 / Before-After 比較 / 概念図 など] を生成してください。
+テーマ: [一文で要約]
+Language: [日本語 / 英語]   ← 図中のすべてのラベルに使う言語
+含める要素 (配置順):
+- [要素 1 とそのラベル]
+- [要素 2 とそのラベル]
+- [要素 3 とそのラベル]
+要素間の関係: [X から Y への矢印 / X が Y を含む / ...]
+レイアウト: [横方向のフロー / 縦並び / 2x2 / 放射状 / ...]
+スタイル: 白背景・フラット・モダンなインフォグラフィック。
+アクセントカラーは Google ブランドパレット
+(青 #4285F4・赤 #EA4335・黄 #FBBC04・緑 #34A853)、
+角丸の長方形、Google Sans に近いサンセリフ書体、
+影やグラデーションは使わない。
+アスペクト比 16:9、スライド埋め込み用。
+ラベルはすべて上で指定した Language に揃える。
+ロゴ・透かし・装飾的なテキストは入れない。
+```
+
+**Example — Before/After figure for a Japanese training deck:**
+
+> Generate a Before/After comparison figure for a Japanese-language slide.
+> Language: 日本語 (all labels in Japanese).
+> Left "Before": a rounded box labeled 「README だけ・ローカルでしか動かない」 with a red `#EA4335` accent.
+> Right "After": a rounded box labeled 「自動 CI / クラウドにデプロイ済み」 with a green `#34A853` accent.
+> Center: a thick right-pointing arrow in blue `#4285F4`.
+> Style: white background, flat, Google Sans-like typography, no shadows, 16:9.
+> No logos, no watermarks, no extra text.
+
+**Operational notes when calling `gen-image`:**
+
+- `gen-image` writes to `./images/` under the current working directory. After generation, move the file into `<content-name>/img/` (`mv ./images/foo.png <content-name>/img/`) and reference it from `slide.md`.
+- One `codex exec` call produces exactly one file. For variations, call it multiple times with different filenames.
+- If the result comes back with stray logos or unintended text, add a stronger `no logos, no watermark, no extra text` clause and regenerate. If it still leaks, drop one or two elements from the request — fewer elements tend to come back cleaner.
+
 ## Available CSS variables
 
 Defined in `.marp/gdg.css`. Use these instead of hardcoding hex codes so the deck stays on-brand:
