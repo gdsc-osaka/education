@@ -547,6 +547,24 @@ flutter pub add flutter_riverpod
 
 ---
 
+## 生成されるファイル / ディレクトリ
+
+```text
+my_app/
+├── lib/
+│   └── main.dart           ← 今日コードを書くのはほぼここ!
+├── pubspec.yaml            ← 依存関係 (npm の package.json 相当)
+├── pubspec.lock            ← ロックファイル (package-lock.json 相当)
+├── web/                    ← Web 用ファイル (基本触らない)
+├── android/  ios/  macos/  ← 各 OS 用設定 (今日は無視)
+├── test/                   ← テストコード (今日は使わない)
+└── analysis_options.yaml   ← Lint 設定
+```
+
+> **`lib/main.dart`** と **`pubspec.yaml`** だけ覚えておけば OK!
+
+---
+
 <!-- _class: invert -->
 
 ## ⚠️ 次に CLAUDE.md をダウンロード!
