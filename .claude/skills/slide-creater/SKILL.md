@@ -1,6 +1,6 @@
 ---
 name: slide-creater
-description: Use this skill whenever the user asks to create slides, a slide deck, a presentation, a talk, 発表資料, スライド, or anything that will become a Marp deck in this repository. Explains the project-specific Marp template at `.marp/template.md` — its frontmatter, slide classes (`title` / `lead` / `section` / `split` / `invert`), CSS variables, layout patterns, and build pipeline — so new decks match the conventions GDG on Campus University of Osaka already uses. Trigger this skill even when the user just says "make slides" or "create a deck" without mentioning Marp; in this repo, slides always mean Marp + this template.
+description: Use this skill whenever the user asks to create slides, a slide deck, a presentation, a talk, 発表資料, スライド, or anything that will become a Marp deck in this repository. Explains the project-specific Marp template at `.marp/template.md` — its frontmatter, slide classes (`title` / `lead` / `section` / `split` / `invert`), CSS variables, layout patterns, and build pipeline — plus how to write Japanese slide copy that does not read as AI-translated (句点 / 文末 / 体言止め conventions) — so new decks match the conventions GDG on Campus University of Osaka already uses. Trigger this skill even when the user just says "make slides" or "create a deck" without mentioning Marp; in this repo, slides always mean Marp + this template.
 ---
 
 # slide-creater
@@ -19,6 +19,12 @@ This repo has a custom Marp template at `.marp/template.md` with bespoke CSS in 
 3. Replace the example slides with the user's content, picking slide types from the catalog below.
 4. Build with `make slide <content-name>/slide.md <content-name>/slide/index.html`.
 5. For PDFs: `npx -p @marp-team/marp-cli@latest marp --theme-set .marp/gdg.css --html <content-name>/slide.md -o <content-name>/slide.pdf`.
+
+### Interpreting a user-requested slide count
+
+When the user asks for "around N slides" / "N 枚くらい" / "a 3-slide deck", the **title cover and the closing `lead` slide (Thank you! etc.) count toward N** — they're part of the deck the audience sees. So "8 スライドくらい" means roughly 8 total = 1 cover + 6 content beats + 1 closer. A bare "3-slide deck" means *exactly 3* including the cover (no extra Thank-you slide unless asked).
+
+When the count is given exactly (no "くらい" / "around"), match it strictly; when fuzzy, ±1 is acceptable but prefer hitting the number.
 
 ## What's in the template you must keep
 
@@ -240,9 +246,23 @@ Defined in `.marp/gdg.css`. Use these instead of hardcoding hex codes so the dec
 
 このリポジトリのスライドは日本語の聴衆向けに登壇で読み上げ / 投影されます。Claude が素朴に書く日本語は AI 感が滲み出やすく、聞き手・読み手の集中を削ぎます。以下のクセを意識すると、人が書いたように読めます。
 
-### 句点 (`。`) は基本付けない
+### 句点 (`。`) は最小限にする
 
-スライドの本文・箇条書き・引用・キャプションなどの末尾の `。` は外します。視覚的にも不要で、長文 (3 行以上のパラグラフ) で文を区切る必要があるとき以外は打ちません。`!` `?` は感情の起伏を出したいところでは積極的に使って構いません。
+スライドの本文・箇条書き・引用・キャプション、**タイトルスライドのサブタイトル / 日付 / 所属、フッター、注釈** — つまり聴衆が読むすべての要素 — の末尾 `。` は基本的に外します。視覚的に冗長で、口頭発表の朗読感が出るためです。
+
+数値目安はデッキの長さに応じて変えます:
+
+- 〜 5 スライド程度の短いデッキ: **0 個でも自然**。無理に挿入しない
+- 10 スライド前後の通常デッキ: **0〜2 個**。下のいずれかに該当する箇所が自然に出てきたときだけ残す
+- 20 スライド超の長尺・解説中心デッキ: **2〜4 個**。長い説明文や引用が増えるので相応に増える
+
+`。` を残すのに向く箇所 (どの長さでも共通):
+
+- 3 行以上のパラグラフで文を区切る必要があるとき
+- 1 文の中に複数の主張が連なる長い説明文 (「〜なので、〜です」が 2 つ以上)
+- 引用文がもともと `。` で終わっている (原文の体裁を保つ)
+
+該当箇所がなければ無理に `。` を作らないこと。`!` `?` は感情の起伏を出したいところで積極的に使って構いません。
 
 ### 体言止めを避けて丁寧語の動詞で終える
 
