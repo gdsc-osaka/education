@@ -1,363 +1,75 @@
 ---
 name: slide-creater
-description: Use this skill whenever the user asks to create slides, a slide deck, a presentation, a talk, 発表資料, スライド, or anything that will become a Marp deck in this repository. Explains the project-specific Marp template at `.marp/template.md` — its frontmatter, slide classes (`title` / `lead` / `section` / `split` / `invert`), CSS variables, layout patterns, and build pipeline — plus how to write Japanese slide copy that does not read as AI-translated (句点 / 文末 / 体言止め conventions) — so new decks match the conventions GDG on Campus University of Osaka already uses. Trigger this skill even when the user just says "make slides" or "create a deck" without mentioning Marp; in this repo, slides always mean Marp + this template.
+description: Use this skill whenever the user asks to create slides, a slide deck, a presentation, a talk, 発表資料, スライド, or anything that will become a Marp deck in this repository. Explains the project-specific Marp template at `.marp/template.md` — its load-bearing frontmatter / script / style blocks, slide classes (`title` / `lead` / `section` / `split` / `invert`), CSS variables, figure conventions, and Japanese-copy style — so new decks match GDG on Campus University of Osaka's existing decks. Trigger even when the user just says "make slides" or "create a deck" without mentioning Marp; in this repo, slides always mean Marp + this template.
 ---
 
 # slide-creater
 
-This repo has a custom Marp template at `.marp/template.md` with bespoke CSS in `.marp/gdg.css`. New slide decks should start from that template so they match the GDG visual style. This skill explains how the template works — **not Marp in general**. Assume the user knows Marp basics; the value here is the project-specific conventions.
+This repo has a custom Marp template at `.marp/template.md` with bespoke CSS in `.marp/gdg.css`. Every new deck starts by copying that template — it already contains a working example of every supported slide class, so you'll match the visual style by editing example slides in place rather than writing slides from scratch. This skill covers the project-specific conventions only; assume the user knows Marp basics.
 
-## When you're asked to create slides
+## Workflow
 
-1. Decide the destination directory using the convention in `CLAUDE.md`:
+1. Pick the destination directory (see `CLAUDE.md`'s content layout):
    ```
-   <content-name>/slide.md            ← source
+   <content-name>/slide.md            ← source (you write this)
    <content-name>/slide/index.html    ← built output (committed)
    <content-name>/img/                ← images referenced from slide.md
    ```
-2. Copy `.marp/template.md` to `<content-name>/slide.md` as the starting point. Don't write the frontmatter or the `.fit` `<script>` block from scratch — both are load-bearing and easy to break.
-3. Replace the example slides with the user's content, picking slide types from the catalog below.
-4. Build with `make slide <content-name>/slide.md <content-name>/slide/index.html`.
-5. For PDFs: `npx -p @marp-team/marp-cli@latest marp --theme-set .marp/gdg.css --html <content-name>/slide.md -o <content-name>/slide.pdf`.
+2. **Copy `.marp/template.md` to `<content-name>/slide.md`.** Do not write the frontmatter, the `<script>` block, or the `<style>` block from scratch — all three are load-bearing (see "Load-bearing template blocks" below).
+3. Replace the example slides with the user's content. The template's example slides demonstrate every supported class — keep the patterns whose layout you need, delete the rest.
+4. Build: `make slide <content-name>/slide.md <content-name>/slide/index.html`
+5. PDF (when asked): `npx -p @marp-team/marp-cli@latest marp --theme-set .marp/gdg.css --html <content-name>/slide.md -o <content-name>/slide.pdf`
 
-### Interpreting a user-requested slide count
+### Before you write copy — load the references that apply
 
-When the user asks for "around N slides" / "N 枚くらい" / "a 3-slide deck", the **title cover and the closing `lead` slide (Thank you! etc.) count toward N** — they're part of the deck the audience sees. So "8 スライドくらい" means roughly 8 total = 1 cover + 6 content beats + 1 closer. A bare "3-slide deck" means *exactly 3* including the cover (no extra Thank-you slide unless asked).
+- **Slide content in Japanese?** Read `references/japanese-style.md`. Claude's default Japanese reads as AI-translated (heavy `。`, 体言止め, 翻訳調); this deck will be projected live to a Japanese audience, so the difference matters.
+- **Planning the figure mix, or about to call `gen-image`?** Read `references/figures.md`. It covers how many slides should carry a figure (most should), which form to pick (table → inline HTML → generated image), and the prompt template that keeps generated images on-brand.
 
-When the count is given exactly (no "くらい" / "around"), match it strictly; when fuzzy, ±1 is acceptable but prefer hitting the number.
+Skip a reference if it doesn't apply — there's no value loading the Japanese guide for an English-only deck.
 
-## What's in the template you must keep
+## Slide-count interpretation
 
-### Frontmatter
+When the user says "around N slides" / "N 枚くらい" / "a 3-slide deck", **the title cover and the closing `lead` (Thank you!) count toward N** — they're part of what the audience sees. So "8 スライドくらい" ≈ 1 cover + 6 content + 1 closer.
 
-```yaml
----
-marp: true
-theme: gdg
-paginate: true
-size: 16:9
----
-```
+- Exact counts (no くらい / "around"): match strictly, no implicit Thank-you slide unless asked.
+- Fuzzy counts: ±1 is acceptable but prefer hitting the number.
 
-`theme: gdg` is the registered name for `.marp/gdg.css`. Without it, none of the classes below will style correctly.
+## Load-bearing template blocks (don't rewrite, don't delete)
 
-### The `.fit` shrink-to-fit script
+The first ~50 lines of `template.md` are three blocks the deck relies on:
 
-The template embeds a `<script>` block right after the frontmatter. It scales any element wrapped in `<div class="fit">…</div>` down so overflowing content fits on the slide (PowerPoint-style auto-shrink). Keep the script as-is. Use it like this when content might overflow:
+1. **Frontmatter** — `marp: true`, `theme: gdg`, `paginate: true`, `size: 16:9`. `theme: gdg` registers `.marp/gdg.css`; without it none of the classes below style correctly.
+2. **`<script>` block** — PowerPoint-style auto-shrink. Also drives `<div class="fit">…</div>` for explicit opt-in scaling. Wrap blocks that might overflow:
+   ```markdown
+   <div class="fit">
 
-```markdown
-## Auto-fit overflowing content
+   - long bullet list
+   - that would otherwise overflow
 
-<div class="fit">
+   </div>
+   ```
+   The `.fit` div **must be a direct child of `section`** — nesting it in another wrapper breaks the height calc and the shrink silently does nothing.
+3. **`<style>` block with `--gdg-university`** — drives the colored university name on every title slide. Edit the string for a different chapter (e.g. `'University of Kyoto'`); deleting the block makes the title slide render without the chapter name.
 
-- Paste long bullet lists without manually trimming
-- Drop in verbose code samples
-- The element must be a direct child of `section` for height to resolve
+## Slide classes — one-line reference
 
-</div>
-```
+Apply via `<!-- _class: <name> -->` at the top of a slide (`_class` = this slide only; `class` without underscore cascades to following slides).
 
-The `.fit` div has to be a direct child of `section` — don't nest it inside another wrapper.
+| Class                                                         | Use for                                                                                                     |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `title`                                                       | The deck cover. First slide. Big title + subtitle + metadata.                                               |
+| `title image`                                                 | Cover with a logo/hero image — place a single `![](...)` right after the heading.                           |
+| `lead`                                                        | Centered oversized heading. Use for interior "Welcome" beats, the closing "Thank you!", and quote slides (write the quote as a `>` blockquote on a `lead` slide — no dedicated quote class exists). |
+| `section`, `section yellow`, `section green`, `section red`   | Chapter divider with full-bleed background. Yellow uses dark ink (auto-picked). These four are the only documented variants. |
+| *(no class)*                                                  | Default heading + body. Markdown lists, paragraphs, tables, and fenced code blocks all work bare.            |
+| `split`                                                       | Two-column grid. The `h1`/`h2` spans both columns (it's `grid-column: 1 / -1`); content after it flows into columns in source order. Used for two-column bullets **and** image-with-text (image first → image on left; text first → image on right). Constrain images to column width with `![w:480]`. |
+| `invert`                                                      | Light text on a dark background. Combine with `![bg cover](...)` for full-bleed images, or use alone for code-heavy slides.                                              |
 
-### The `<style>` block with `--gdg-university`
+For full-bleed images use Marp's `![bg cover](...)` / `bg fit` / `bg left` / `bg right` directives (no class needed for the slide itself; combine with `_class: invert` if captions need light text).
 
-The template also embeds a `<style>` block right after the `<script>`:
+There is no `card`, `quote`, `flow`, or `chart` class — build those with inline HTML using the CSS variables. The template shows working patterns for a flow diagram (flexbox row of rounded rects), a bar chart (inline `<svg>`), and a takeaway card grid (CSS `grid-template-columns`). Match those when you need a similar structure; Mermaid is not wired up, so render Mermaid externally and embed the image.
 
-```html
-<style>
-:root { --gdg-university: 'University of Osaka'; }
-</style>
-```
-
-This variable drives the colored university name rendered on every title slide. **Keep the block; edit the string only if the deck is for a different chapter** (e.g. `'University of Kyoto'`). Removing the block makes title slides render without the chapter name.
-
-## Slide type catalog
-
-Pick a class by setting `<!-- _class: <name> -->` at the top of a slide. `_class` (with underscore) applies to that slide only; `class` without underscore applies to all following slides.
-
-### 1. Title slide — `_class: title` (optional `image` modifier)
-
-The deck's cover. Big title, subtitle, and metadata.
-
-```markdown
-<!-- _class: title -->
-
-# Google Developer Group
-## Marp Presentation Template
-
-GDG on Campus University of Osaka
-2026-04-28
-```
-
-**Modifier `title image`**: adds a logo / hero image on the title slide. Place a single image right after the heading. Use when the cover needs a visual anchor:
-
-```markdown
-<!-- _class: title image -->
-
-# Chapter Title
-
-![](assets/gdg_logo.png)
-```
-
-`title` and `title image` are the only documented variants — don't add others without extending `gdg.css`.
-
-### 2. Lead slide — `_class: lead`
-
-Centered, oversized heading. Use for intermediate "welcome" beats, the closing "Thank you!" slide, and dedicated quote slides.
-
-```markdown
-<!-- _class: lead -->
-
-# Welcome to GDG
-```
-
-### 3. Section divider — `_class: section`
-
-Chapter break with a colored full-bleed background. Variants: bare `section` (blue/default), `section yellow`, `section green`, `section red`. Yellow uses dark ink for contrast — picked automatically.
-
-```markdown
-<!-- _class: section yellow -->
-
-# 02. What we build
-```
-
-### 4. Default slide — no class
-
-Heading + body. The normal case. Markdown lists, paragraphs, and tables all work without any class.
-
-### 5. Two-column / split — `_class: split`
-
-Two-column grid (CSS grid, `1fr 1fr`). The `h1`/`h2` spans both columns; everything after is placed into columns in source order.
-
-```markdown
-<!-- _class: split -->
-
-## Two-column layout
-
-### Left column
-- bullet
-- bullet
-
-### Right column
-- bullet
-- bullet
-```
-
-### 6 & 7. Image + text — also `_class: split`
-
-The template uses `split` for both "left image + right text" and "right image + left text". Position is controlled by **source order**, not a different class:
-
-- Image first → image on the left
-- Text first → image on the right
-
-```markdown
-<!-- _class: split -->
-
-## Left image + right text
-
-![w:480](assets/gdg_logo.png)
-
-- bullets land in the right column
-```
-
-Use `![w:480]` (or similar) to constrain the image to the column width.
-
-### 8. Full-bleed image
-
-Marp's `bg` directive. No class needed for the slide itself, but combine with `_class: invert` if you put light text on a dark image.
-
-```markdown
-![bg cover](path/to/image.jpg)
-
-<!-- _class: invert -->
-
-## Caption text
-```
-
-Modifiers: `bg`, `bg fit`, `bg cover`, `bg left`, `bg right`.
-
-### 9. Quote slide — `_class: lead` + blockquote
-
-There's no dedicated quote class. Use `lead` for a single centered quote:
-
-```markdown
-<!-- _class: lead -->
-
-> "The best way to predict the future is to invent it."
->
-> — *Alan Kay*
-```
-
-### 10. Code slide — default + fenced block
-
-`section.invert blockquote` and `section.invert code` are styled for dark slides, so combine with `_class: invert` for code-heavy slides:
-
-````markdown
-<!-- _class: invert -->
-
-## Dark slide
-
-```ts
-const client = new Anthropic();
-```
-````
-
-### 11. Table slide — default + Markdown table
-
-Normal Markdown tables work; no class needed.
-
-### 12. Diagram / flow — inline HTML
-
-No `card` or `flow` CSS class exists. Use inline HTML with the project's CSS variables (see below) for color consistency:
-
-```html
-<div style="display: flex; align-items: center; justify-content: center; gap: 24px;">
-  <div style="padding: 24px 32px; border: 2px solid var(--gdg-blue); border-radius: 12px;">Idea</div>
-  <div style="font-size: 40px; color: var(--gdg-blue);">→</div>
-  <div style="padding: 24px 32px; border: 2px solid var(--gdg-green); border-radius: 12px;">Build</div>
-</div>
-```
-
-Mermaid is **not** wired up — render Mermaid externally and embed the resulting image, or use inline SVG/HTML.
-
-### 13. Chart / graph — inline SVG
-
-No chart library. Use inline `<svg>` with the project colors, or embed a pre-rendered image:
-
-```html
-<svg viewBox="0 0 600 280" style="width: 100%; height: 280px;">
-  <rect x="100" y="160" width="60" height="80" fill="var(--gdg-blue)"/>
-  …
-</svg>
-```
-
-### 14. Takeaways / summary — inline HTML card grid
-
-Card-style layout via CSS grid. Match top-border colors to GDG palette:
-
-```html
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
-  <div style="padding: 24px; border-top: 4px solid var(--gdg-blue); background: #F8F9FA; border-radius: 8px;">
-    <h3>Community</h3>
-    <p>GDG is global, local, and open to everyone.</p>
-  </div>
-  …
-</div>
-```
-
-### 15. Closing — `_class: lead`
-
-Same class as the welcome lead. Typically `# Thank you!` + a "Questions?" line.
-
-## How often to include figures, and how to make them
-
-Slides that are all text lose the audience and feel monotonous. Add figures, tables, charts, and illustrations in the right proportion to reinforce the key points visually.
-
-### How many slides should carry a figure
-
-The right amount depends on the deck type. Measure by slide: "of the content slides, how many have a figure or table on them?" The cover (`title`), `section` dividers, and the closing `lead` (Thank you!) don't count toward the denominator.
-
-| Deck type                              |   Figure-bearing share | Figures that fit                                      |
-| -------------------------------------- | ---------------------: | ----------------------------------------------------- |
-| Executive / decision-making            |       30–50% of slides | Comparison tables, structure diagrams, roadmaps, KPI charts |
-| Proposal / sales                       |       50–70% of slides | Problem structures, impact, Before/After, case studies |
-| Training / explanatory                 |       40–60% of slides | Flow diagrams, concept diagrams, step diagrams, illustrative art |
-| Research / analysis                    |       60–80% of slides | Graphs, tables, model diagrams, experiment results    |
-| Live talk (spoken presentation)        |               70%+ ok  | Large figures, photos, simple charts                  |
-
-Decks built in this repo are almost always **training / explanatory** or **live talk**, so when unsure, aim for **50–70%**.
-
-**What counts as a "figure"** (numerator):
-
-- ○ Markdown table
-- ○ Inline HTML diagram / card grid / SVG chart
-- ○ Generated or embedded image (`![]()` / `<img>` / `![bg]`)
-- ○ A substantive fenced code block (≥ 4 lines or that is the main content of the slide)
-- × Plain bullet lists, paragraphs, headings alone — these are text
-
-**Denominator** = content slides only. Exclude the cover (`title` / `title image`), every `section` divider, and the closing `lead`. Quote-only `lead` slides count as content.
-
-**Small-deck rounding**: when content-slide count is 4 or fewer, round the target up. E.g. for a live talk with 3 content slides at "70%+", treat the target as "all but at most one" (so 2 of 3 minimum, 3 of 3 ideal).
-
-### Picking the figure form — table first, inline second, generated image last
-
-Throwing every figure at image generation makes the deck stylistically uneven and heavy. Walk down this list in order:
-
-1. **Markdown table** — for comparisons and one-to-one mappings, see if a plain table is enough first (slide catalog #11).
-2. **Inline HTML / SVG** — simple structure diagrams, card grids, and bar charts fit the patterns in catalog #12–#14. Using `var(--gdg-*)` for colors makes them match the template automatically.
-3. **Generated image** — for complex concept diagrams, illustrations, Before/After figures, and anything the above can't express cleanly, generate an image with the `gen-image` skill and embed it (see below).
-
-### Generating figure images with the `gen-image` skill
-
-The quality of what `gen-image` (via codex CLI) returns depends almost entirely on the prompt. Keep these three rules at minimum:
-
-- **Match the in-figure text language to the slide language.** If the slide is in Japanese, the labels inside the figure must be in Japanese too; if the slide is in English, English. Mixing the two costs the reader cognitive effort. State this explicitly in the prompt (`All labels in Japanese` / `ラベルはすべて日本語`); codex defaults to English labels when left silent.
-- **Match the style to the template.** The GDG template is built around: white background, Google Sans-like sans-serif, four accent colors (blue `#4285F4`, red `#EA4335`, yellow `#FBBC04`, green `#34A853`), rounded corners, flat — no gradients or shadows. Specify this palette and the flat style every time. Photorealistic, watercolor, 3D, or heavy-gradient outputs will visibly clash with the rest of the deck.
-- **Be concrete enough.** A request like "a diagram of data flow" comes back as a decorative picture with no elements or arrows — "just a drawing." Spell out the element count, the label on each element, the arrow directions, and the layout (horizontal / vertical / 2x2 / radial).
-
-**Prompt template (English — codex is more stable in English):**
-
-```
-A [diagram type, e.g. flow diagram / Before-After comparison / concept map]
-illustrating [topic in one sentence].
-Language: [Japanese / English]   ← language used for every label in the figure
-Elements (left to right / top to bottom):
-- [element 1 with its label text]
-- [element 2 with its label text]
-- [element 3 with its label text]
-Relationships: [arrow from X to Y / X contains Y / ...].
-Layout: [horizontal flow / vertical stack / 2x2 matrix / radial / ...].
-Style: flat, clean, modern infographic on a pure white background,
-using the Google brand palette (blue #4285F4, red #EA4335,
-yellow #FBBC04, green #34A853) for accents, thin rounded
-rectangles, Google Sans-like sans-serif typography, no shadows
-or gradients.
-Aspect ratio: 16:9, designed to be embedded in a slide.
-All labels in the Language specified above. No logos, no watermark,
-no extra decorative text.
-```
-
-**Prompt template (Japanese version):**
-
-```
-[図の種類: フロー図 / Before-After 比較 / 概念図 など] を生成してください。
-テーマ: [一文で要約]
-Language: [日本語 / 英語]   ← 図中のすべてのラベルに使う言語
-含める要素 (配置順):
-- [要素 1 とそのラベル]
-- [要素 2 とそのラベル]
-- [要素 3 とそのラベル]
-要素間の関係: [X から Y への矢印 / X が Y を含む / ...]
-レイアウト: [横方向のフロー / 縦並び / 2x2 / 放射状 / ...]
-スタイル: 白背景・フラット・モダンなインフォグラフィック。
-アクセントカラーは Google ブランドパレット
-(青 #4285F4・赤 #EA4335・黄 #FBBC04・緑 #34A853)、
-角丸の長方形、Google Sans に近いサンセリフ書体、
-影やグラデーションは使わない。
-アスペクト比 16:9、スライド埋め込み用。
-ラベルはすべて上で指定した Language に揃える。
-ロゴ・透かし・装飾的なテキストは入れない。
-```
-
-**Example — Before/After figure for a Japanese training deck:**
-
-> Generate a Before/After comparison figure for a Japanese-language slide.
-> Language: 日本語 (all labels in Japanese).
-> Left "Before": a rounded box labeled 「README だけ・ローカルでしか動かない」 with a red `#EA4335` accent.
-> Right "After": a rounded box labeled 「自動 CI / クラウドにデプロイ済み」 with a green `#34A853` accent.
-> Center: a thick right-pointing arrow in blue `#4285F4`.
-> Style: white background, flat, Google Sans-like typography, no shadows, 16:9.
-> No logos, no watermarks, no extra text.
-
-**Operational notes when calling `gen-image`:**
-
-- `gen-image` writes to `./images/` under the current working directory. After generation, move the file into `<content-name>/img/` (`mv ./images/foo.png <content-name>/img/`) and reference it from `slide.md`.
-- One `codex exec` call produces exactly one file. For variations, call it multiple times with different filenames.
-- If the result comes back with stray logos or unintended text, add a stronger `no logos, no watermark, no extra text` clause and regenerate. If it still leaks, drop one or two elements from the request — fewer elements tend to come back cleaner.
-
-## Available CSS variables
-
-Defined in `.marp/gdg.css`. Use these instead of hardcoding hex codes so the deck stays on-brand:
+## CSS variables (use these, not raw hex)
 
 | Variable          | Value     | Typical use                       |
 | ----------------- | --------- | --------------------------------- |
@@ -367,89 +79,22 @@ Defined in `.marp/gdg.css`. Use these instead of hardcoding hex codes so the dec
 | `--gdg-green`     | `#34A853` | section green, success            |
 | `--gdg-ink`       | `#1A1A1A` | dark text (used on yellow bgs)    |
 
-## Assets you can reuse
+## Reusable assets
 
-- `.marp/assets/gdg_logo.png` — official logo. Reference as `assets/gdg_logo.png` from `.marp/template.md`'s own location, or copy into `<content-name>/img/` and reference as `img/gdg_logo.png` from `<content-name>/slide.md`.
-- `.marp/assets/GoogleSans-Variable.ttf` / `GoogleSans-Italic-Variable.ttf` — bundled fonts already loaded by `gdg.css`.
+- `.marp/assets/gdg_logo.png` — official logo. Either reference as `assets/gdg_logo.png` from `.marp/template.md`'s location, or copy into `<content-name>/img/` and reference as `img/gdg_logo.png` from `<content-name>/slide.md`.
+- `.marp/assets/GoogleSans-Variable.ttf` / `GoogleSans-Italic-Variable.ttf` — already loaded by `gdg.css`.
 
-## 日本語スライドを自然に書く
+## Things that commonly break decks
 
-このリポジトリのスライドは日本語の聴衆向けに登壇で読み上げ / 投影されます。Claude が素朴に書く日本語は AI 感が滲み出やすく、聞き手・読み手の集中を削ぎます。以下のクセを意識すると、人が書いたように読めます。
-
-### 句点 (`。`) は最小限にする
-
-スライドの本文・箇条書き・引用・キャプション、**タイトルスライドのサブタイトル / 日付 / 所属、フッター、注釈** — つまり聴衆が読むすべての要素 — の末尾 `。` は基本的に外します。視覚的に冗長で、口頭発表の朗読感が出るためです。
-
-数値目安はデッキの長さに応じて変えます:
-
-- 〜 5 スライド程度の短いデッキ: **0 個でも自然**。無理に挿入しない
-- 10 スライド前後の通常デッキ: **0〜2 個**。下のいずれかに該当する箇所が自然に出てきたときだけ残す
-- 20 スライド超の長尺・解説中心デッキ: **2〜4 個**。長い説明文や引用が増えるので相応に増える
-
-`。` を残すのに向く箇所 (どの長さでも共通):
-
-- 3 行以上のパラグラフで文を区切る必要があるとき
-- 1 文の中に複数の主張が連なる長い説明文 (「〜なので、〜です」が 2 つ以上)
-- 引用文がもともと `。` で終わっている (原文の体裁を保つ)
-
-該当箇所がなければ無理に `。` を作らないこと。`!` `?` は感情の起伏を出したいところで積極的に使って構いません。
-
-### 体言止めを避けて丁寧語の動詞で終える
-
-AI が書く日本語は名詞で終わる文 (体言止め) や常体 (〜する) を多用しがちです。スライドでは聞き手に呼びかける場面が多いので、丁寧語の動詞 (ましょう / です / ます / してください) で揃えると一気に自然になります。
-
-| ❌ AI 感のある書き方                | ✅ 自然な書き方                          |
-| ----------------------------- | --------------------------------- |
-| これで合格。                        | この 3 つができれば OK!                   |
-| データを保存する場所。                   | データを保存しておく場所です                    |
-| 症状から逆引きできるようになろう。             | 症状から逆算できるようになりましょう!               |
-| 必ずブランチを切ってから作業。               | 必ずブランチを切ってから作業しましょう!              |
-| 全員で実際に手を動かす。                  | 全員で実際に手を動かしてみましょう!                |
-| API 通信の様子を見る。                 | API 通信の様子を確認できます                  |
-
-### `!` で熱量を出す
-
-登壇者が自然に声を張る箇所 — 励まし・結論・呼びかけ・ハイライト — は `!` で締めると勢いが伝わります。`。` 終わりだと淡々と読み上げているように見えます。
-
-- 全員で実際に手を動かしてみましょう!
-- 30 分で進まなければ、すぐ声をかけてください!
-- 文字起こしより、画像をそのまま投げる方が早いです!
-
-### 翻訳調・ビジネス文書調の言い回しを置き換える
-
-AI らしさが出る典型パターンです。聞き手が口頭で言いそうな形に直します。
-
-- 「〜することができます」 → 「〜できます」
-- 「〜という形になります」 → そもそも省く / 言い換える
-- 「時間が崩れます」「印象を与えます」「重要となります」 → 直訳調なので避ける
-- 過剰な「まず / 次に / 最後に」「〜であり、〜であり」 → 1〜2 個に絞る
-
-例: 「研修中に環境構築すると時間が崩れます」 → 「スムーズな進行のため、事前に環境構築をお願いします!」
-
-### 1 スライド内で文末を揃える
-
-同じ箇条書きの中で「〜する」「〜しましょう」「〜です」「体言止め」が混ざるとちぐはぐに見えます。スライドごとに文末スタイルを決めて、その中では揃えます。
-
-### なぜここまでこだわるか
-
-スライドは口頭発表とセットで読まれるので、文末ひとつで「人が話している」感じか「資料を朗読している」感じかが決まります。Claude のデフォルトは後者に寄りやすいので、最初から上のクセを適用しておくと推敲ラウンドが要らなくなります。
-
-## Things that will surprise you
-
-- **`title` vs `lead`**: the cover uses `title`, not `lead`. `lead` is for intermediate big-text slides like "Welcome", quotes, and "Thank you!".
-- **No `card`, `quote`, `flow`, or `chart` classes**: build those with inline HTML and CSS variables. Don't invent new `_class` names unless you also add CSS to `gdg.css`.
-- **`split` heading spans both columns**: the `h1`/`h2` is set to `grid-column: 1 / -1` in CSS. Don't try to put it inside a column.
-- **`.fit` must be a direct child of `section`**: nesting it inside another `<div>` breaks the height calculation and the shrink does nothing.
-- **Images in `split`**: column width is ~half the slide. Use explicit `![w:480]` or similar — large images otherwise overflow.
+- **`title` ≠ `lead`**: the cover uses `title`. `lead` is for *interior* big-text slides (Welcome / quote / Thank you!). Mixing them up gives a wrong-looking cover.
+- **`split` heading inside a column**: don't — the heading spans both columns by CSS rule. Put it before the column content, not nested.
+- **`split` images overflow**: column width ≈ half the slide. Always use explicit `![w:480]` (or smaller) for images inside `split`.
+- **Inventing new `_class` names**: only the classes listed above exist in `gdg.css`. New names need a CSS change.
 
 ## Building
-
-From the project root:
 
 ```bash
 make slide <content-name>/slide.md <content-name>/slide/index.html
 ```
 
-This invokes Marp CLI with `--theme-set .marp/gdg.css --html`. The `--html` flag is required because the template and most slide types use inline HTML.
-
-Generated HTML is **committed** (GitHub Pages serves it directly at `https://gdsc-osaka.github.io/education/<content-name>/slide/`).
+This calls Marp CLI with `--theme-set .marp/gdg.css --html`. `--html` is required — the template and most inline patterns contain raw HTML. The generated HTML is **committed** because GitHub Pages serves it directly at `https://gdsc-osaka.github.io/education/<content-name>/slide/`.
