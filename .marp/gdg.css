@@ -42,7 +42,7 @@ section {
                'Yu Gothic UI', 'Meiryo', sans-serif;
   background-color: var(--gdg-bg);
   color: var(--gdg-text);
-  font-size: 28px;
+  font-size: 22px;
   line-height: 1.55;
   padding: 64px 80px 70px;
   letter-spacing: 0.005em;
@@ -50,9 +50,21 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  /* Japanese line-break handling: keep CJK runs intact so strings like
+     "スマホアプリを作ろう" don't split mid-character. overflow-wrap
+     permits breaks only for unavoidably long runs that would overflow. */
+  word-break: keep-all;
+  line-break: strict;
+  overflow-wrap: anywhere;
   /* Expose Marpit's page number as a CSS variable so it can be rendered
      alongside the footer text via footer::after. */
   --page-number: attr(data-marpit-pagination);
+}
+
+h1, h2, h3, h4 {
+  /* Balance multi-line headings so Japanese titles wrap to roughly equal
+     line lengths instead of leaving an orphaned tail. */
+  text-wrap: balance;
 }
 
 /* Brand block at bottom-left: GDG icon + "Google Developer Group" text */
@@ -69,7 +81,7 @@ section::before {
   background-position: left center;
   background-size: 24px 24px;
   color: var(--gdg-muted);
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -81,7 +93,7 @@ section::after {
   left: auto;
   bottom: 24px;
   color: var(--gdg-muted);
-  font-size: 14px;
+  font-size: 11px;
 }
 
 /* When a footer is set, suppress the standalone page number — it is
@@ -99,7 +111,7 @@ h1, h2, h3, h4 {
 }
 
 h1 {
-  font-size: 56px;
+  font-size: 45px;
   line-height: 1.15;
   border-bottom: 4px solid var(--gdg-blue);
   padding-bottom: 0.2em;
@@ -107,12 +119,12 @@ h1 {
 }
 
 h2 {
-  font-size: 42px;
+  font-size: 34px;
   line-height: 1.2;
 }
 
-h3 { font-size: 30px; color: var(--gdg-muted); font-weight: 500; }
-h4 { font-size: 24px; color: var(--gdg-muted); font-weight: 500; }
+h3 { font-size: 24px; color: var(--gdg-muted); font-weight: 500; }
+h4 { font-size: 19px; color: var(--gdg-muted); font-weight: 500; }
 
 /* ---------- Body ---------- */
 p { margin: 0 0 0.7em; }
@@ -159,7 +171,7 @@ pre {
   color: #F8F9FA;
   padding: 0.9em 1.1em;
   border-radius: 8px;
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1.45;
   overflow: auto;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
@@ -234,7 +246,7 @@ tr:nth-child(even) td { background: var(--gdg-surface); }
 /* ---------- Footer ---------- */
 footer {
   color: var(--gdg-muted);
-  font-size: 16px;
+  font-size: 13px;
   left: auto;
   right: 40px;
   bottom: 24px;
@@ -246,8 +258,22 @@ footer::after {
   content: var(--page-number);
   display: inline-block;
   margin-left: 0.6em;
-  font-size: 14px;
+  font-size: 11px;
   color: var(--gdg-muted);
+}
+
+/* ---------- Decoration: normal content slides ----------
+   Hash + 3-dots stack on the right edge for the default layout.
+   Excluded layouts override `background` or have their own decoration. */
+section:not(.title):not(.lead):not(.section):not(.invert):not(.split) {
+  background-image:
+    url("./assets/shapes/hash_green.png"),
+    url("./assets/shapes/3dots_green_halftone.png");
+  background-repeat: no-repeat, no-repeat;
+  background-position:
+    right 90px top 45%,
+    right 110px bottom 110px;
+  background-size: 180px auto, 140px auto;
 }
 
 /* ---------- Layout: title slide ----------
@@ -260,10 +286,10 @@ footer::after {
 */
 section.title {
   background-color: var(--gdg-bg);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 80'><path d='M10,30 L60,30 L60,15 L115,40 L60,65 L60,50 L10,50 Z' fill='%234285F4' stroke='%23000' stroke-width='5' stroke-linejoin='round' stroke-linecap='round'/></svg>");
+  background-image: url("./assets/shapes/right_arrow_yellow.png");
   background-repeat: no-repeat;
-  background-position: right 100px bottom 90px;
-  background-size: 200px auto;
+  background-position: right 80px bottom 80px;
+  background-size: 240px auto;
   justify-content: center;
   text-align: left;
   padding: 200px 100px 180px;
@@ -282,7 +308,7 @@ section.title::before {
   background-position: left center;
   display: flex;
   align-items: center;
-  font-size: 26px;
+  font-size: 21px;
   font-weight: 500;
   color: var(--gdg-text);
   letter-spacing: 0.005em;
@@ -297,14 +323,14 @@ section.title::after {
   bottom: auto;
   left: 152px;
   right: auto;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--gdg-university-color);
   letter-spacing: 0.005em;
 }
 
 section.title h1 {
-  font-size: 96px;
+  font-size: 77px;
   line-height: 1.05;
   font-weight: 300;
   border-bottom: none;
@@ -318,14 +344,14 @@ section.title h1 {
 section.title h1 strong { font-weight: 700; }
 
 section.title h2 {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 400;
   color: var(--gdg-muted);
   margin: 24px 0 0;
 }
 
 section.title p {
-  font-size: 24px;
+  font-size: 19px;
   font-weight: 700;
   color: var(--gdg-ink);
   margin: 36px 0 0;
@@ -341,9 +367,9 @@ section.title.image {
   column-gap: 60px;
   align-items: center;
   padding: 200px 80px 200px 100px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 80'><path d='M10,30 L60,30 L60,15 L115,40 L60,65 L60,50 L10,50 Z' fill='%23EA4335' stroke='%23000' stroke-width='5' stroke-linejoin='round' stroke-linecap='round'/></svg>");
-  background-position: left 100px bottom 90px;
-  background-size: 180px auto;
+  background-image: url("./assets/shapes/right_arrow_yellow.png");
+  background-position: left 80px bottom 80px;
+  background-size: 200px auto;
 }
 
 section.title.image::after {
@@ -353,7 +379,7 @@ section.title.image::after {
 section.title.image h1 {
   grid-column: 1;
   grid-row: 1;
-  font-size: 72px;
+  font-size: 58px;
   align-self: center;
   max-width: 100%;
 }
@@ -383,7 +409,7 @@ section.lead {
 }
 
 section.lead h1 {
-  font-size: 64px;
+  font-size: 51px;
   border-bottom: none;
 }
 
@@ -407,11 +433,11 @@ section.lead h1::after {
    quotation marks: green opening top-left, cream-yellow closing bottom-right. */
 section.lead:has(blockquote) {
   background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><text x='100' y='195' font-family='Arial Black, Helvetica, sans-serif' font-size='320' font-weight='900' text-anchor='middle' fill='%2334A853' stroke='%23000' stroke-width='8' paint-order='stroke'>%E2%80%9C</text></svg>"),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><g transform='rotate(180 100 100)'><text x='100' y='195' font-family='Arial Black, Helvetica, sans-serif' font-size='320' font-weight='900' text-anchor='middle' fill='%23FBE38A' stroke='%23000' stroke-width='8' paint-order='stroke'>%E2%80%9C</text></g></svg>");
+    url("./assets/shapes/double_quote_open_green.png"),
+    url("./assets/shapes/double_quote_close_green.png");
   background-repeat: no-repeat, no-repeat;
   background-position: 80px 60px, right 80px bottom 60px;
-  background-size: 230px 230px, 230px 230px;
+  background-size: 180px auto, 180px auto;
 }
 
 section.lead blockquote {
@@ -419,7 +445,7 @@ section.lead blockquote {
   border-left: none;
   color: var(--gdg-ink);
   font-style: normal;
-  font-size: 56px;
+  font-size: 45px;
   line-height: 1.3;
   font-weight: 400;
   padding: 0 60px;
@@ -434,7 +460,7 @@ section.lead blockquote em { font-style: normal; }
 section.lead blockquote p { margin: 0; }
 
 section.lead blockquote p:last-child:not(:only-child) {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 600;
   color: var(--gdg-ink);
   margin-top: 36px;
@@ -453,7 +479,7 @@ section.section h2 {
   border-bottom: none;
 }
 
-section.section h1 { font-size: 80px; }
+section.section h1 { font-size: 64px; }
 
 section.section::before { color: rgba(255, 255, 255, 0.95); }
 section.section::after  { color: rgba(255, 255, 255, 0.85); }
