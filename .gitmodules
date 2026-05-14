@@ -1,0 +1,3 @@
+[submodule "team-dev-onboarding/example"]
+	path = team-dev-onboarding/example
+	url = https://github.com/gdsc-osaka/react-example.git

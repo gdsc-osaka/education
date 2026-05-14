@@ -232,11 +232,11 @@ commit → push → PR → review
 リポジトリを自分の PC に持ってきます
 
 ```bash
-git clone https://github.com/xxx/yyy.git
-cd yyy
+git clone https://github.com/gdsc-osaka/react-example.git
+cd react-example
 ```
 
-> URL はチームから配布されます
+> 今日はこのリポジトリを使います!
 
 ---
 
@@ -245,10 +245,10 @@ cd yyy
 `main` では作業しません! **最初に**自分のブランチを作りましょう
 
 ```bash
-git switch -c feature/first-pr
+git switch -c feature/add-<your-name>
 ```
 
-> `git status` で今いるブランチを確認できます
+> ブランチ名がカブらないよう、`<your-name>` は自分の名前に置き換えましょう
 
 ---
 
@@ -261,7 +261,7 @@ npm install
 npm run dev
 ```
 
-ブラウザで `http://localhost:3000` を開いてみましょう!
+ブラウザで `http://localhost:5173` を開いてみましょう!
 
 ---
 
@@ -273,16 +273,20 @@ npm run dev
 
 ---
 
-## Step 4. 文言を修正
+## Step 4. 自分の名前を追加
 
-例として、ページのタイトルを変えてみましょう
+`src/App.jsx` の `participants` 配列に**自分の名前**を追加しましょう
 
 ```diff
-- <h1>Hello</h1>
-+ <h1>Hello World</h1>
+  const participants = [
+    'Alice',
++   'YOUR_NAME',
+  ]
 ```
 
-ブラウザをリロードして変わっているか確認！
+ブラウザをリロードして、自分の名前が表示されたら成功!
+
+> 全員分の名前が**最終的に main に並ぶ**のがゴールです
 
 ---
 
@@ -292,7 +296,7 @@ npm run dev
 
 ```bash
 git add .
-git commit -m "fix: change title text"
+git commit -m "feat: add <your-name> to participants"
 ```
 
 > コミットメッセージは「**何をしたか**」を短く書きましょう
@@ -304,8 +308,8 @@ git commit -m "fix: change title text"
 自分の変更を GitHub に送ります
 
 ```bash
-git push -u origin feature/first-pr  # 初回
-git push                             # 2 回目以降
+git push -u origin feature/add-<your-name>  # 初回
+git push                                    # 2 回目以降
 ```
 
 > 初回は `-u origin <ブランチ名>` が必要です!
