@@ -20,7 +20,7 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 %:
 	@:
 
-.PHONY: claat slide
+.PHONY: claat slide slide-pdf
 
 # Export a claat codelab. Usage:
 #   make claat path/to/codelab.md path/to/output
@@ -49,3 +49,12 @@ slide:
 	  exit 2; \
 	fi
 	$(MARP) --theme-set $(MARP_THEME) --html "$(word 1,$(ARGS))" -o "$(if $(word 2,$(ARGS)),$(word 2,$(ARGS)),$(patsubst %.md,%.html,$(word 1,$(ARGS))))"
+
+# Export a Marp deck to PDF. Usage:
+#   make slide-pdf path/to/deck.md [path/to/deck.pdf]
+slide-pdf:
+	@if [ -z "$(ARGS)" ]; then \
+	  echo "Usage: make slide-pdf path/to/deck.md [path/to/deck.pdf]"; \
+	  exit 2; \
+	fi
+	$(MARP) --theme-set $(MARP_THEME) --html --pdf --allow-local-files "$(word 1,$(ARGS))" -o "$(if $(word 2,$(ARGS)),$(word 2,$(ARGS)),$(patsubst %.md,%.pdf,$(word 1,$(ARGS))))"
