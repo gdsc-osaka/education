@@ -164,6 +164,102 @@ $ marp template.md --pdf
 
 ---
 
+<!-- _class: split -->
+
+## Left image + right text
+
+![w:480](assets/gdg_logo.png)
+
+- Image lands in the left column (it appears first in source order)
+- Text bullets flow into the right column
+- Use `![w:480]` to keep the image inside the column
+
+---
+
+<!-- _class: split -->
+
+## Right image + left text
+
+- Put the text block first in source order
+- Then the image — it falls into the right column
+- Same `split` class, just swap the order
+
+![w:480](assets/gdg_logo.png)
+
+---
+
+![bg cover](assets/gdg_logo.png)
+
+<!-- _class: invert -->
+
+## Full-bleed image
+
+Use `![bg cover](...)` for a key visual. `bg`, `bg fit`, `bg cover`, and `bg left`/`bg right` cover the common cases.
+
+---
+
+<!-- _class: lead -->
+
+> "The best way to predict the future is to invent it."
+>
+> — *Alan Kay*
+
+---
+
+## Diagram / flow
+
+<div style="display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 32px;">
+  <div style="padding: 24px 32px; border: 2px solid var(--gdg-blue); border-radius: 12px; font-weight: 600;">Idea</div>
+  <div style="font-size: 40px; color: var(--gdg-blue);">→</div>
+  <div style="padding: 24px 32px; border: 2px solid var(--gdg-green); border-radius: 12px; font-weight: 600;">Build</div>
+  <div style="font-size: 40px; color: var(--gdg-green);">→</div>
+  <div style="padding: 24px 32px; border: 2px solid var(--gdg-yellow); border-radius: 12px; font-weight: 600;">Ship</div>
+  <div style="font-size: 40px; color: var(--gdg-yellow);">→</div>
+  <div style="padding: 24px 32px; border: 2px solid var(--gdg-red); border-radius: 12px; font-weight: 600;">Learn</div>
+</div>
+
+Use inline HTML, an exported Mermaid image, or an SVG for process diagrams.
+
+---
+
+## Chart / graph
+
+<svg viewBox="0 0 600 280" style="width: 100%; height: 280px;">
+  <line x1="60" y1="240" x2="580" y2="240" stroke="#5F6368" stroke-width="2"/>
+  <line x1="60" y1="20"  x2="60"  y2="240" stroke="#5F6368" stroke-width="2"/>
+  <rect x="100" y="160" width="60" height="80"  fill="var(--gdg-blue)"/>
+  <rect x="200" y="110" width="60" height="130" fill="var(--gdg-red)"/>
+  <rect x="300" y="70"  width="60" height="170" fill="var(--gdg-yellow)"/>
+  <rect x="400" y="40"  width="60" height="200" fill="var(--gdg-green)"/>
+  <text x="130" y="260" text-anchor="middle" font-size="16">2023</text>
+  <text x="230" y="260" text-anchor="middle" font-size="16">2024</text>
+  <text x="330" y="260" text-anchor="middle" font-size="16">2025</text>
+  <text x="430" y="260" text-anchor="middle" font-size="16">2026</text>
+</svg>
+
+Inline SVG keeps charts crisp at any export size; pre-rendered images also work.
+
+---
+
+## Takeaways
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px;">
+  <div style="padding: 24px; border-top: 4px solid var(--gdg-blue); background: #F8F9FA; border-radius: 8px;">
+    <h3 style="margin-top: 0;">Community</h3>
+    <p>GDG is global, local, and open to everyone.</p>
+  </div>
+  <div style="padding: 24px; border-top: 4px solid var(--gdg-green); background: #F8F9FA; border-radius: 8px;">
+    <h3 style="margin-top: 0;">Build</h3>
+    <p>Web, mobile, cloud, and AI — pick your stack.</p>
+  </div>
+  <div style="padding: 24px; border-top: 4px solid var(--gdg-yellow); background: #F8F9FA; border-radius: 8px;">
+    <h3 style="margin-top: 0;">Connect</h3>
+    <p>Meetups, study jams, and hands-on workshops.</p>
+  </div>
+</div>
+
+---
+
 <!-- _class: lead -->
 
 # Thank you!
