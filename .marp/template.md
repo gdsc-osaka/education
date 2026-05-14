@@ -211,9 +211,9 @@ Use `![bg cover](...)` for a key visual. `bg`, `bg fit`, `bg cover`, and `bg lef
 
 <!-- _class: lead -->
 
-> "The best way to predict the future is to invent it."
+> Good design is as **little** design as possible.
 >
-> — *Alan Kay*
+> - Dieter Rams
 
 ---
 

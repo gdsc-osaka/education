@@ -366,6 +366,43 @@ section.lead h1::after {
   border-radius: 3px;
 }
 
+/* When the lead slide contains a blockquote, frame it with decorative
+   quotation marks: green opening top-left, cream-yellow closing bottom-right. */
+section.lead:has(blockquote) {
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><text x='100' y='195' font-family='Arial Black, Helvetica, sans-serif' font-size='320' font-weight='900' text-anchor='middle' fill='%2334A853' stroke='%23000' stroke-width='8' paint-order='stroke'>%E2%80%9C</text></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><g transform='rotate(180 100 100)'><text x='100' y='195' font-family='Arial Black, Helvetica, sans-serif' font-size='320' font-weight='900' text-anchor='middle' fill='%23FBE38A' stroke='%23000' stroke-width='8' paint-order='stroke'>%E2%80%9C</text></g></svg>");
+  background-repeat: no-repeat, no-repeat;
+  background-position: 80px 60px, right 80px bottom 60px;
+  background-size: 230px 230px, 230px 230px;
+}
+
+section.lead blockquote {
+  background: transparent;
+  border-left: none;
+  color: var(--gdg-ink);
+  font-style: normal;
+  font-size: 56px;
+  line-height: 1.3;
+  font-weight: 400;
+  padding: 0 60px;
+  margin: 0 auto;
+  max-width: 75%;
+  text-align: center;
+}
+
+section.lead blockquote strong { font-weight: 700; }
+section.lead blockquote em { font-style: normal; }
+
+section.lead blockquote p { margin: 0; }
+
+section.lead blockquote p:last-child:not(:only-child) {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--gdg-ink);
+  margin-top: 36px;
+}
+
 /* ---------- Layout: section divider ---------- */
 section.section {
   background: var(--gdg-blue);
