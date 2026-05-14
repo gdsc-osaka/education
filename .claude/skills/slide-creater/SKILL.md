@@ -59,11 +59,23 @@ The template embeds a `<script>` block right after the frontmatter. It scales an
 
 The `.fit` div has to be a direct child of `section` — don't nest it inside another wrapper.
 
+### The `<style>` block with `--gdg-university`
+
+The template also embeds a `<style>` block right after the `<script>`:
+
+```html
+<style>
+:root { --gdg-university: 'University of Osaka'; }
+</style>
+```
+
+This variable drives the colored university name rendered on every title slide. **Keep the block; edit the string only if the deck is for a different chapter** (e.g. `'University of Kyoto'`). Removing the block makes title slides render without the chapter name.
+
 ## Slide type catalog
 
 Pick a class by setting `<!-- _class: <name> -->` at the top of a slide. `_class` (with underscore) applies to that slide only; `class` without underscore applies to all following slides.
 
-### 1. Title slide — `_class: title`
+### 1. Title slide — `_class: title` (optional `image` modifier)
 
 The deck's cover. Big title, subtitle, and metadata.
 
@@ -76,6 +88,18 @@ The deck's cover. Big title, subtitle, and metadata.
 GDG on Campus University of Osaka
 2026-04-28
 ```
+
+**Modifier `title image`**: adds a logo / hero image on the title slide. Place a single image right after the heading. Use when the cover needs a visual anchor:
+
+```markdown
+<!-- _class: title image -->
+
+# Chapter Title
+
+![](assets/gdg_logo.png)
+```
+
+`title` and `title image` are the only documented variants — don't add others without extending `gdg.css`.
 
 ### 2. Lead slide — `_class: lead`
 
@@ -242,6 +266,18 @@ The right amount depends on the deck type. Measure by slide: "of the content sli
 | Live talk (spoken presentation)        |               70%+ ok  | Large figures, photos, simple charts                  |
 
 Decks built in this repo are almost always **training / explanatory** or **live talk**, so when unsure, aim for **50–70%**.
+
+**What counts as a "figure"** (numerator):
+
+- ○ Markdown table
+- ○ Inline HTML diagram / card grid / SVG chart
+- ○ Generated or embedded image (`![]()` / `<img>` / `![bg]`)
+- ○ A substantive fenced code block (≥ 4 lines or that is the main content of the slide)
+- × Plain bullet lists, paragraphs, headings alone — these are text
+
+**Denominator** = content slides only. Exclude the cover (`title` / `title image`), every `section` divider, and the closing `lead`. Quote-only `lead` slides count as content.
+
+**Small-deck rounding**: when content-slide count is 4 or fewer, round the target up. E.g. for a live talk with 3 content slides at "70%+", treat the target as "all but at most one" (so 2 of 3 minimum, 3 of 3 ideal).
 
 ### Picking the figure form — table first, inline second, generated image last
 
