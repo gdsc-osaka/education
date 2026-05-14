@@ -52,6 +52,7 @@ size: 16:9
 </style>
 
 <!-- _class: title -->
+<!-- _paginate: false -->
 
 # Chapter **Title** Goes Here.
 
@@ -60,10 +61,11 @@ This is where the subtitle can be displayed.
 ---
 
 <!-- _class: title image -->
+<!-- _paginate: false -->
 
 # Chapter **Title** Goes Here.
 
-![](assets/gdg_logo.png)
+![](../../assets/gdg_logo.png)
 
 ---
 
@@ -203,7 +205,7 @@ $ marp template.md --pdf
 
 ## Left image + right text
 
-![w:480](assets/gdg_logo.png)
+![w:480](../../assets/gdg_logo.png)
 
 - Image lands in the left column (it appears first in source order)
 - Text bullets flow into the right column
@@ -219,11 +221,11 @@ $ marp template.md --pdf
 - Then the image — it falls into the right column
 - Same `split` class, just swap the order
 
-![w:480](assets/gdg_logo.png)
+![w:480](../../assets/gdg_logo.png)
 
 ---
 
-![bg cover](assets/gdg_logo.png)
+![bg cover](../../assets/gdg_logo.png)
 
 <!-- _class: invert -->
 

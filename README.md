@@ -4,10 +4,13 @@ Educational content for GDG on Campus University of Osaka. Sources are markdown;
 
 Published codelabs:
 
-- [ポートフォリオ Web サイト Workshop 2025](https://gdsc-osaka.github.io/education/portfolio-2025/index.html)
-- [ポートフォリオ Web サイト Workshop 2026](https://gdsc-osaka.github.io/education/portfolio-2026/index.html)
-- [ポートフォリオ Web サイト Workshop 2026 スライド](https://gdsc-osaka.github.io/education/portfolio-2026/slide/index.html)
-- [Vibe coding hands-on](https://gdsc-osaka.github.io/education/vibe-coding-hands-on/index.html)
+- [ポートフォリオ Web サイト Workshop 2025](https://gdsc-osaka.github.io/education/portfolio-2025/)
+- [ポートフォリオ Web サイト Workshop 2026](https://gdsc-osaka.github.io/education/portfolio-2026/)
+- [ポートフォリオ Web サイト Workshop 2026 スライド](https://gdsc-osaka.github.io/education/portfolio-2026/slide/)
+- [Vibe coding hands-on](https://gdsc-osaka.github.io/education/vibe-coding-hands-on/)
+- [Web アプリ チーム開発 はじめの一歩](https://gdsc-osaka.github.io/education/team-dev-onboarding/)
+- [Web アプリ チーム開発 スライド](https://gdsc-osaka.github.io/education/team-dev-onboarding/slide/)
+- [AI と Flutter で スマホアプリを作ろう スライド](https://gdsc-osaka.github.io/education/flutter-workshop/slide/)
 
 ## Setup
 

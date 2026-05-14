@@ -52,6 +52,7 @@ size: 16:9
 </style>
 
 <!-- _class: title -->
+<!-- _paginate: false -->
 
 # AI と Flutter で スマホアプリを作ろう
 
@@ -87,9 +88,11 @@ GDG on Campus University of Osaka
 
 ---
 
-<!-- _class: split -->
-
 ## 今日のスコープ
+
+<div class="container">
+
+<div class="col">
 
 ### やること
 
@@ -98,12 +101,20 @@ GDG on Campus University of Osaka
 - **Claude Code** でアプリを実装する
 - 自分のアイデアを **1 画面**で形にする
 
+</div>
+
+<div class="col">
+
 ### やらないこと
 
 - iOS / Android エミュレータの利用
 - Firebase / API 連携
 - 認証・データ永続化
 - 複数画面の遷移
+
+</div>
+
+</div>
 
 ---
 
@@ -117,7 +128,7 @@ GDG on Campus University of Osaka
 
 ## 完成イメージ① 読書メモ
 
-![bg right:45% fit](img/app-reading.png)
+![bg right:45% fit](../img/app-reading.png)
 
 読んだ本を **追加 / 一覧表示 / 削除**できるアプリ
 
@@ -131,7 +142,7 @@ GDG on Campus University of Osaka
 
 ## 完成イメージ② ランチルーレット
 
-![bg right:45% fit](img/app-roulette.png)
+![bg right:45% fit](../img/app-roulette.png)
 
 候補をいくつか入れて、ボタンで **ランダムに 1 つ**選ぶアプリ
 
@@ -240,7 +251,9 @@ claude
 
 ここから 1 つ選んでください!
 
-<div class="fit">
+<div class="container">
+
+<div class="col">
 
 - 今日の気分ログ
 - ランチ決定ルーレット
@@ -250,6 +263,11 @@ claude
 - 水分摂取トラッカー
 - 行きたいカフェリスト
 - 映画ウォッチリスト
+
+</div>
+
+<div class="col">
+
 - 英単語カード
 - 旅行先ガチャ
 - 服装メモ
@@ -257,6 +275,8 @@ claude
 - 推し活メモ
 - 睡眠メモ
 - 今日の一問クイズ
+
+</div>
 
 </div>
 
@@ -272,7 +292,7 @@ claude
 
 ## Flutter とは
 
-![bg right:35% fit](img/flutter-logo.png)
+![bg right:35% fit](../img/flutter-logo.png)
 
 Google が作っている **マルチプラットフォーム UI フレームワーク**です
 
@@ -299,7 +319,7 @@ Google が作っている **マルチプラットフォーム UI フレームワ
 
 ## すべては Widget
 
-![bg right:45% fit](img/widget-tree.png)
+![bg right:45% fit](../img/widget-tree.png)
 
 Flutter では **画面のすべてが Widget**です
 
@@ -310,9 +330,11 @@ Flutter では **画面のすべてが Widget**です
 
 ---
 
-<!-- _class: split -->
-
 ## Stateless と Stateful
+
+<div class="container">
+
+<div class="col">
 
 ### StatelessWidget
 
@@ -321,12 +343,20 @@ Flutter では **画面のすべてが Widget**です
 - ボタンやラベルなど
 - React の純粋なコンポーネント相当
 
+</div>
+
+<div class="col">
+
 ### StatefulWidget
 
 - 内部で状態を持つ
 - 値が変わると **再描画**する
 - カウンター / チェックボックスなど
 - 今回は **Riverpod に任せる**
+
+</div>
+
+</div>
 
 ---
 
@@ -385,7 +415,7 @@ class MyApp extends StatelessWidget {
 
 ## なぜ状態管理が必要?
 
-![bg right:50% fit](img/state-problem.png)
+![bg right:50% fit](../img/state-problem.png)
 
 - StatefulWidget だけだと、状態が **その Widget の中**に閉じる
 - 離れた Widget で同じ状態を見たいとき、**親から子へバケツリレー**になる
@@ -396,7 +426,7 @@ class MyApp extends StatelessWidget {
 
 ## Riverpod の三要素
 
-![bg right:45% fit](img/riverpod-flow.png)
+![bg right:45% fit](../img/riverpod-flow.png)
 
 今日覚えるのはこの 3 つだけです!
 

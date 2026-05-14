@@ -57,8 +57,8 @@ Apply via `<!-- _class: <name> -->` at the top of a slide (`_class` = this slide
 
 | Class                                                         | Use for                                                                                                     |
 | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `title`                                                       | The deck cover. First slide. Big title + subtitle + metadata.                                               |
-| `title image`                                                 | Cover with a logo/hero image — place a single `![](...)` right after the heading.                           |
+| `title`                                                       | The deck cover. First slide. Big title + subtitle + metadata. Pair with `<!-- _paginate: false -->` so the cover isn't numbered. |
+| `title image`                                                 | Cover with a logo/hero image — place a single `![](...)` right after the heading. Also pair with `<!-- _paginate: false -->`.   |
 | `lead`                                                        | Centered oversized heading. Use for interior "Welcome" beats, the closing "Thank you!", and quote slides (write the quote as a `>` blockquote on a `lead` slide — no dedicated quote class exists). |
 | `section`, `section yellow`, `section green`, `section red`   | Chapter divider with full-bleed background. Yellow uses dark ink (auto-picked). These four are the only documented variants. |
 | *(no class)*                                                  | Default heading + body. Markdown lists, paragraphs, tables, and fenced code blocks all work bare.            |
@@ -66,6 +66,33 @@ Apply via `<!-- _class: <name> -->` at the top of a slide (`_class` = this slide
 | `invert`                                                      | Light text on a dark background. Combine with `![bg cover](...)` for full-bleed images, or use alone for code-heavy slides.                                              |
 
 For full-bleed images use Marp's `![bg cover](...)` / `bg fit` / `bg left` / `bg right` directives (no class needed for the slide itself; combine with `_class: invert` if captions need light text).
+
+### Inline two-column: `.container` / `.col`
+
+For two columns *below* a heading and intro paragraph (instead of `split`'s heading-spans-both-columns grid), wrap the columns in inline divs on a default slide:
+
+```markdown
+# タイトル文字
+本文をここに書ける
+
+<div class="container">
+
+<div class="col">
+
+カラム1のコンテンツ
+
+</div>
+
+<div class="col">
+
+カラム2のコンテンツ
+
+</div>
+
+</div>
+```
+
+Blank lines around each `<div>` are required so Marp parses the inner markdown. Pick `split` when the heading should sit beside the columns and the two halves are equally weighted; pick `.container`/`.col` when you want a heading + lead-in above the split.
 
 There is no `card`, `quote`, `flow`, or `chart` class — build those with inline HTML using the CSS variables. The template shows working patterns for a flow diagram (flexbox row of rounded rects), a bar chart (inline `<svg>`), and a takeaway card grid (CSS `grid-template-columns`). Match those when you need a similar structure; Mermaid is not wired up, so render Mermaid externally and embed the image.
 
