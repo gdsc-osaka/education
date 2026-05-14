@@ -172,6 +172,43 @@ pre code {
   font-size: inherit;
 }
 
+/* highlight.js token colors, tuned for the dark `pre` background above. */
+.hljs-comment,
+.hljs-quote { color: #9AA0A6; font-style: italic; }
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-doctag,
+.hljs-name,
+.hljs-tag { color: #F28B82; }
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta-string { color: #81C995; }
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-deletion { color: #FDD663; }
+.hljs-title,
+.hljs-function .hljs-title,
+.hljs-built_in,
+.hljs-class .hljs-title { color: #8AB4F8; }
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attr,
+.hljs-property,
+.hljs-params { color: #C58AF9; }
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo { color: #78D9EC; }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 700; }
+
 /* ---------- Tables ---------- */
 table {
   border-collapse: collapse;
