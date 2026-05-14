@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-05-14T16:30:03+09:00",
+  "id": "team-dev-onboarding",
+  "duration": 125,
+  "title": "Web アプリ チーム開発 はじめの一歩",
+  "summary": "チーム開発に参加するための事前準備とハンズオン (clone → PR まで)",
+  "source": "team-dev-onboarding/claat.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "web",
+    "入門",
+    "github",
+    "react"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "team-dev-onboarding"
+}

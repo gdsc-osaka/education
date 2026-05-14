@@ -1,0 +1,495 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Web アプリ チーム開発 はじめの一歩</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="libs/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="team-dev-onboarding"
+                  title="Web アプリ チーム開発 はじめの一歩"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Codelab の概要" duration="5">
+        <p>この Codelab では、Web アプリのチーム開発に<strong>初めて参加する人</strong>を対象に、開発に必要なツールのインストールから、実際に Pull Request（PR）を 1 回出すまでの流れを体験します。</p>
+<p>座学のスライドだけでは細かい手順までは追いきれないので、こちらの Codelab に沿って<strong>自分のペースで</strong>手を動かしてみてください。</p>
+<p><strong>この Codelab で達成すること:</strong></p>
+<ul>
+<li>チーム開発に必要なツール（Git, Node.js, VS Code）が動く状態を作る</li>
+<li>GitHub アカウントを準備する</li>
+<li>リポジトリを clone してブランチを切る</li>
+<li>React のコードを少しだけ編集して、ブラウザで確認する</li>
+<li>commit → push → Pull Request の流れを 1 周経験する</li>
+</ul>
+<p><strong>必要なもの:</strong></p>
+<ul>
+<li>インターネットに接続された PC（Windows または macOS）</li>
+<li>メールアドレス（GitHub アカウント作成用）</li>
+<li>受信できる電話番号 or 認証アプリ（GitHub の 2 段階認証用）</li>
+</ul>
+<aside class="warning"><p><strong>Note:</strong> すべてを完璧に理解する必要はありません。「だいたい流れが分かる」「困ったときに何を聞けばいいか分かる」状態を目指しましょう。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 1: 事前準備の全体像" duration="5">
+        <p>ハンズオンを始める前に、以下のツール / アカウントを揃えておきます。<strong>できれば前日まで</strong>に終わらせておくと当日スムーズです。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>#</p>
+</td><td colspan="1" rowspan="1"><p>準備するもの</p>
+</td><td colspan="1" rowspan="1"><p>確認コマンド</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>GitHub アカウント</p>
+</td><td colspan="1" rowspan="1"><p>ブラウザでログインできる</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>Git</p>
+</td><td colspan="1" rowspan="1"><p><code>git --version</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p>Node.js</p>
+</td><td colspan="1" rowspan="1"><p><code>node --version</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>4</p>
+</td><td colspan="1" rowspan="1"><p>VS Code</p>
+</td><td colspan="1" rowspan="1"><p>アプリを起動できる</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>5</p>
+</td><td colspan="1" rowspan="1"><p>ターミナル</p>
+</td><td colspan="1" rowspan="1"><p>開いてコマンドが打てる</p>
+</td></tr>
+</table>
+<p>それぞれのインストール手順を以下で詳しく説明します。</p>
+<aside class="special"><p><strong>Tip:</strong> すでにインストール済みの場合は、確認コマンドを打って表示されればスキップして構いません。バージョンが古い場合のみアップデートしてください。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 2: GitHub アカウントを準備する" duration="10">
+        <p>チーム開発のコード共有・PR レビュー・履歴管理は GitHub を中心に行います。</p>
+<h2 is-upgraded>アカウントを作る（未作成の人）</h2>
+<ol type="1">
+<li>ブラウザで <a href="https://github.com/signup" target="_blank">https://github.com/signup</a> を開きます。</li>
+<li>画面の指示に従って <strong>メールアドレス</strong>、<strong>パスワード</strong>、<strong>ユーザー名</strong> を入力します。 <ul>
+<li>ユーザー名は半角英数字とハイフンのみ。<strong>今後ずっと使う名前</strong>になるので、本名ベース or 普段使うハンドルネームなどがおすすめです。</li>
+</ul>
+</li>
+<li>登録したメールアドレスに 8 桁の認証コードが届くので、画面に入力します。</li>
+<li>プランは <strong>Free</strong> で OK です。</li>
+</ol>
+<h2 is-upgraded>ログインできることを確認する</h2>
+<ol type="1">
+<li>ブラウザで <a href="https://github.com/" target="_blank">https://github.com/</a> を開きます。</li>
+<li>右上にアイコンが表示されていれば、ログイン済みです。</li>
+</ol>
+<h2 is-upgraded>2 段階認証（2FA）を有効にする</h2>
+<p>2023 年以降、GitHub では 2 段階認証が<strong>必須</strong>です。後で push のときに詰まらないように先に設定しておきましょう。</p>
+<ol type="1">
+<li>右上のアイコン → <strong>Settings</strong> をクリック。</li>
+<li>左メニューから <strong>Password and authentication</strong> を選択。</li>
+<li><strong>Two-factor authentication</strong> の項目で <strong>Enable two-factor authentication</strong> をクリック。</li>
+<li>「Authenticator app（認証アプリ）」を選ぶのがおすすめです。 <ul>
+<li>スマホに <strong>Google Authenticator</strong> や <strong>Authy</strong> などを入れて QR コードを読み取ります。</li>
+</ul>
+</li>
+<li>表示されたリカバリーコードは<strong>必ず保存</strong>しておきましょう。スマホを失くした時の命綱です。</li>
+</ol>
+<aside class="warning"><p><strong>Warning:</strong> リカバリーコードを失くすと、アカウントに二度とログインできなくなる可能性があります。テキストファイルに保存する、印刷する、パスワードマネージャに入れるなど、必ず保管してください。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 3: Git をインストールする" duration="15">
+        <p>Git はコードのバージョン管理ツールです。OS ごとに手順が違うので、自分の環境を選んで進めてください。</p>
+<h2 is-upgraded>Windows の場合</h2>
+<ol type="1">
+<li><a href="https://git-scm.com/download/win" target="_blank">https://git-scm.com/download/win</a> にアクセスします。</li>
+<li>自動でインストーラのダウンロードが始まります（始まらなければページのリンクをクリック）。</li>
+<li>ダウンロードした <code>.exe</code> ファイルをダブルクリックして起動します。</li>
+<li>インストールオプションは<strong>基本的にデフォルトで OK</strong> ですが、以下だけ確認してください。 <ul>
+<li><strong>Adjusting your PATH environment</strong> → &#34;Git from the command line and also from 3rd-party software&#34; を選択</li>
+<li><strong>Default editor</strong> → 普段使うエディタ（迷ったら &#34;Use Visual Studio Code as Git&#39;s default editor&#34;）</li>
+<li><strong>Default branch name</strong> → &#34;Override the default branch name for new repositories&#34; にチェックし、<code>main</code> を入力</li>
+</ul>
+</li>
+<li>残りは <strong>Next</strong> を押し続けて <strong>Install</strong> をクリック。</li>
+</ol>
+<h2 is-upgraded>macOS の場合</h2>
+<p>macOS には Git が同梱されていますが、最新版を入れるには <strong>Homebrew</strong> がおすすめです。</p>
+<p><strong>Homebrew 未インストールの場合（先にこちら）:</strong></p>
+<ol type="1">
+<li>ターミナル（後述の STEP 6 で開き方を説明）を開きます。</li>
+<li>以下のコマンドを貼り付けて実行します。 <pre><code language="language-bash" class="language-bash">/bin/bash -c &#34;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)&#34;
+</code></pre>
+</li>
+<li>パスワードを聞かれたら、Mac のログインパスワードを入力（入力中は何も表示されませんが、ちゃんと入力されています）。</li>
+<li>完了後、画面の指示に従って <code>eval "$(/opt/homebrew/bin/brew shellenv)"</code> などの行をターミナルに貼り付けて実行します。</li>
+</ol>
+<p><strong>Git を入れる:</strong></p>
+<pre><code language="language-bash" class="language-bash">brew install git
+</code></pre>
+<aside class="warning"><p><strong>Note:</strong> Homebrew を使わない場合、macOS に最初から入っている Git でも今日のハンズオンには十分です。コマンドラインで <code>git --version</code> が動けば OK。</p></aside>
+<h2 is-upgraded>インストール確認</h2>
+<p>ターミナル（Mac）または PowerShell / コマンドプロンプト（Windows）を開いて、以下を実行します。</p>
+<pre><code language="language-bash" class="language-bash">git --version
+</code></pre>
+<p><code>git version 2.40.0</code> のように<strong>バージョン番号が表示されたら成功</strong>です。</p>
+<h2 is-upgraded>Git に名前とメールを設定する</h2>
+<p>コミットの履歴に残る情報なので、最初に設定しておきましょう。</p>
+<pre><code language="language-bash" class="language-bash">git config --global user.name &#34;Your Name&#34;
+git config --global user.email &#34;your-email@example.com&#34;
+</code></pre>
+<aside class="special"><p><strong>Tip:</strong> メールアドレスは GitHub に登録したものと<strong>同じ</strong>にしておくと、PR で「あなたのアイコン」がコミットに紐づきます。プライベートにしたい人は GitHub の Settings → Emails で <code>xxxxx+username@users.noreply.github.com</code> 形式のアドレスを取得できます。</p></aside>
+<p><strong>Troubleshooting: </strong><code>git: command not found</code> と出た場合、インストールが完了していないか、PATH が通っていません。ターミナルを一度閉じて開き直してから試してみてください。それでもダメなら経験者を呼びましょう。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 4: Node.js をインストールする" duration="10">
+        <p>Node.js は JavaScript を<strong>ブラウザ以外</strong>で動かすためのランタイムです。今日触る React のビルドや開発サーバー（<code>npm run dev</code>）で使います。</p>
+<h2 is-upgraded>バージョンの選び方</h2>
+<p>2 種類のバージョンが配布されていますが、迷ったら <strong>LTS（Long Term Support）版</strong> を選んでください。</p>
+<h2 is-upgraded>Windows / macOS 共通の手順</h2>
+<ol type="1">
+<li><a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a> にアクセスします。</li>
+<li><strong>LTS</strong> と書かれた緑色のボタンをクリックしてインストーラをダウンロードします。</li>
+<li>ダウンロードしたファイルを開き、画面の指示通りに <strong>Next</strong> / <strong>続ける</strong> を押していきます。</li>
+<li>最後に <strong>Install</strong> / <strong>インストール</strong> をクリック。</li>
+</ol>
+<h2 is-upgraded>macOS で Homebrew を使う場合</h2>
+<pre><code language="language-bash" class="language-bash">brew install node
+</code></pre>
+<h2 is-upgraded>インストール確認</h2>
+<p>ターミナル / PowerShell を<strong>一度閉じて開き直して</strong>から、以下を実行します。</p>
+<pre><code language="language-bash" class="language-bash">node --version
+npm --version
+</code></pre>
+<p><code>v20.x.x</code> のような表示が両方とも出れば成功です。</p>
+<p><strong>Troubleshooting: </strong><code>node: command not found</code> が出るときは、ターミナルの再起動が一番効きます。それでもダメな場合は PC 自体を再起動してみてください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 5: VS Code をインストールする" duration="10">
+        <p>コードを書くためのエディタです。チーム開発では拡張機能が豊富な VS Code が定番です。</p>
+<h2 is-upgraded>インストール手順</h2>
+<ol type="1">
+<li><a href="https://code.visualstudio.com/" target="_blank">https://code.visualstudio.com/</a> にアクセスします。</li>
+<li>自分の OS に合ったボタン（<strong>Download for Windows</strong> / <strong>Download for macOS</strong>）をクリックします。</li>
+<li>ダウンロードしたファイルを開いてインストールします。 <ul>
+<li>Windows: インストーラを実行。「<strong>PATH への追加</strong>」のチェックは入れたままにしておきましょう（デフォルトで ON）。</li>
+<li>macOS: ダウンロードした <code>.zip</code> を解凍し、出てきた <strong>Visual Studio Code.app</strong> を <strong>Applications フォルダ</strong> にドラッグ＆ドロップします。</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>おすすめ拡張機能（任意）</h2>
+<p>VS Code を起動して、左の四角アイコン（拡張機能）から以下を検索してインストールしておくと便利です。</p>
+<ul>
+<li><strong>Japanese Language Pack</strong> — メニューを日本語化</li>
+<li><strong>ESLint</strong> — JavaScript のミスを赤線で教えてくれる</li>
+<li><strong>Prettier</strong> — 保存時に自動整形</li>
+<li><strong>GitLens</strong> — Git の履歴をエディタ内で見やすく表示</li>
+</ul>
+<aside class="warning"><p><strong>Note:</strong> 拡張機能はあとから追加できます。今日は無理して入れなくても OK です。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 6: ターミナルを開けるようにする" duration="5">
+        <p>「ターミナル」とは、コマンドを打つための黒い画面のことです。Git / npm は基本的にここから操作します。</p>
+<h2 is-upgraded>macOS の場合</h2>
+<ul>
+<li><strong>Spotlight</strong>（Cmd + Space）を開いて <code>Terminal</code> と入力 → Enter</li>
+<li>または <strong>Launchpad</strong> → <strong>その他</strong> → <strong>ターミナル</strong></li>
+</ul>
+<h2 is-upgraded>Windows の場合</h2>
+<ul>
+<li><strong>スタートメニュー</strong> で <code>PowerShell</code> と検索して起動するのがおすすめ</li>
+<li>または <strong>Windows Terminal</strong>（Windows 11 では標準搭載）</li>
+</ul>
+<h2 is-upgraded>最低限のコマンド</h2>
+<table>
+<tr><td colspan="1" rowspan="1"><p>コマンド</p>
+</td><td colspan="1" rowspan="1"><p>役割</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>pwd</code></p>
+</td><td colspan="1" rowspan="1"><p>今いるフォルダの場所を表示</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>ls</code> (Mac) / <code>dir</code> (Windows)</p>
+</td><td colspan="1" rowspan="1"><p>今いるフォルダのファイル一覧</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>cd フォルダ名</code></p>
+</td><td colspan="1" rowspan="1"><p>フォルダに移動</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>cd ..</code></p>
+</td><td colspan="1" rowspan="1"><p>一つ上のフォルダに戻る</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>Ctrl + C</code></p>
+</td><td colspan="1" rowspan="1"><p>動いているコマンドを止める</p>
+</td></tr>
+</table>
+<p><strong>Tip: </strong><code>Ctrl + C</code> は<strong>最強の脱出ボタン</strong>です。何か変なコマンドを実行してしまったとき、固まったときは押せば大抵抜けられます。</p>
+<p>これで事前準備は完了です！ここからは当日のハンズオンに入ります。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 7: リポジトリを clone する" duration="10">
+        <p>ここからが当日のハンズオンです。まずは GitHub にあるリポジトリを自分の PC にコピー（clone）します。</p>
+<h2 is-upgraded>作業フォルダの場所を決める</h2>
+<p>clone したリポジトリは PC のどこかに置かれます。<strong>自分が分かる場所</strong>に置きましょう（例: <code>~/dev</code> や Documents の中）。</p>
+<p>ターミナルで作業フォルダに移動しておきます。</p>
+<p><strong>macOS の例:</strong></p>
+<pre><code language="language-bash" class="language-bash">mkdir -p ~/dev
+cd ~/dev
+</code></pre>
+<p><strong>Windows (PowerShell) の例:</strong></p>
+<pre><code language="language-powershell" class="language-powershell">mkdir $HOME\dev -Force
+cd $HOME\dev
+</code></pre>
+<h2 is-upgraded>clone する</h2>
+<p>以下のコマンドを実行します。</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/gdsc-osaka/react-example.git
+cd react-example
+</code></pre>
+<p>成功すると、<code>react-example</code> というフォルダが作られ、その中に移動できます。<code>ls</code>（または <code>dir</code>）でファイル一覧を見て、<code>package.json</code> や <code>src</code> フォルダがあれば成功です。</p>
+<p><strong>Troubleshooting: </strong><code>Permission denied</code> や <code>fatal: unable to access ...</code> が出る場合、ネットワーク（Wi-Fi）に繋がっているか確認してください。社内 / 学内ネットワークで proxy がある場合は経験者に相談しましょう。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 8: 自分のブランチを切る" duration="5">
+        <p><code>main</code> ブランチで作業すると、チーム全員の作業がぶつかって大事故になります。<strong>作業前に必ず</strong>自分専用のブランチを作りましょう。</p>
+<h2 is-upgraded>ブランチを作る</h2>
+<pre><code language="language-bash" class="language-bash">git switch -c feature/add-&lt;your-name&gt;
+</code></pre>
+<p><code>&lt;your-name&gt;</code> の部分は自分の名前（半角英数字）に置き換えてください。</p>
+<p>例: 自分の名前が <code>taro</code> なら...</p>
+<pre><code language="language-bash" class="language-bash">git switch -c feature/add-taro
+</code></pre>
+<h2 is-upgraded>今どのブランチにいるか確認する</h2>
+<pre><code language="language-bash" class="language-bash">git status
+</code></pre>
+<p>最初の行に <code>On branch feature/add-taro</code> のように表示されていれば成功です。</p>
+<aside class="warning"><p><strong>Note:</strong> ブランチ名は <code>feature/&lt;何をするか&gt;</code> の形が分かりやすいです。今日は名前を入れる作業なので <code>feature/add-&lt;名前&gt;</code> にしています。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 9: 開発サーバーを起動する" duration="10">
+        <p>依存パッケージをインストールして、React の開発サーバーを立ち上げます。</p>
+<h2 is-upgraded>依存パッケージをインストールする</h2>
+<pre><code language="language-bash" class="language-bash">npm install
+</code></pre>
+<p><code>package.json</code> に書かれたライブラリをまとめてダウンロードします。1〜3 分かかります。</p>
+<p>途中で <code>WARN</code> がたくさん出ますが、最後に <code>npm warn</code> 以外のエラーで止まっていなければ OK です。</p>
+<h2 is-upgraded>開発サーバーを起動する</h2>
+<pre><code language="language-bash" class="language-bash">npm run dev
+</code></pre>
+<p>成功すると、ターミナルに以下のような表示が出ます。</p>
+<pre><code language="language-text" class="language-text">  VITE v5.x.x  ready in 312 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+</code></pre>
+<h2 is-upgraded>ブラウザで開いてみる</h2>
+<p>ブラウザで <a href="http://localhost:5173" target="_blank">http://localhost:5173</a> にアクセスしてみましょう。<code>Participants</code> というタイトルと、<code>Alice</code> だけが表示されたリストが見えれば成功です。</p>
+<p><strong>Tip: </strong><code>npm run dev</code> で起動した開発サーバーは<strong>起動したまま</strong>にしておきます。ファイルを保存すると自動的にブラウザが更新される（HMR）ので、編集中はずっと立ち上げておくのが便利です。</p>
+<aside class="warning"><p><strong>Troubleshooting:</strong> ポート 5173 が既に使われているとエラーが出ることがあります。<code>Ctrl + C</code> でいったん止めて、他の <code>npm run dev</code> が動いていないか確認してください。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 10: コードを編集する" duration="10">
+        <p>実際にコードを 1 行追加して、自分の名前を画面に出してみましょう。</p>
+<h2 is-upgraded>App.jsx を開く</h2>
+<p>VS Code を起動して、先ほど clone した <code>react-example</code> フォルダを開きます。</p>
+<ul>
+<li><strong>File（ファイル）</strong> → <strong>Open Folder（フォルダーを開く）</strong> から <code>react-example</code> を選択</li>
+<li>または、ターミナルから <code>code .</code> を実行（VS Code のコマンドが PATH に通っていれば）</li>
+</ul>
+<p>開いたら、左のサイドバーから <code>src/App.jsx</code> を選んでください。</p>
+<h2 is-upgraded>自分の名前を追加する</h2>
+<p>以下のような <code>participants</code> 配列があります。</p>
+<pre><code language="language-jsx" class="language-jsx">function App() {
+  const participants = [
+    &#39;Alice&#39;,
+  ]
+  // ...
+}
+</code></pre>
+<p>ここに自分の名前を<strong>配列の要素として</strong>追加します。</p>
+<pre><code language="language-jsx" class="language-jsx">function App() {
+  const participants = [
+    &#39;Alice&#39;,
+    &#39;YOUR_NAME&#39;,  // ← この行を追加
+  ]
+  // ...
+}
+</code></pre>
+<p><code>'YOUR_NAME'</code> の部分は自分の名前に書き換えてください。<strong>シングルクォート </strong></p>
+<p><strong><code>'</code></strong></p>
+<p><strong> と末尾のカンマ </strong></p>
+<p><strong><code>,</code></strong></p>
+<p><strong> を忘れずに!</strong></p>
+<h2 is-upgraded>保存する</h2>
+<ul>
+<li>Windows: <code>Ctrl + S</code></li>
+<li>macOS: <code>Cmd + S</code></li>
+</ul>
+<h2 is-upgraded>ブラウザで確認する</h2>
+<p><code>npm run dev</code> を起動したままなら、ブラウザのタブに切り替えるだけで自動的にリロードされ、リストに自分の名前が増えているはずです。</p>
+<aside class="warning"><p><strong>Troubleshooting:</strong> 画面が真っ白になった、エラー画面（赤い枠）が出た、という場合は、編集ミスの可能性が高いです。</p>
+<ul>
+<li>クォート <code>'</code> の閉じ忘れ</li>
+<li>カンマ <code>,</code> の位置ミス</li>
+<li>全角スペース・全角クォートの混入</li>
+</ul></aside>
+<p>ブラウザを開いた状態で <strong>F12</strong> を押して DevTools の <strong>Console</strong> タブを見ると、エラーの内容が赤文字で出ています。それをそのままコピーして AI に貼り付けると原因が分かりやすいです。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 11: 変更を commit する" duration="5">
+        <p>ここまでの変更を Git に記録（commit）します。</p>
+<h2 is-upgraded>変更内容を確認する</h2>
+<pre><code language="language-bash" class="language-bash">git status
+</code></pre>
+<p><code>modified: src/App.jsx</code> のように表示されれば、Git は「App.jsx が変わったよ」と認識しています。</p>
+<p>差分の中身を見たい場合は以下も使えます。</p>
+<pre><code language="language-bash" class="language-bash">git diff
+</code></pre>
+<p><code>Ctrl + C</code> ではなく <strong><code>q</code></strong> キーで抜けられます（<code>less</code> というコマンドが効いている状態のため）。</p>
+<h2 is-upgraded>ステージング → commit</h2>
+<pre><code language="language-bash" class="language-bash">git add src/App.jsx
+git commit -m &#34;feat: add &lt;your-name&gt; to participants&#34;
+</code></pre>
+<p><code>&lt;your-name&gt;</code> は自分の名前に置き換えてください。</p>
+<aside class="special"><p><strong>Tip:</strong> コミットメッセージは「<strong>何をしたか</strong>」を短く書きます。</p>
+<ul>
+<li><code>feat:</code> 新機能の追加</li>
+<li><code>fix:</code> バグ修正</li>
+<li><code>docs:</code> ドキュメントの修正</li>
+</ul></aside>
+<p>このプレフィックスは「Conventional Commits」と呼ばれる慣習で、多くのチームで使われています。</p>
+<p><strong>Troubleshooting: </strong><code>Please tell me who you are</code> というエラーが出た場合は、STEP 3 の <code>git config --global user.name / user.email</code> を実行し忘れています。設定してから再度 commit してください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 12: GitHub に push する" duration="10">
+        <p>自分の PC で作った commit を、GitHub のサーバーに送ります。</p>
+<h2 is-upgraded>初回 push</h2>
+<pre><code language="language-bash" class="language-bash">git push -u origin feature/add-&lt;your-name&gt;
+</code></pre>
+<p><code>-u origin &lt;ブランチ名&gt;</code> を最初の 1 回だけ付けます。これで「ローカルのブランチを GitHub のどのブランチと連携させるか」が記録され、2 回目以降は <code>git push</code> だけで OK になります。</p>
+<h2 is-upgraded>認証を求められたら</h2>
+<ul>
+<li>ブラウザが自動で開き、GitHub のログインを求められることがあります。表示に従って <strong>Authorize</strong> をクリックしてください。</li>
+<li>HTTPS + パスワード方式は 2021 年から廃止されています。<strong>Personal Access Token（PAT）</strong> または <strong>GitHub CLI / ブラウザ認証</strong> を使います。</li>
+</ul>
+<p><strong>もし PAT を求められた場合の作り方:</strong></p>
+<ol type="1">
+<li>ブラウザで <a href="https://github.com/settings/tokens" target="_blank">https://github.com/settings/tokens</a> を開きます。</li>
+<li><strong>Generate new token</strong> → <strong>Generate new token (classic)</strong> をクリック。</li>
+<li><strong>Note</strong> に何用か書く（例: <code>react-example-push</code>）、<strong>Expiration</strong> を 30 日くらいに設定。</li>
+<li><strong>Scopes</strong> で <code>repo</code> にチェック。</li>
+<li><strong>Generate token</strong> をクリック → 表示されたトークンをコピー（<strong>この画面を閉じると二度と見れません</strong>）。</li>
+<li>push のときにパスワードを聞かれたら、このトークンを貼り付けます。</li>
+</ol>
+<h2 is-upgraded>確認</h2>
+<p>ブラウザで <a href="https://github.com/gdsc-osaka/react-example" target="_blank">https://github.com/gdsc-osaka/react-example</a> を開いて、自分のブランチ（<code>feature/add-&lt;your-name&gt;</code>）が一覧に出ていれば成功です。</p>
+<p><strong>Troubleshooting: </strong><code>Permission denied</code> が出る場合、リポジトリに push する権限がない可能性があります。経験者に「コラボレーターに追加してください」と頼みましょう。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 13: Pull Request を作成する" duration="10">
+        <p>いよいよ最後のステップ、Pull Request（PR）を作ります。PR は「自分のブランチの変更を main に取り込んでほしい」というリクエストです。</p>
+<h2 is-upgraded>PR 作成画面を開く</h2>
+<p>push 直後、GitHub のリポジトリページを開くと、画面の上部に黄色いバナーで以下のような表示が出ます。</p>
+<pre><code>feature/add-taro had recent pushes  [ Compare &amp; pull request ]
+</code></pre>
+<p><strong>Compare &amp; pull request</strong> ボタンをクリックしてください。</p>
+<aside class="warning"><p><strong>Note:</strong> バナーが出ない場合は、リポジトリ上部の <strong>Pull requests</strong> タブ → <strong>New pull request</strong> からも作成できます。<code>base: main</code> ← <code>compare: feature/add-&lt;your-name&gt;</code> を選びましょう。</p></aside>
+<h2 is-upgraded>タイトルと説明を書く</h2>
+<ul>
+<li><strong>タイトル</strong>: コミットメッセージが自動で入りますが、必要なら短く分かりやすく直します（例: <code>Add taro to participants</code>）</li>
+<li><strong>Description（説明欄）</strong>: 以下のテンプレを参考に書いてみてください。</li>
+</ul>
+<pre><code language="language-markdown" class="language-markdown">## やったこと
+- participants 配列に自分の名前を追加
+
+## 動作確認
+- npm run dev でブラウザに自分の名前が表示されることを確認
+</code></pre>
+<h2 is-upgraded>Create pull request をクリック</h2>
+<p>画面下の緑のボタンをクリックすれば PR 完成です！</p>
+<p>PR が作成されると、URL は <code>https://github.com/gdsc-osaka/react-example/pull/&lt;番号&gt;</code> のようになります。これを Discord / Slack でチームに共有してレビューを依頼しましょう。</p>
+<aside class="special"><p><strong>Tip:</strong> PR には「なぜその変更が必要だったか」が書かれていると、レビュアーがとても助かります。今日は練習なので簡単で OK ですが、本番では「目的」「変更内容」「動作確認」を書く習慣をつけましょう。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="STEP 14: お疲れさまでした！" duration="5">
+        <p>ここまでで、チーム開発の基本的な 1 サイクルを体験できました！</p>
+<pre><code language="language-text" class="language-text">clone → branch → 編集 → commit → push → PR
+</code></pre>
+<h2 is-upgraded>今日身についたこと</h2>
+<ul>
+<li>✅ Git / Node.js / VS Code が動く環境</li>
+<li>✅ GitHub に自分のブランチを push できる</li>
+<li>✅ Pull Request を作れる</li>
+<li>✅ エラーが出たら DevTools / ターミナルを見るクセ</li>
+</ul>
+<h2 is-upgraded>次に学ぶと良いこと</h2>
+<ul>
+<li><strong>コードレビュー</strong>: 他の人の PR を読んでコメントしてみる</li>
+<li><strong>merge conflict の解消</strong>: 同じファイルを別の人が同時に編集したときの対処</li>
+<li><strong>git pull / fetch の違い</strong>: 最新を取ってくる正しい手順</li>
+<li><strong>React の基礎</strong>: コンポーネント / state / props</li>
+</ul>
+<h2 is-upgraded>困ったときの心得</h2>
+<ol type="1">
+<li><strong>エラー文を読む</strong>（赤文字の 1 行目から）</li>
+<li><strong>スクショを撮る</strong>（要約しない、そのまま貼る）</li>
+<li><strong>AI に聞く</strong>（テンプレに沿って、状況・エラー全文・試したことを書く）</li>
+<li><strong>10〜30 分</strong>自分で粘る</li>
+<li>進まなければ<strong>経験者</strong>に画面ごと見せて相談</li>
+</ol>
+<p><strong>最重要:</strong> 30 分詰まったら、迷わず人に聞きましょう。「壊した、分からない」を<strong>隠さない</strong>チームが一番強いです。</p>
+<p>ようこそ、チームへ！🎉</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="libs/native-shim.js"></script>
+  <script src="libs/custom-elements.min.js"></script>
+  <script src="libs/prettify.js"></script>
+  <script src="libs/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
