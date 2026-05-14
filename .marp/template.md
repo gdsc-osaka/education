@@ -6,18 +6,42 @@ size: 16:9
 ---
 
 <script>
-/* Scale .fit elements down so overflowing content fits the slide
-   (PowerPoint-style auto shrink). Wrap any block in <div class="fit">…</div>. */
+/* PowerPoint-style auto-shrink: iteratively reduce a slide's font size
+   until its content stops overflowing. Also keeps the explicit opt-in
+   <div class="fit">…</div> wrapper for finer-grained scaling. */
 (() => {
-  const transformOrigin = "top left";
-  window.addEventListener("load", () => {
-    const fits = document.querySelectorAll(".fit");
-    for (const fit of fits) {
-      if (!fit.scrollHeight) continue;
-      const scaleRatio = Math.min(1, fit.clientHeight / fit.scrollHeight);
-      fit.style.transformOrigin = transformOrigin;
-      fit.style.transform = `scale(${scaleRatio})`;
+  const MIN_FONT_PX = 12;
+  const STEP = 0.96;
+  const MAX_ITERS = 40;
+  const TOLERANCE = 1;
+
+  const overflows = (el) =>
+    el.scrollHeight > el.clientHeight + TOLERANCE ||
+    el.scrollWidth  > el.clientWidth  + TOLERANCE;
+
+  const shrinkSection = (section) => {
+    if (section.dataset.autofit === "skip") return;
+    if (!overflows(section)) return;
+    const base = parseFloat(getComputedStyle(section).fontSize) || 28;
+    let size = base;
+    for (let i = 0; i < MAX_ITERS && overflows(section) && size > MIN_FONT_PX; i++) {
+      size *= STEP;
+      section.style.fontSize = `${size}px`;
     }
+  };
+
+  const scaleFitBlocks = () => {
+    for (const fit of document.querySelectorAll(".fit")) {
+      if (!fit.scrollHeight) continue;
+      const ratio = Math.min(1, fit.clientHeight / fit.scrollHeight);
+      fit.style.transformOrigin = "top left";
+      fit.style.transform = `scale(${ratio})`;
+    }
+  };
+
+  window.addEventListener("load", () => {
+    scaleFitBlocks();
+    for (const section of document.querySelectorAll("section")) shrinkSection(section);
   });
 })();
 </script>
