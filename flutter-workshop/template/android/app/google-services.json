@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "86608508201",
+    "project_id": "flutter-workshops",
+    "storage_bucket": "flutter-workshops.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86608508201:android:2fb7fc68ccfd361d92f338",
+        "android_client_info": {
+          "package_name": "com.example.mini_instagram"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZdlyeuUd9dS9Z6VGzoPuKAXOBBBP5HDE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
