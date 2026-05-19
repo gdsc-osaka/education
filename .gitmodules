@@ -1,3 +1,9 @@
 [submodule "team-dev-onboarding/example"]
 	path = team-dev-onboarding/example
 	url = https://github.com/gdsc-osaka/react-example.git
+[submodule "flutter-workshop/template"]
+	path = flutter-workshop/template
+	url = https://github.com/gdsc-osaka/flutter-workshop.git
+[submodule "flutter-workshop/example"]
+	path = flutter-workshop/example
+	url = https://github.com/gdsc-osaka/flutter-workshop-example.git
