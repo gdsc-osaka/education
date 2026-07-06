@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">WebMCP と ADK multi-agent で席を予約する完成イメージ</title>
+  <desc id="desc">予約サイト、WebMCP、coordinator、seat finder、reservation agent、運営予約ボードが接続されている図</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#202124"/>
+    </marker>
+    <marker id="blue-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4285F4"/>
+    </marker>
+    <marker id="green-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#34A853"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="675" fill="#f8f9fa"/>
+  <rect x="55" y="55" width="1090" height="565" rx="32" fill="#eef0f2"/>
+  <text x="95" y="118" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#202124">WebMCP x ADK multi-agent seat reservation</text>
+
+  <rect x="95" y="165" width="285" height="350" rx="22" fill="#fff"/>
+  <text x="125" y="215" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#202124">Reservation site</text>
+  <text x="125" y="250" font-family="Arial, sans-serif" font-size="17" fill="#5f6368">localhost:5173</text>
+  <g transform="translate(126 285)">
+    <rect width="46" height="46" rx="8" fill="#34A853"/>
+    <rect x="58" width="46" height="46" rx="8" fill="#34A853"/>
+    <rect x="116" width="46" height="46" rx="8" fill="#EA4335"/>
+    <rect x="174" width="46" height="46" rx="8" fill="#34A853"/>
+    <rect y="58" width="46" height="46" rx="8" fill="#FBBC04"/>
+    <rect x="58" y="58" width="46" height="46" rx="8" fill="#34A853"/>
+    <rect x="116" y="58" width="46" height="46" rx="8" fill="#34A853"/>
+    <rect x="174" y="58" width="46" height="46" rx="8" fill="#EA4335"/>
+  </g>
+  <rect x="125" y="425" width="220" height="42" rx="8" fill="#E8F0FE"/>
+  <text x="147" y="452" font-family="Arial, sans-serif" font-size="17" fill="#1967D2">WebMCP tool/action</text>
+
+  <rect x="455" y="165" width="285" height="350" rx="22" fill="#4285F4"/>
+  <text x="485" y="215" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#fff">WebMCP</text>
+  <rect x="485" y="255" width="220" height="62" rx="12" fill="#E8F0FE"/>
+  <text x="505" y="294" font-family="Arial, sans-serif" font-size="18" fill="#174EA6">Imperative tools</text>
+  <rect x="485" y="340" width="220" height="62" rx="12" fill="#FEF7E0"/>
+  <text x="505" y="379" font-family="Arial, sans-serif" font-size="18" fill="#A14200">Declarative action</text>
+  <text x="485" y="460" font-family="Arial, sans-serif" font-size="17" fill="#E8F0FE">browser model context</text>
+
+  <rect x="815" y="135" width="285" height="405" rx="22" fill="#fff"/>
+  <text x="845" y="185" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#202124">ADK local agents</text>
+  <rect x="845" y="220" width="225" height="58" rx="12" fill="#E8F0FE"/>
+  <text x="870" y="257" font-family="Arial, sans-serif" font-size="18" fill="#174EA6">coordinator</text>
+  <rect x="845" y="305" width="225" height="58" rx="12" fill="#E6F4EA"/>
+  <text x="870" y="342" font-family="Arial, sans-serif" font-size="18" fill="#137333">seat_finder_agent</text>
+  <rect x="845" y="390" width="225" height="58" rx="12" fill="#FCE8E6"/>
+  <text x="870" y="427" font-family="Arial, sans-serif" font-size="18" fill="#A50E0E">reservation_agent</text>
+  <text x="845" y="493" font-family="Arial, sans-serif" font-size="16" fill="#5f6368">retry is coordinated here</text>
+
+  <path d="M390 340 H435" stroke="#202124" stroke-width="5" marker-end="url(#arrow)"/>
+  <path d="M750 340 H795" stroke="#202124" stroke-width="5" marker-end="url(#arrow)"/>
+  <path d="M957 280 V302" stroke="#4285F4" stroke-width="4" marker-end="url(#blue-arrow)"/>
+  <path d="M957 365 V387" stroke="#34A853" stroke-width="4" marker-end="url(#green-arrow)"/>
+  <path d="M960 548 C960 590 250 590 238 525" fill="none" stroke="#34A853" stroke-width="5" stroke-dasharray="10 9" marker-end="url(#green-arrow)"/>
+  <text x="330" y="603" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#202124">BOARD_URL に connpass ID が表示されたら完成</text>
+</svg>
