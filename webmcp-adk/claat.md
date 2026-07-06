@@ -70,8 +70,8 @@ Duration: 0:12:00
 
 参加者が使う GitHub repository は次の2つです。
 
-- template: https://github.com/gdg-jp/webmcp-adk-template
-- example: https://github.com/gdg-jp/webmcp-adk-example
+[骨組み版を開く](https://github.com/gdg-jp/webmcp-adk-template)
+[完成版を開く](https://github.com/gdg-jp/webmcp-adk-example)
 
 手を動かすときは template を使います。詰まったとき、完成形を確認したいとき、TA と一緒に差分を見るときだけ example を参照してください。
 

@@ -758,7 +758,7 @@ export async function fetchReservations() {}
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-js" class="language-js claat-diff-code" data-claat-diff="true" data-claat-diff-language="js"> export function modelContext() {
+<pre><code language="language-js" class="claat-diff-code language-js" data-claat-diff="true" data-claat-diff-language="js"> export function modelContext() {
 -  // TODO(Handson): Return the WebMCP model context exposed by the browser runtime.
 -  return null;
 +  return document.modelContext ?? window.modelContext ?? window.mcpb?.modelContext ?? null;
@@ -825,7 +825,7 @@ export async function fetchReservations() {}
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-js" class="language-js claat-diff-code" data-claat-diff="true" data-claat-diff-language="js"> export function registerImperativeWebMcpTools() {
+<pre><code language="language-js" class="claat-diff-code language-js" data-claat-diff="true" data-claat-diff-language="js"> export function registerImperativeWebMcpTools() {
 -  // TODO(Handson): Register list_available_seats, get_seat_detail, and list_reservations.
 -  return {
 -    registered: false,
@@ -996,7 +996,7 @@ export async function fetchReservations() {}
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">       &lt;section class=&#34;panel&#34;&gt;
+<pre><code language="language-html" class="claat-diff-code language-html" data-claat-diff="true" data-claat-diff-language="html">       &lt;section class=&#34;panel&#34;&gt;
          &lt;h2&gt;予約&lt;/h2&gt;
 -        &lt;form id=&#34;reservationForm&#34; class=&#34;form&#34; method=&#34;post&#34;&gt;
 +        &lt;form
@@ -1212,7 +1212,7 @@ MAX_RESERVATION_RETRIES = 2
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> def build_webmcp_connection_params() -&gt; StdioConnectionParams:
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python"> def build_webmcp_connection_params() -&gt; StdioConnectionParams:
      &#34;&#34;&#34;Build connection params for the local browser WebMCP relay.&#34;&#34;&#34;
 -    raise NotImplementedError(
 -        &#34;TODO(Handson): build StdioConnectionParams for the local WebMCP relay.&#34;
@@ -1277,7 +1277,7 @@ MAX_RESERVATION_RETRIES = 2
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> def build_finder_webmcp_toolset() -&gt; McpToolset:
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python"> def build_finder_webmcp_toolset() -&gt; McpToolset:
 -    raise NotImplementedError(
 -        &#34;TODO(Handson): build the finder WebMCP toolset with list/detail/reservation-list tools.&#34;
 -    )
@@ -1459,7 +1459,7 @@ class ReservationWorkflowResult(BaseModel):
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> MAX_SEAT_CANDIDATES = 3
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python"> MAX_SEAT_CANDIDATES = 3
 +MAX_RANKED_SEATS = 3
  MAX_RESERVATION_RETRIES = 2
 </code></pre>
@@ -1724,7 +1724,7 @@ finderReason あり: +1
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> preference_parser_agent = Agent(
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python"> preference_parser_agent = Agent(
      name=&#34;preference_parser_agent&#34;,
      model=&#34;gemini-2.0-flash&#34;,
      description=(
@@ -1824,7 +1824,7 @@ finderReason あり: +1
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> seat_finder_agent = Agent(
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python"> seat_finder_agent = Agent(
      name=&#34;seat_finder_agent&#34;,
      model=&#34;gemini-2.0-flash&#34;,
      description=(
@@ -1900,7 +1900,7 @@ finderReason あり: +1
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> explanation_agent = Agent(
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python"> explanation_agent = Agent(
      name=&#34;explanation_agent&#34;,
      model=&#34;gemini-2.0-flash&#34;,
      description=(
@@ -2032,7 +2032,7 @@ SeatCandidates:
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> reservation_agent = Agent(
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python"> reservation_agent = Agent(
      name=&#34;reservation_agent&#34;,
      model=&#34;gemini-2.0-flash&#34;,
      description=(
@@ -2096,7 +2096,7 @@ SeatCandidates:
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> from __future__ import annotations
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python"> from __future__ import annotations
  
  from typing import Any
  
@@ -2134,7 +2134,7 @@ SeatCandidates:
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python">+STATE_PREFERENCE = &#34;seat_preference&#34;
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python">+STATE_PREFERENCE = &#34;seat_preference&#34;
 +STATE_CANDIDATES = &#34;seat_candidates&#34;
 +STATE_RANKED_SEATS = &#34;ranked_seats&#34;
 +STATE_TRIED_SEATS = &#34;tried_seats&#34;
@@ -2154,7 +2154,7 @@ SeatCandidates:
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python">+def build_finder_input(request_text: str, preference: SeatPreference) -&gt; str:
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python">+def build_finder_input(request_text: str, preference: SeatPreference) -&gt; str:
 +    return &#34;\n\n&#34;.join(
 +        [
 +            &#34;Find available seats for this participant.&#34;,
@@ -2201,7 +2201,7 @@ SeatCandidates:
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python">+def build_reservation_input(seat_id: str, preference: SeatPreference, ranked_seat: RankedSeat) -&gt; str:
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python">+def build_reservation_input(seat_id: str, preference: SeatPreference, ranked_seat: RankedSeat) -&gt; str:
 +    return &#34;\n&#34;.join(
 +        [
 +            &#34;Reserve exactly one seat through reserve_seat.&#34;,
@@ -2239,7 +2239,7 @@ SeatCandidates:
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python">+async def parse_preferences(ctx: Context, request_text: str) -&gt; SeatPreference:
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python">+async def parse_preferences(ctx: Context, request_text: str) -&gt; SeatPreference:
 +    preference_output = await ctx.run_node(
 +        preference_parser_agent,
 +        node_input=request_text,
@@ -2278,7 +2278,7 @@ SeatCandidates:
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python">+async def rank_candidates(
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python">+async def rank_candidates(
 +    ctx: Context,
 +    preference: SeatPreference,
 +    candidates: SeatCandidates,
@@ -2308,7 +2308,7 @@ SeatCandidates:
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python">+async def reserve_ranked_candidates(
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python">+async def reserve_ranked_candidates(
 +    ctx: Context,
 +    preference: SeatPreference,
 +    ranked_seats: list[RankedSeat],
@@ -2361,7 +2361,7 @@ SeatCandidates:
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python">+@node(rerun_on_resume=True)
+<pre><code language="language-python" class="claat-diff-code language-python" data-claat-diff="true" data-claat-diff-language="python">+@node(rerun_on_resume=True)
 +async def reserve_best_matching_seat(ctx: Context, user_request: Any) -&gt; str:
 +    request_text = text(user_request) or text(ctx.user_content)
 +    preference = await parse_preferences(ctx, request_text)
