@@ -420,7 +420,14 @@
       </google-codelab-step>
     
       <google-codelab-step label="セットアップする" duration="12">
-        <p>このステップでは、starting template を開き、依存関係と設定ファイルを準備します。完成コードは <code>webmcp-adk/repos/example</code>、初期コードは <code>webmcp-adk/repos/template</code> にあります。</p>
+        <p>このステップでは、starting template を開き、依存関係と設定ファイルを準備します。</p>
+<p>参加者が使う GitHub repository は次の2つです。</p>
+<ul>
+<li>template: <a href="https://github.com/gdg-jp/webmcp-adk-template" target="_blank">https://github.com/gdg-jp/webmcp-adk-template</a></li>
+<li>example: <a href="https://github.com/gdg-jp/webmcp-adk-example" target="_blank">https://github.com/gdg-jp/webmcp-adk-example</a></li>
+</ul>
+<p>手を動かすときは template を使います。詰まったとき、完成形を確認したいとき、TA と一緒に差分を見るときだけ example を参照してください。</p>
+<p>この codelab repository 内にも確認用として <code>webmcp-adk/repos/template</code> と <code>webmcp-adk/repos/example</code> を置いていますが、当日の参加者向け導線は GitHub の template repository です。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">テンプレートを開く</h2>
 <p>リポジトリのルートから、テンプレートディレクトリへ移動します。</p>
 <div class="claat-code-block" data-code-theme="light">
@@ -448,7 +455,7 @@
 <pre><code language="language-bash" class="language-bash">code .
 </code></pre>
 </div>
-<p>このコードラボでは、参加者向けの操作は <code>template</code> で行います。完成コードを確認したいときだけ、<code>webmcp-adk/repos/example</code> を参照してください。</p>
+<p>このコードラボでは、参加者向けの操作は <code>template</code> で行います。完成コードを確認したいときだけ、GitHub の example repository または <code>webmcp-adk/repos/example</code> を参照してください。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">setup script を実行する</h2>
 <p>macOS の場合は次を実行します。</p>
 <div class="claat-code-block" data-code-theme="light">
@@ -550,7 +557,7 @@ WEB_URL=http://localhost:5173
 <p>今回の Web 側は「すでに完成している座席予約サイト」です。HTML、CSS、API client、座席描画、フォーム送信、デバッグページは用意済みです。</p>
 <p>あなたが追加するのは、既存サイトの機能を Agent に見つけてもらうための WebMCP 部分です。現実の開発でも、すでに動いている社内ツールや業務サイトに対して「Agent から使えるようにして」と頼まれることがあります。このコードラボは、その状況を小さく再現しています。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">3 A2A specialist と coordinator Workflow の責務</h2>
-<p>今回の Agent は1つの巨大な instruction にすべてを詰め込みません。役割ごとに小さく分けます。</p>
+<p>今回の Agent は1つの巨大な instruction にすべてを詰め込みません。むしろ本編の完成コードでは <code>instruction=</code> パラメータを使わず、役割分担、schema、toolset、Workflow node、Python helper で動きを縛ります。</p>
 <table>
 <tr><td colspan="1" rowspan="1"><p>Agent</p>
 </td><td colspan="1" rowspan="1"><p>責務</p>
@@ -587,15 +594,56 @@ WEB_URL=http://localhost:5173
     
       <google-codelab-step label="LLM、Agent、Tool を整理する" duration="10">
         <p>このステップでは、これから書くコードの意味を確認します。用語を曖昧にしたまま実装すると、どのファイルが何を担当しているのか分かりにくくなります。</p>
+<p class="image-container"><img alt="LLM、Agent、Tool の責務" src="img/f8512875483fc7b4.svg"></p>
 <h2 is-upgraded data-claat-source-heading-level="3">LLM は出力を作る</h2>
 <p>LLM は、入力された文章や構造化データをもとに、次の文章や JSON のような出力を生成します。単体の LLM は、外部 API を勝手に呼んだり、ブラウザのボタンを押したりできません。</p>
 <p>たとえば「前方で通路側がいい」と入力すると、LLM はその希望を理解できます。しかし、現在どの席が空いているかは、外部の予約システムを見なければ分かりません。</p>
+<p>ここを混ぜてしまうと、Agent 開発が急に分かりにくくなります。LLM は「言葉を読む」「候補を説明する」「構造化された形へ寄せる」ことが得意です。一方で、「今の空席一覧を取得する」「予約 API を呼ぶ」「何回 retry するかを固定する」ことは、LLM の内側から自然に発生するわけではありません。</p>
+<p>このハンズオンでは、LLM に任せる部分を意図的に狭くします。自然文の希望を <code>SeatPreference</code> に寄せるところ、WebMCP tool を呼び出すところ、Python が決めた ranking を説明するところは LLM の力を使います。逆に、スコア計算、retry 条件、最終成功条件は Python コードで固定します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">Agent は Tool を使って行動する</h2>
 <p>Agent は LLM に tool、状態、実行ルールを持たせたアプリケーションです。Agent は「この情報が必要だから tool を呼ぶ」「失敗したから別の手段を試す」のような流れを作れます。</p>
 <p>今回の <code>coordinator</code> は、ユーザーの希望を受け取り、<code>preference_parser_agent</code>、<code>seat_finder_agent</code>、Python の scoring helper、<code>reservation_agent</code> を順番に呼びます。予約済みだった場合は、Python ranking の次候補で再試行します。</p>
+<p>ただし、この「順番」は自然言語のお願いとして書くのではなく、<code>Workflow</code> と Python node で固定します。ここが今回の設計の中心です。Agent が増えると、なんとなく「全部 LLM に相談して進める」形にしたくなりますが、ハンズオンでは再現性が大切です。どのファイルを直せば挙動が変わるのか、参加者が追えるようにします。</p>
+<p><code>coordinator</code> は入口です。<code>seat_finder_agent</code> は空席を調べる A2A service、<code>reservation_agent</code> は予約する A2A service、<code>explanation_agent</code> は説明を補助する A2A service です。service を分けることで、WebMCP の命令型 tool と宣言型 form tool の境界も見えやすくなります。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">Tool は外部世界との接点</h2>
 <p>Tool は Agent が外部世界へ触るための小さな関数です。今回の tool は WebMCP 経由でブラウザ上の予約サイトへつながります。</p>
-<p>このコードラボでは、tool と Agent の責務を意図的に狭くします。<code>preference_parser_agent</code> は希望の構造化だけ、<code>seat_finder_agent</code> は検索だけ、<code>agents/shared/scoring.py</code> は順位付けだけ、<code>reservation_agent</code> は予約だけです。責務を狭くすると、instruction が短くなり、失敗したときに原因を追いやすくなります。</p>
+<p>このコードラボでは、tool と Agent の責務を意図的に狭くします。<code>preference_parser_agent</code> は希望の構造化だけ、<code>seat_finder_agent</code> は検索だけ、<code>agents/shared/scoring.py</code> は順位付けだけ、<code>reservation_agent</code> は予約だけです。責務を狭くすると、長いプロンプトに頼らず、失敗したときに原因をコードから追いやすくなります。</p>
+<p>Tool は「何でもできる便利関数」ではありません。名前、説明、入力 schema、戻り値の形が、Agent にとっての使い方になります。<code>list_available_seats</code> という tool 名なら「席を一覧する」ことが分かります。<code>reserve_seat</code> という form tool 名なら「予約という副作用がある」ことが分かります。</p>
+<p>今回の WebMCP 実装では、既存の予約サイトにある低レイヤの関数を使い回します。<code>fetchSeats()</code>、<code>fetchSeatDetail()</code>、<code>fetchReservations()</code>、<code>reserveSeat()</code> はもともと人間向け UI のためにあります。WebMCP はそれを Agent からも見える入口として公開します。</p>
+<p class="image-container"><img alt="座席予約 Agent の境界" src="img/dab1d7c9553309fd.svg"></p>
+<h2 is-upgraded data-claat-source-heading-level="3">今回の責務分担を先に覚える</h2>
+<p>この先の実装では、次の分担が何度も出てきます。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>担当</p>
+</td><td colspan="1" rowspan="1"><p>やること</p>
+</td><td colspan="1" rowspan="1"><p>やらないこと</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>preference_parser_agent</code></p>
+</td><td colspan="1" rowspan="1"><p>自然文を <code>SeatPreference</code> に寄せる</p>
+</td><td colspan="1" rowspan="1"><p>空席検索、予約</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>seat_finder_agent</code></p>
+</td><td colspan="1" rowspan="1"><p>命令型 WebMCP tool で候補を集める</p>
+</td><td colspan="1" rowspan="1"><p>最終順位決定、予約</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>agents/shared/scoring.py</code></p>
+</td><td colspan="1" rowspan="1"><p>Python code で候補をスコアリングする</p>
+</td><td colspan="1" rowspan="1"><p>WebMCP tool 呼び出し</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>reservation_agent</code></p>
+</td><td colspan="1" rowspan="1"><p>宣言型 WebMCP form tool で1席を予約する</p>
+</td><td colspan="1" rowspan="1"><p>候補探し、retry 判断</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>coordinator</code></p>
+</td><td colspan="1" rowspan="1"><p>実行順、state、retry、最終応答を管理する</p>
+</td><td colspan="1" rowspan="1"><p>WebMCP tool の中身を実装する</p>
+</td></tr>
+</table>
+<p>この表を覚えておくと、後半でファイルが増えても迷いにくくなります。特に「検索」と「予約」を同じ Agent に持たせないことが大切です。検索は読み取り、予約は状態変更です。状態変更を狭い場所へ閉じ込めると、当日のデバッグでも「どこで予約が走ったか」を追いやすくなります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">動かした時の想定動作</h2>
+<p>このステップではまだコードは動かしません。ここで期待する状態は、用語と役割の見通しが立っていることです。</p>
+<p>この後の実装で <code>seat_finder_agent</code> が予約しようとしていたら、責務が広がりすぎています。<code>reservation_agent</code> が候補探しを始めたら、同じく責務がずれています。<code>coordinator</code> が retry 回数を持っていなければ、予約競合時の制御が曖昧になります。</p>
+<p>つまり、この時点での成功条件は「どのファイルがどの責務を持つか」を説明できることです。</p>
 
 
       </google-codelab-step>
@@ -677,7 +725,7 @@ export async function fetchReservations() {}
 
       </google-codelab-step>
     
-      <google-codelab-step label="WebMCP の入口を実装する" duration="10">
+      <google-codelab-step label="WebMCP を実装してデバッグする" duration="35">
         <p>このステップでは、ブラウザが公開する WebMCP の入口を取得します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3"><code>modelContext</code> を返す</h2>
 <p><code>public/script.js</code> の <code>modelContext()</code> を更新します。</p>
@@ -740,12 +788,8 @@ export async function fetchReservations() {}
 <h2 is-upgraded data-claat-source-heading-level="3">デバッグページで確認する</h2>
 <p><code>http://localhost:5173/debug.html</code> を開き、WebMCP チェックを押します。まだ tool は登録していないため、ここでは <code>modelContext</code> の検出状態を確認します。</p>
 <aside class="special"><p><strong>補足:</strong> WebMCP ランタイムがないブラウザでは <code>modelContext</code> は未検出になります。本番の確認では WebMCP 対応ブラウザまたは local relay の起動状態を確認してください。</p></aside>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="命令型 WebMCP を実装する" duration="18">
-        <p>このステップでは、JavaScript から WebMCP tool を登録します。<code>seat_finder_agent</code> はこの tool を使って、空席や席詳細を取得します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">命令型 WebMCP を実装する</h2>
+<p>このステップでは、JavaScript から WebMCP tool を登録します。<code>seat_finder_agent</code> はこの tool を使って、空席や席詳細を取得します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">情報取得 tool を登録する</h2>
 <p><code>registerImperativeWebMcpTools()</code> を次のように更新します。</p>
 <p>この関数は、Agent がブラウザから情報を取得するための入口を登録します。</p>
@@ -935,12 +979,8 @@ export async function fetchReservations() {}
 </code></pre>
 </div>
 <p><code>seat_finder_agent</code> は、この3つの tool だけを使います。予約 form tool はまだ使いません。</p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="宣言型 WebMCP を実装する" duration="15">
-        <p>このステップでは、予約フォームを WebMCP の宣言型 form tool として公開します。<code>reservation_agent</code> はこの form tool を使って、指定された1席を予約します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">宣言型 WebMCP を実装する</h2>
+<p>このステップでは、予約フォームを WebMCP の宣言型 form tool として公開します。<code>reservation_agent</code> はこの form tool を使って、指定された1席を予約します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">予約フォームに属性を追加する</h2>
 <p><code>public/index.html</code> の予約フォームを次のように更新します。</p>
 <p>命令型 tool は「JavaScript から関数を登録する」形でした。宣言型 WebMCP は違います。既存の <code>&lt;form&gt;</code> に <code>toolname</code>、<code>tooldescription</code>、<code>toolautosubmit</code> を書き、Web ページ上の通常フォームを Agent から使える tool として公開します。</p>
@@ -1025,12 +1065,8 @@ export async function fetchReservations() {}
 </code></pre>
 </div>
 <p>この時点で、Web 側の WebMCP 実装は完成です。次は Python の ADK 側から、この WebMCP tool を見つけて使えるようにします。</p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="WebMCP をデバッグする" duration="8">
-        <p>このステップでは、WebMCP の登録状態を確認します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">WebMCP をデバッグする</h2>
+<p>このステップでは、WebMCP の登録状態を確認します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">デバッグページを開く</h2>
 <p>ブラウザで <code>http://localhost:5173/debug.html</code> を開きます。</p>
 <p><strong>API チェック</strong>を押すと、<code>fetchSeats</code> と <code>fetchReservations</code> が動くか確認できます。<strong>WebMCP チェック</strong>を押すと、<code>modelContext</code>、命令型 tool 登録、宣言型 form tool 登録の状態を確認できます。</p>
@@ -1054,6 +1090,27 @@ OK 予約フォームの宣言型 WebMCP 属性
 </code></pre>
 </div>
 <p><code>modelContext</code> が NG の場合、WebMCP ランタイムまたは relay 側の問題です。<code>fetchSeats</code> が NG の場合、<code>BOARD_URL</code> または運営 API 側の問題です。切り分けのために、API と WebMCP は別々に確認します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">動かした時の想定動作</h2>
+<p>このステップが完了すると、通常の予約サイトとしての動きは変わらず、Agent から見える入口だけが増えます。</p>
+<p>ブラウザで <code>http://localhost:5173/</code> を開くと、座席一覧が表示され、フォームから手動予約できます。これは WebMCP を追加する前からある通常 UI です。次に <code>http://localhost:5173/debug.html</code> を開いて WebMCP チェックを押すと、<code>modelContext</code>、命令型 tool、宣言型 form tool の状態が表示されます。</p>
+<p>期待する見え方は次の通りです。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP modelContext: OK
+Imperative tools: OK
+Declarative form tool: OK
+reserve_seat form: OK
+</code></pre>
+</div>
+<p>ここで NG が出ても、すぐに ADK 側へ進まないでください。ADK 側はブラウザで登録された WebMCP tool を使うため、ブラウザ側の登録が見えていない状態では specialist agent も tool を発見できません。</p>
+<p>画面イメージとしては、通常の予約サイト、デバッグページ、運営ボードの3つをブラウザで開いておくと分かりやすくなります。手動予約ができること、debug page で WebMCP が OK になること、運営ボードで予約者 ID が表示されることを別々に確認します。</p>
 
 
       </google-codelab-step>
@@ -1112,8 +1169,8 @@ MAX_RESERVATION_RETRIES = 2
 </code></pre>
 </div>
 <p>候補数を変えたい場合は <code>MAX_SEAT_CANDIDATES</code> を変更します。競合時の再試行回数を変えたい場合は <code>MAX_RESERVATION_RETRIES</code> を変更します。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">共通 instruction を確認する</h2>
-<p><code>agents/shared/instructions.py</code> には、席タグの説明や共通制約があります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">共通説明を確認する</h2>
+<p><code>agents/shared/instructions.py</code> には、席タグの説明や共通制約があります。ファイル名は <code>instructions.py</code> ですが、本編の Agent 定義では <code>instruction=</code> パラメータに長文を入れません。教材用の共通テキストやメッセージ生成の材料として残しておきます。</p>
 <p>このファイルを分けておくと、A2A specialist services と coordinator で同じ説明を使い回せます。タグの意味が agent ごとにずれると、parser、finder、explanation、coordinator の判断が食い違います。</p>
 
 
@@ -1236,8 +1293,8 @@ MAX_RESERVATION_RETRIES = 2
 +    return _build_toolset([&#34;reserve_seat&#34;])
 </code></pre>
 </div>
-<aside class="special"><p><strong>Tips:</strong> finder 用と reservation 用で別関数にしておくと、Agent の責務と toolset の責務が対応します。ADK 側の tool filter が使えない場合でも、関数名と instruction を読むだけで「どの Agent が何を使うか」が分かります。</p></aside>
-<p>ADK のバージョンによって tool filter の扱いが変わる可能性があります。そのため、関数名で意図を分け、さらに各 Agent の instruction でも「使ってよい tool」を制限します。</p>
+<aside class="special"><p><strong>Tips:</strong> finder 用と reservation 用で別関数にしておくと、Agent の責務と toolset の責務が対応します。ADK 側の tool filter が使えない場合でも、関数名と接続先を分けておけば「どの Agent が何を使うか」をコードで追えます。</p></aside>
+<p>ADK のバージョンによって tool filter の扱いが変わる可能性があります。そのため、関数名で意図を分け、toolset を組み立てる段階で「使ってよい tool」を制限します。</p>
 <p>ここまで実装すると、<code>tools/webmcp_tools.py</code> の主要部分は次の状態になります。</p>
 <p><code>tools/webmcp_tools.py</code></p>
 <div class="claat-code-block" data-code-theme="light">
@@ -1271,7 +1328,11 @@ def build_reservation_webmcp_toolset() -&gt; McpToolset:
     return _build_toolset([&#34;reserve_seat&#34;])
 </code></pre>
 </div>
-<p><code>tool_filter</code> が使える ADK バージョンでは tool 名で絞ります。使えない場合でも、関数名と Agent instruction で意図を固定します。</p>
+<p><code>tool_filter</code> が使える ADK バージョンでは tool 名で絞ります。使えない場合でも、finder と reservation の toolset 関数を分けることで、教材上の責務境界をコードに残します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">動かした時の想定動作</h2>
+<p>この時点では、まだ ADK Web から予約を実行しません。期待する状態は、Python 側が WebMCP local relay へ接続する準備を持っていることです。</p>
+<p>後で <code>seat_finder_agent</code> が起動すると、<code>build_finder_webmcp_toolset()</code> 経由で <code>list_available_seats</code>、<code>get_seat_detail</code>、<code>list_reservations</code> が見えるようになります。<code>reservation_agent</code> が起動すると、<code>build_reservation_webmcp_toolset()</code> 経由で <code>reserve_seat</code> form tool が見えるようになります。</p>
+<p>ここで失敗する場合、ブラウザ側ではなく Python と relay の接続を疑います。具体的には <code>bunx @mcp-b/webmcp-local-relay</code> が起動できるか、<code>.env</code> が読まれているか、Web ページを先に開いているかを確認します。</p>
 
 
       </google-codelab-step>
@@ -1423,6 +1484,9 @@ MAX_RESERVATION_RETRIES = 2
 </code></pre>
 </div>
 <p>この値は、後続の specialist agent と coordinator Workflow から参照します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">動かした時の想定動作</h2>
+<p>このステップのコードは画面を直接変えません。期待する状態は、Workflow の途中結果を <code>SeatPreference</code>、<code>SeatCandidates</code>、<code>RankedSeats</code>、<code>ReservationWorkflowResult</code> として読めるようになることです。</p>
+<p>ADK Web Inspector では、各 agent や node の出力が文字列として表示される場合があります。その場合でも、Python helper 側ではこの model に寄せて処理します。つまり、画面上の見え方が少し揺れても、Workflow の内部では同じ形にそろえる準備ができます。</p>
 
 
       </google-codelab-step>
@@ -1627,6 +1691,10 @@ finderReason あり: +1
 </code></pre>
 </div>
 <p>このあと実装する specialist agent と coordinator Workflow は、この shared layer を使います。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">動かした時の想定動作</h2>
+<p>このステップが完了すると、Agent の出力が多少揺れても Python 側で扱いやすくなります。</p>
+<p>たとえば parser が <code>preferred_tags</code> に重複を返しても、<code>normalize_preference()</code> が重複を落とします。finder の出力が dict や model や text に揺れても、<code>coerce_seat_candidates()</code> が候補 list へ寄せます。予約失敗の文字列に <code>seat_already_reserved</code> が含まれていれば、<code>is_reserved_conflict()</code> が retry 対象として判定します。</p>
+<p>参加者がここで見るべき成功条件は、画面ではなくコードの責務です。LLM の出力を信じ切らず、Workflow に渡す前に Python helper で整える構造になっていれば OK です。</p>
 
 
       </google-codelab-step>
@@ -1634,16 +1702,16 @@ finderReason あり: +1
       <google-codelab-step label="preference_parser_agent を実装する" duration="16">
         <p>このステップでは、自然文を <code>SeatPreference</code> に変換する Agent を作ります。</p>
 <p>なぜ parser を分けるのでしょうか。</p>
-<p>1つの Agent が「希望を読む」「WebMCP で検索する」「候補を比較する」「予約する」まで全部やると、instruction が長くなります。instruction が長くなると、どの失敗がどの責務に由来するのか見えにくくなります。</p>
+<p>1つの Agent が「希望を読む」「WebMCP で検索する」「候補を比較する」「予約する」まで全部やると、自然言語の制約が増えます。プロンプトで頑張るほど、どの失敗がどの責務に由来するのか見えにくくなります。</p>
 <p>parser を分けると、最初に「ユーザーは何を望んでいるのか」を構造化できます。後続の finder と explanation は、その構造を見て動けます。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">agent.py を更新する</h2>
 <p><code>agents/preference_parser/agent.py</code> を更新します。</p>
 <p>この Agent は WebMCP tool を使いません。自然文を読み、<code>SeatPreference</code> の形で返すことだけに集中します。</p>
 <p>そのため、ここで見るポイントは3つです。</p>
 <ul>
-<li><code>instruction</code> にタグの意味が入っているか</li>
+<li><code>description</code> と <code>SeatPreference</code> の field description が役割を表しているか</li>
 <li><code>output_schema=SeatPreference</code> が指定されているか</li>
-<li>follow-up question をしない指示があるか</li>
+<li>follow-up question をしない前提が schema と Workflow 側で吸収されているか</li>
 </ul>
 <p>parser が聞き返しを始めると、Workflow が1ターンで終わらなくなります。このハンズオンでは、曖昧な希望は <code>notes</code> に残して先へ進めます。</p>
 <p><code>agents/preference_parser/agent.py</code></p>
@@ -1659,17 +1727,12 @@ finderReason あり: +1
 <pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> preference_parser_agent = Agent(
      name=&#34;preference_parser_agent&#34;,
      model=&#34;gemini-2.0-flash&#34;,
-     description=&#34;Parses a participant&#39;s natural-language seat request into seat preference tags.&#34;,
+     description=(
+         &#34;Convert a participant&#39;s seat request into SeatPreference. Supported tags are &#34;
+         &#34;front, aisle, quiet, and pair. Put positive wishes in preferred_tags, unwanted &#34;
+         &#34;conditions in avoided_tags, preserve nuance in free_text, and do not ask follow-up questions.&#34;
+     ),
      mode=&#34;single_turn&#34;,
-     instruction=f&#34;&#34;&#34;
--Parse the participant&#39;s request into SeatPreference.
-+Parse the participant&#39;s request into SeatPreference.
- 
- {SEAT_TAG_GUIDE}
- 
-- The completed agent should return SeatPreference and should not ask follow-up questions.
-+Do not ask follow-up questions. Keep uncertain nuance in notes.
- &#34;&#34;&#34;.strip(),
      output_schema=SeatPreference,
  )
 </code></pre>
@@ -1690,21 +1753,12 @@ finderReason あり: +1
 <pre><code language="language-python" class="language-python">preference_parser_agent = Agent(
     name=&#34;preference_parser_agent&#34;,
     model=&#34;gemini-2.0-flash&#34;,
-    description=&#34;Parses a participant&#39;s natural-language seat request into seat preference tags.&#34;,
+    description=(
+        &#34;Convert a participant&#39;s seat request into SeatPreference. Supported tags are &#34;
+        &#34;front, aisle, quiet, and pair. Put positive wishes in preferred_tags, unwanted &#34;
+        &#34;conditions in avoided_tags, preserve nuance in free_text, and do not ask follow-up questions.&#34;
+    ),
     mode=&#34;single_turn&#34;,
-    instruction=f&#34;&#34;&#34;
-You parse a participant&#39;s seat request into a SeatPreference object.
-
-{SEAT_TAG_GUIDE}
-
-Rules:
-- Use only these preferred or avoided tags when possible: front, aisle, quiet, pair.
-- Put positive wishes in preferred_tags.
-- Put conditions the participant wants to avoid in avoided_tags.
-- Keep the original nuance in free_text.
-- Add short notes when the request is vague or when a tag is inferred.
-- Do not ask follow-up questions. This hands-on keeps the flow single-turn.
-&#34;&#34;&#34;.strip(),
     output_schema=SeatPreference,
 )
 </code></pre>
@@ -1746,13 +1800,16 @@ Rules:
 </code></pre>
 </div>
 <p>この中間出力があると、explanation が「なぜこの席を選んだか」を説明しやすくなります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">動かした時の想定動作</h2>
+<p>ADK Web で最終実行したとき、parser は最初に呼ばれます。期待する出力は、自由文のままではなく <code>preferred_tags</code>、<code>avoided_tags</code>、<code>free_text</code>、<code>notes</code> を持つ <code>SeatPreference</code> です。</p>
+<p>たとえば「前方で通路側」と入力した場合は、<code>preferred_tags</code> に <code>front</code> と <code>aisle</code> が入る想定です。ここで <code>preferred_tags</code> が空でも、<code>normalize_preference()</code> が最低限の補完を行います。つまり、parser は完璧である必要はありません。後続の helper と組み合わせて安定させます。</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="seat_finder_agent を実装する" duration="14">
         <p>このステップでは、空席調査担当の specialist agent を実装します。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">instruction と tools を設定する</h2>
+<h2 is-upgraded data-claat-source-heading-level="3">description と tools を設定する</h2>
 <p><code>agents/seat_finder/agent.py</code> を更新します。</p>
 <p><code>seat_finder_agent</code> は WebMCP 命令型 tool を使う Agent です。</p>
 <p>この Agent の責務は、候補を探すことです。予約はしません。順位付けもしすぎません。候補を最大3件に絞り、なぜ候補にしたのかを説明します。</p>
@@ -1770,32 +1827,12 @@ Rules:
 <pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> seat_finder_agent = Agent(
      name=&#34;seat_finder_agent&#34;,
      model=&#34;gemini-2.0-flash&#34;,
-     description=&#34;Finds available single-seat candidates from WebMCP imperative tools.&#34;,
-     instruction=f&#34;&#34;&#34;
--Use the browser WebMCP tools to inspect the current seat board.
-+Use the browser WebMCP tools to inspect the current seat board.
-+
-+{SEAT_TAG_GUIDE}
-+
-+- Use only list_available_seats, get_seat_detail, and list_reservations.
-+- Never call reserve_seat.
-+- Return raw useful facts. Python code extracts and ranks candidates.
-+
-+Tool rules:
-+- Use only imperative WebMCP tools: list_available_seats, get_seat_detail, and list_reservations.
-+- Never call reserve_seat or any reservation action.
-+- Start with list_available_seats. Use get_seat_detail for promising seats when more detail helps.
-+- Use list_reservations only to avoid conflicting with already visible bookings.
-+
-+Return up to {MAX_SEAT_CANDIDATES} candidates. For each candidate include:
-+- seatId
-+- label or display name if available
-+- matching tags
-+- a concise reason connected to the participant&#39;s preference
-+- any tradeoff or uncertainty
-+
-+If no good candidate exists, say so and suggest which condition to relax.
- &#34;&#34;&#34;.strip(),
+     description=(
+         &#34;Use only imperative WebMCP tools to inspect the live seat board. Return raw facts &#34;
+         &#34;about available single-seat candidates: seat IDs, labels, tags, availability, details, &#34;
+         &#34;and visible reservation state. Do not reserve seats.&#34;
+     ),
+     mode=&#34;single_turn&#34;,
      tools=[
 -        # TODO(Handson): Add build_finder_webmcp_toolset() after implementing it.
 +        build_finder_webmcp_toolset(),
@@ -1803,7 +1840,7 @@ Rules:
  )
 </code></pre>
 </div>
-<aside class="special"><p><strong>Tips: </strong><code>tools=[build_finder_webmcp_toolset()]</code> を入れることで、この Agent だけが命令型 WebMCP tool を使えるようになります。instruction 側でも <code>reserve_seat</code> を使わないと明記し、検索と予約を分離します。</p></aside>
+<aside class="special"><p><strong>Tips: </strong><code>tools=[build_finder_webmcp_toolset()]</code> を入れることで、この Agent だけが命令型 WebMCP tool を使えるようになります。予約側の toolset を渡さないことが、検索と予約の分離になります。</p></aside>
 <p><code>seat_finder_agent</code> は予約しません。候補を探し、理由を添えて返すだけです。責務を狭くすることで、予約競合の処理を coordinator に集められます。</p>
 <p>ここまで実装すると、<code>seat_finder_agent</code> は次の状態になります。</p>
 <p><code>agents/seat_finder/agent.py</code></p>
@@ -1819,35 +1856,20 @@ Rules:
 <pre><code language="language-python" class="language-python">seat_finder_agent = Agent(
     name=&#34;seat_finder_agent&#34;,
     model=&#34;gemini-2.0-flash&#34;,
-    description=&#34;Finds available single-seat candidates from WebMCP imperative tools.&#34;,
+    description=(
+        &#34;Use only imperative WebMCP tools to inspect the live seat board. Return raw facts &#34;
+        &#34;about available single-seat candidates: seat IDs, labels, tags, availability, details, &#34;
+        &#34;and visible reservation state. Do not reserve seats.&#34;
+    ),
     mode=&#34;single_turn&#34;,
-    instruction=f&#34;&#34;&#34;
-You find candidate seats for a participant.
-
-{SEAT_TAG_GUIDE}
-
-{COMMON_CONSTRAINTS}
-
-Tool rules:
-- Use only imperative WebMCP tools: list_available_seats, get_seat_detail, and list_reservations.
-- Never call reserve_seat or any reservation action.
-- Start with list_available_seats. Use get_seat_detail for promising seats when more detail helps.
-- Use list_reservations only to avoid conflicting with already visible bookings.
-
-Return up to {MAX_SEAT_CANDIDATES} candidates. For each candidate include:
-- seatId
-- label or display name if available
-- matching tags
-- a concise reason connected to the participant&#39;s preference
-- any tradeoff or uncertainty
-
-If no good candidate exists, say so and suggest which condition to relax.
-&#34;&#34;&#34;.strip(),
     tools=[build_finder_webmcp_toolset()],
 )
 </code></pre>
 </div>
 <p>この時点で、ブラウザ上の空席情報を Agent から取得できるようになります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">動かした時の想定動作</h2>
+<p>最終実行時、<code>seat_finder_agent</code> は A2A service として起動し、WebMCP relay 経由でブラウザ上の命令型 tool を呼びます。</p>
+<p>期待する動きは、最初に空席一覧を取得し、必要に応じて席詳細や予約一覧を確認することです。ここでは予約は行いません。もし ADK Web Inspector で <code>reserve_seat</code> が finder 側から呼ばれていたら、toolset の分離が崩れています。</p>
 
 
       </google-codelab-step>
@@ -1881,29 +1903,11 @@ If no good candidate exists, say so and suggest which condition to relax.
 <pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> explanation_agent = Agent(
      name=&#34;explanation_agent&#34;,
      model=&#34;gemini-2.0-flash&#34;,
-     description=&#34;Explains Python-generated seat ranking without changing it.&#34;,
+     description=(
+         &#34;Explain the Python-generated seat ranking without changing seat order, scores, &#34;
+         &#34;seat IDs, candidates, or reservation decisions.&#34;
+     ),
      mode=&#34;single_turn&#34;,
-     instruction=f&#34;&#34;&#34;
-+The Python workflow already ranked the seats.
-+Explain that ranking briefly without changing the order.
- 
--Use these shared texts:
-+{SEAT_TAG_GUIDE}
- 
--{SEAT_TAG_GUIDE}
-+{COMMON_CONSTRAINTS}
- 
--{COMMON_CONSTRAINTS}
--
--The completed agent should rank up to {MAX_RANKED_SEATS} seats and return RankedSeats.
-+Rules:
-+- Do not reorder seats.
-+- Do not invent new seats.
-+- Explain why the first ranked seat is the best option.
-+- Mention meaningful tradeoffs if they are present.
-+- Keep the output short.
-+- Do not reserve seats.
- &#34;&#34;&#34;.strip(),
      output_schema=RankedSeats,
  )
 </code></pre>
@@ -1924,24 +1928,11 @@ If no good candidate exists, say so and suggest which condition to relax.
 <pre><code language="language-python" class="language-python">explanation_agent = Agent(
     name=&#34;explanation_agent&#34;,
     model=&#34;gemini-2.0-flash&#34;,
-    description=&#34;Explains Python-generated seat ranking without changing it.&#34;,
+    description=(
+        &#34;Explain the Python-generated seat ranking without changing seat order, scores, &#34;
+        &#34;seat IDs, candidates, or reservation decisions.&#34;
+    ),
     mode=&#34;single_turn&#34;,
-    instruction=f&#34;&#34;&#34;
-The Python workflow already ranked the seats.
-Explain that ranking briefly without changing the order.
-
-{SEAT_TAG_GUIDE}
-
-{COMMON_CONSTRAINTS}
-
-Rules:
-- Do not reorder seats.
-- Do not invent new seats.
-- Explain why the first ranked seat is the best option.
-- Mention meaningful tradeoffs if they are present.
-- Keep the output short.
-- Do not reserve seats.
-&#34;&#34;&#34;.strip(),
     output_schema=RankedSeats,
 )
 </code></pre>
@@ -2017,6 +2008,9 @@ SeatCandidates:
 </code></pre>
 </div>
 <aside class="special"><p><strong>Tip:</strong> 順位がおかしい場合は <code>explanation_agent</code> ではなく <code>score_candidate()</code> を見ます。説明が薄い場合だけ <code>explanation_agent</code> を調整します。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">動かした時の想定動作</h2>
+<p>最終実行時、<code>explanation_agent</code> は Python がすでに作った ranking を説明します。期待する動きは、順位を変えず、seat ID を変えず、score を変えず、理由だけを読みやすくすることです。</p>
+<p>ここで新しい候補席が増えたり、Python ranking と違う順番で返ってきたりする場合は、説明担当の責務が広がりすぎています。本編では ranking の正しさは <code>agents/shared/scoring.py</code> で確認し、説明の読みやすさだけを explanation 側で見ます。</p>
 
 
       </google-codelab-step>
@@ -2041,27 +2035,11 @@ SeatCandidates:
 <pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> reservation_agent = Agent(
      name=&#34;reservation_agent&#34;,
      model=&#34;gemini-2.0-flash&#34;,
-     description=&#34;Attempts exactly one specified single-seat reservation.&#34;,
-     instruction=f&#34;&#34;&#34;
--Use only reserve_seat for the specified seatId.
-+Use only reserve_seat for the specified seatId.
-+Attempt it once. Do not retry; Python workflow controls retry.
-+
-+{COMMON_CONSTRAINTS}
-+
-+Tool rules:
-+- Use only reserve_seat.
-+- Attempt the specified seat exactly once.
-+- Do not search for alternatives.
-+- Do not call list_available_seats, get_seat_detail, or list_reservations.
-+
-+Return a structured result:
-+- status: success or failure
-+- seatId
-+- code: include tool error code such as seat_already_reserved when available
-+- message: short human-readable result
-+- rawResult: include important fields returned by the tool
- &#34;&#34;&#34;.strip(),
+     description=(
+         &#34;Use only the declarative WebMCP form tool reserve_seat to attempt the specified &#34;
+         &#34;single-seat reservation once. Return the tool result so the Python workflow can inspect it.&#34;
+     ),
+     mode=&#34;single_turn&#34;,
      tools=[
 -        # TODO(Handson): Add build_reservation_webmcp_toolset() after implementing it.
 +        build_reservation_webmcp_toolset(),
@@ -2085,31 +2063,19 @@ SeatCandidates:
 <pre><code language="language-python" class="language-python">reservation_agent = Agent(
     name=&#34;reservation_agent&#34;,
     model=&#34;gemini-2.0-flash&#34;,
-    description=&#34;Attempts exactly one specified single-seat reservation.&#34;,
+    description=(
+        &#34;Use only the declarative WebMCP form tool reserve_seat to attempt the specified &#34;
+        &#34;single-seat reservation once. Return the tool result so the Python workflow can inspect it.&#34;
+    ),
     mode=&#34;single_turn&#34;,
-    instruction=f&#34;&#34;&#34;
-You reserve one specified seat through the WebMCP reserve_seat form tool.
-
-{COMMON_CONSTRAINTS}
-
-Tool rules:
-- Use only reserve_seat.
-- Attempt the specified seat exactly once.
-- Do not search for alternatives.
-- Do not call list_available_seats, get_seat_detail, or list_reservations.
-
-Return a structured result:
-- status: success or failure
-- seatId
-- code: include tool error code such as seat_already_reserved when available
-- message: short human-readable result
-- rawResult: include important fields returned by the tool
-&#34;&#34;&#34;.strip(),
     tools=[build_reservation_webmcp_toolset()],
 )
 </code></pre>
 </div>
 <p>この時点で、予約を1回だけ実行する専門 Agent ができました。次に coordinator で4つの specialist をつなぎます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">動かした時の想定動作</h2>
+<p>最終実行時、<code>reservation_agent</code> は指定された <code>seatId</code> を <code>reserve_seat</code> form tool へ渡します。期待する動きは、1席を1回だけ予約し、その結果を coordinator へ返すことです。</p>
+<p>成功すれば <code>success</code> や予約済み seat ID が返ります。競合していれば <code>seat_already_reserved</code> を含む失敗が返ります。ここで次候補を探したり、勝手に retry したりしないことが重要です。retry は coordinator Workflow が担当します。</p>
 
 
       </google-codelab-step>
@@ -2177,7 +2143,7 @@ Return a structured result:
 <aside class="special"><p><strong>Tips:</strong> state は ADK Web の Inspector で途中状態を追うときにも役立ちます。失敗時に「parser は正しく動いたか」「finder は候補を返したか」「ranking は作られたか」を見分けやすくなります。</p></aside>
 <h2 is-upgraded data-claat-source-heading-level="3">Agent に渡す入力を組み立てる</h2>
 <p>specialist agent へ渡す文章は、coordinator 側の関数で組み立てます。</p>
-<p>これにより、specialist agent の instruction に長い workflow を書かずに済みます。</p>
+<p>これにより、specialist agent に長い自然言語の workflow を持たせずに済みます。</p>
 <p><code>agents/coordinator/agent.py</code></p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -2436,9 +2402,7 @@ Return a structured result:
      name=&#34;coordinator&#34;,
 -    model=&#34;gemini-2.0-flash&#34;,
 -    description=&#34;Coordinates seat search and one-seat reservation for the hands-on.&#34;,
--    instruction=f&#34;&#34;&#34;
 -...
--&#34;&#34;&#34;.strip(),
 -    tools=[
 -        ...
 +    description=&#34;Runs the coded seat search and reservation workflow.&#34;,
@@ -2661,6 +2625,10 @@ root_agent = Workflow(
 </code></pre>
 </div>
 <p>これで、実装パートの Python 側も一通りつながりました。ADK Web から選ぶ root は <code>coordinator</code> ですが、実際の処理は3つの A2A specialist service と coordinator Workflow node に分かれています。</p>
+<h2 is-upgraded>動かした時の想定動作</h2>
+<p><code>coordinator</code> を ADK Web から実行すると、処理は必ず <code>reserve_best_matching_seat</code> node に入ります。そこから parser、finder、Python ranking、explanation、reservation の順に進みます。</p>
+<p>成功時の最終応答には、予約した席 ID、選定理由、予約者 connpass ID、運営ボードで確認する案内が入ります。失敗時には、試した候補、失敗理由、条件を緩める提案が入ります。</p>
+<p>この時点での完成条件は、実行順が prompt 任せではなく Python code で固定されていることです。ADK Web Inspector で node の順番を見たとき、reservation が ranking より前に動いていなければ OK です。</p>
 
 
       </google-codelab-step>
@@ -2769,8 +2737,8 @@ root_agent = Workflow(
 }
 </code></pre>
 </div>
-<p>ここで <code>preferred_tags</code> が空の場合は、parser の instruction が弱い可能性があります。<code>front</code>, <code>aisle</code>, <code>quiet</code>, <code>pair</code> のタグ説明が instruction に入っているか確認してください。</p>
-<p>逆に、ユーザーが言っていないタグが大量に入る場合は、parser が推測しすぎています。その場合は「明示または自然に推測できるタグだけを入れる」と instruction に加えると安定します。</p>
+<p>ここで <code>preferred_tags</code> が空の場合は、<code>SeatPreference</code> の schema、parser の <code>description</code>、または <code>normalize_preference()</code> の補完ルールが弱い可能性があります。<code>front</code>, <code>aisle</code>, <code>quiet</code>, <code>pair</code> が field description と正規化処理に反映されているか確認してください。</p>
+<p>逆に、ユーザーが言っていないタグが大量に入る場合は、parser が推測しすぎています。その場合は <code>normalize_tags()</code> と <code>SUPPORTED_TAGS</code> で余計な値を落とし、必要なら <code>SeatPreference</code> の field description を具体化します。</p>
 <h2 is-upgraded>finder の出力を見る</h2>
 <p><code>seat_finder_agent</code> は WebMCP の命令型 tools を使います。</p>
 <p>見るべき点は3つです。</p>
@@ -2779,7 +2747,7 @@ root_agent = Workflow(
 <li>必要に応じて <code>get_seat_detail</code> が呼ばれているか</li>
 <li><code>reserve_seat</code> を呼んでいないか</li>
 </ol>
-<p>finder が <code>reserve_seat</code> を呼ぶ場合は責務違反です。<code>seat_finder_agent</code> の instruction に「Never call reserve_seat」を入れてください。</p>
+<p>finder が <code>reserve_seat</code> を呼ぶ場合は責務違反です。<code>seat_finder_agent</code> に予約用 toolset が渡っていないか、<code>build_finder_webmcp_toolset()</code> が <code>reserve_seat</code> を含んでいないか確認してください。</p>
 <h2 is-upgraded>explanation の出力を見る</h2>
 <p><code>explanation_agent</code> は WebMCP を直接使いません。</p>
 <p>explanation の出力は次のような形を期待します。</p>
@@ -2865,12 +2833,8 @@ root_agent = Workflow(
 </ul>
 <p>失敗応答が短すぎると、TA はどこを見ればよいか分からなくなります。教材では、成功時より失敗時の情報を厚くする方が親切です。</p>
 <p>実際の席 ID は、運営 API の座席状態によって変わります。</p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="予約競合と retry を確認する" duration="14">
-        <p>複数人で同時にハンズオンを進めると、Agent が選んだ席が予約直前に埋まることがあります。これは異常ではありません。</p>
+<h2 is-upgraded>予約競合と retry の完成実装を確認する</h2>
+<p>複数人で同時にハンズオンを進めると、Agent が選んだ席が予約直前に埋まることがあります。これは異常ではありません。</p>
 <h2 is-upgraded>retry の責務</h2>
 <p>retry は <code>reservation_agent</code> ではなく coordinator が管理します。</p>
 <p><code>reservation_agent</code> は指定された席を1回だけ予約します。失敗したら、失敗理由を返します。coordinator はその結果を見て、<code>seat_already_reserved</code> の場合だけ次候補を試します。</p>
@@ -2879,7 +2843,7 @@ root_agent = Workflow(
 <p><code>reservation_agent</code> に retry を入れると、一見便利です。しかし reservation agent は ranking の全体像を持っていません。どの候補が第1候補で、どの候補が第2候補なのかを知っているのは coordinator です。</p>
 <p>retry は「次にどの候補を試すか」という判断を含みます。これは単なる予約 API の再実行ではありません。そのため、retry は coordinator Workflow の責務にします。</p>
 <h2 is-upgraded>ranking と retry の関係</h2>
-<p><code>explanation_agent</code> は最大3件の <code>rankedSeats</code> を返します。</p>
+<p>Python の <code>rank_seat_candidates()</code> は最大3件の <code>rankedSeats</code> を返します。</p>
 <p>coordinator は、その順番に予約を試します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -2930,9 +2894,9 @@ reservation attempts:
 </td></tr>
 </table>
 <p>retry の条件を絞ると、問題が隠れにくくなります。</p>
-<h2 is-upgraded>競合を観察する方法</h2>
-<p>当日は50人が同じ予約ボードを使うため、自然に競合が起きます。</p>
-<p>競合が起きたら、ADK Web の実行ログで次を確認します。</p>
+<h2 is-upgraded>競合が起きた場合の見え方</h2>
+<p>当日は50人が同じ予約ボードを使うため、自然に競合が起きる可能性があります。ただし、ここで時間を使って意図的に競合を再現する必要はありません。retry 処理は coordinator の完成実装として最初から入れておきます。</p>
+<p>もし競合が起きたら、ADK Web の実行ログでは次のように見えます。</p>
 <ol type="1">
 <li>Python ranking が第1候補を返した</li>
 <li><code>reservation_agent</code> が第1候補を予約しようとした</li>
@@ -2958,28 +2922,7 @@ reservation attempts:
     return &#34;seat_already_reserved&#34; in normalized or &#34;already reserved&#34; in normalized
 </code></pre>
 </div>
-<p>API や WebMCP form tool が別の error code を返す場合、この判定に引っかかりません。</p>
-<p>たとえば API が <code>already_booked</code> を返すなら、coordinator 側の判定も更新する必要があります。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-python" class="language-python claat-diff-code" data-claat-diff="true" data-claat-diff-language="python"> def is_reserved_conflict(value: Any) -&gt; bool:
-     normalized = text(value).lower()
--    return &#34;seat_already_reserved&#34; in normalized or &#34;already reserved&#34; in normalized
-+    return (
-+        &#34;seat_already_reserved&#34; in normalized
-+        or &#34;already reserved&#34; in normalized
-+        or &#34;already_booked&#34; in normalized
-+    )
-</code></pre>
-</div>
-<p>ただし、本ハンズオンでは運営 API の error code を <code>seat_already_reserved</code> に揃える前提です。参加者がここを変える必要は基本的にありません。</p>
+<p>本ハンズオンでは運営 API の error code を <code>seat_already_reserved</code> に揃える前提です。参加者がここを変える必要は基本的にありません。もし当日の API 仕様が変わった場合は、TA または講師が example 側の完成実装を更新します。</p>
 <h2 is-upgraded>運営ボードで確認する</h2>
 <p>Discord の <code>#260718_webmcp_agent</code> に投稿された <code>BOARD_URL</code> を開きます。予約した席に自分の connpass ID が表示されていれば成功です。</p>
 <h2 is-upgraded>成功したのにボードに出ない場合</h2>
@@ -3010,7 +2953,7 @@ reservation attempts:
 <p><code>scripts/start-agent.sh</code> は <code>PYTHONPATH=.</code> を設定して <code>adk web agents --port 8000</code> を起動します。<code>agents/coordinator/__init__.py</code> と <code>agents/coordinator/agent.py</code> が存在するか確認してください。</p>
 <p>Python import error が出る場合は、<code>uv sync</code> が完了しているか確認します。</p>
 <h2 is-upgraded>Agent が存在しない席を予約しようとする</h2>
-<p><code>seat_finder_agent</code> と <code>coordinator</code> の instruction を確認します。どちらにも「tool の結果だけを根拠にする」「存在しない席を推測しない」という制約が必要です。</p>
+<p><code>seat_finder_agent</code> に渡している toolset と、<code>coerce_seat_candidates()</code> の変換結果を確認します。「tool の結果だけを根拠にする」「存在しない席を推測しない」という制約は、候補抽出と ranking の入力チェックで守ります。</p>
 <h2 is-upgraded>予約済みで失敗する</h2>
 <p><code>seat_already_reserved</code> は想定内です。coordinator が次候補を試しているか確認します。すべて失敗した場合は、条件を緩めてもう一度依頼してください。</p>
 
@@ -3194,8 +3137,8 @@ agents/coordinator/agent.py
 </td><td colspan="1" rowspan="1"><p>候補探索や retry をしない</p>
 </td></tr>
 </table>
-<p>この「しないこと」は instruction にも書きますが、最終的には Python Workflow 側でも守ります。</p>
-<p>たとえば reservation agent が retry しないことは instruction にも書きます。しかし本当に retry 回数を決めているのは <code>reserve_ranked_candidates()</code> の <code>for</code> loop です。</p>
+<p>この「しないこと」は自然言語の説明だけに頼らず、最終的には Python Workflow 側で守ります。</p>
+<p>たとえば reservation agent が retry しないことは、予約用 toolset と coordinator の <code>for</code> loop で担保します。本当に retry 回数を決めているのは <code>reserve_ranked_candidates()</code> です。</p>
 <h2 is-upgraded>coordinator は考える Agent ではなく制御する Workflow</h2>
 <p>coordinator は LLM Agent ではありません。</p>
 <div class="claat-code-block" data-code-theme="light">
@@ -3296,7 +3239,7 @@ public/index.html の #reservationForm
 <p>example では <code>.env</code> を読み、<code>bunx @mcp-b/webmcp-local-relay</code> を起動する <code>StdioConnectionParams</code> を返します。</p>
 <p>この差分は、WebMCP と ADK をつなぐ低レイヤです。ここが動かないと、Agent はブラウザ上の tool を発見できません。</p>
 <h2 is-upgraded>shared helper の差分</h2>
-<p>コード主体で読む場合、最初に見るのは specialist agent の instruction ではありません。</p>
+<p>コード主体で読む場合、最初に見るのは specialist agent の自然言語説明ではありません。</p>
 <p>template と example の主な差分は shared helper です。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -3472,7 +3415,7 @@ agents/shared/reservation.py
 <p>運営 API の error code が増えた場合も、ここに条件を追加するだけで Workflow 全体の retry 方針を調整できます。</p>
 <h2 is-upgraded>coordinator Workflow の改善</h2>
 <p>coordinator の改善は prompt ではなくコードです。</p>
-<p>たとえば retry 回数を変えたい場合は、instruction ではなく <code>MAX_RESERVATION_RETRIES</code> を変えます。</p>
+<p>たとえば retry 回数を変えたい場合は、自然言語の説明ではなく <code>MAX_RESERVATION_RETRIES</code> を変えます。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -3711,7 +3654,7 @@ API client:
 </td><td colspan="1" rowspan="1"><p><code>reservation_agent</code></p>
 </td></tr>
 </table>
-<p>この分担を守ると、Agent instruction が単純になります。</p>
+<p>この分担を守ると、Agent 定義が単純になります。</p>
 <p><code>seat_finder_agent</code> は予約しません。</p>
 <p><code>reservation_agent</code> は検索しません。</p>
 <p><code>coordinator</code> はその両方を順番に呼びます。</p>
@@ -3774,7 +3717,7 @@ API client:
 <li><code>quiet</code></li>
 <li><code>pair</code></li>
 </ul>
-<p>タグを増やしすぎると、参加者が schema と instruction の両方を追いにくくなります。</p>
+<p>タグを増やしすぎると、参加者が schema と scoring logic の両方を追いにくくなります。</p>
 <p>最初は少ないタグで、Agent がどのように判断するかを観察する方が学びやすくなります。</p>
 <p>Extra で増やすなら、次のようなタグが候補です。</p>
 <ul>
@@ -3784,7 +3727,7 @@ API client:
 <li><code>wide_desk</code></li>
 <li><code>group</code></li>
 </ul>
-<p>タグを増やすときは、WebMCP tool が返す seat data、parser instruction、<code>score_candidate()</code>、codelab の説明を一緒に更新します。</p>
+<p>タグを増やすときは、WebMCP tool が返す seat data、<code>SeatPreference</code> の field description、<code>score_candidate()</code>、codelab の説明を一緒に更新します。</p>
 <h2 is-upgraded>SeatCandidate は finder の成果物</h2>
 <p><code>SeatCandidate</code> は、finder が「この席は候補になりそう」と判断した結果です。</p>
 <p>候補には、少なくとも次の情報が必要です。</p>
@@ -3900,7 +3843,7 @@ API client:
 <p>ハンズオン中に詰まったら、まず structured output の境界を見ます。</p>
 <h2 is-upgraded>schema と prompt はセットで読む</h2>
 <p>Pydantic model だけ見ても、Agent の振る舞いは決まりません。</p>
-<p>Agent instruction だけ見ても、出力の形は保証されません。</p>
+<p>自然言語の説明だけ見ても、出力の形は保証されません。</p>
 <p>この2つをセットで読むと、意図が分かります。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -3914,7 +3857,7 @@ API client:
 <pre><code language="language-text" class="language-text">Pydantic model:
   出力の形を決める
 
-Agent instruction:
+Agent description:
   その形に何を入れるかを決める
 </code></pre>
 </div>
@@ -4131,12 +4074,8 @@ MAX_RESERVATION_RETRIES = 2
 </ul>
 <p>この情報があると、参加者は ADK Web の応答だけで状況を把握できます。</p>
 <p>運営ボードに反映されたかどうかは、最後にブラウザで確認します。</p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="ADK Web Inspector で境界を見る" duration="16">
-        <p>このステップでは、ADK Web で実行した後に、どこを見ると原因を切り分けられるかを確認します。</p>
+<h2 is-upgraded>ADK Web Inspector で境界を見る</h2>
+<p>このステップでは、ADK Web で実行した後に、どこを見ると原因を切り分けられるかを確認します。</p>
 <p>ADK Web の画面では、ユーザーの入力と Agent の応答だけでなく、tool 呼び出しや node の実行結果も確認できます。ハンズオン中にうまくいかないときは、最終応答だけを見ても原因が分かりません。境界ごとに見ます。</p>
 <h2 is-upgraded>まず実行順を見る</h2>
 <p>今回の期待される順番は次の通りです。</p>
@@ -4183,8 +4122,8 @@ MAX_RESERVATION_RETRIES = 2
 <li><code>free_text</code> に元の希望が残っているか</li>
 <li><code>notes</code> に補足があるか</li>
 </ul>
-<p>たとえば「前方で通路側」と入力して <code>front</code> も <code>aisle</code> も入っていない場合、parser instruction が弱い可能性があります。</p>
-<p>逆に、ユーザーが言っていないタグがたくさん入る場合もあります。その場合は「明示された希望だけを preferred_tags に入れる」と instruction に書きます。</p>
+<p>たとえば「前方で通路側」と入力して <code>front</code> も <code>aisle</code> も入っていない場合、parser の <code>description</code> や <code>SeatPreference</code> の field description が弱い可能性があります。</p>
+<p>逆に、ユーザーが言っていないタグがたくさん入る場合もあります。その場合は、field description を具体化し、<code>normalize_preference()</code> で unsupported tag を落とします。</p>
 <h2 is-upgraded>finder の tool 呼び出しを見る</h2>
 <p>finder では、WebMCP tool が呼ばれているかを確認します。</p>
 <p>期待する tool は次の3つです。</p>
@@ -4206,7 +4145,7 @@ MAX_RESERVATION_RETRIES = 2
 <li><code>tradeoffs</code> がある場合に納得できるか</li>
 </ul>
 <p>explanation が存在しない seat ID を返している場合は、explanation input に candidate IDs が渡っているか確認します。</p>
-<p>candidate IDs を渡しているのに違う ID を返す場合は、「candidate IDs に含まれる seatId だけを返す」と instruction を強めます。</p>
+<p>candidate IDs を渡しているのに違う ID を返す場合は、<code>coerce_seat_candidates()</code> と ranking input の検証を強め、candidate IDs に含まれない seatId を Python 側で落とします。</p>
 <h2 is-upgraded>reservation の action 呼び出しを見る</h2>
 <p>reservation では、宣言型 WebMCP form tool <code>reserve_seat</code> が呼ばれているかを見ます。</p>
 <p>確認する値です。</p>
@@ -4251,12 +4190,8 @@ MAX_RESERVATION_RETRIES = 2
 8. 運営ボードに connpass ID が出たか
 </code></pre>
 </div>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="WebMCP debug page の読み方" duration="16">
-        <p>このステップでは、<code>public/debug.html</code> の役割をもう少し詳しく見ます。</p>
+<h2 is-upgraded>WebMCP debug page の読み方</h2>
+<p>このステップでは、<code>public/debug.html</code> の役割をもう少し詳しく見ます。</p>
 <p>debug page は参加者が実装する対象ではありません。運営側で用意された、切り分け用のページです。</p>
 <p>それでも仕組みを知っておくと、エラー対応が速くなります。</p>
 <h2 is-upgraded>debug page が確認するもの</h2>
@@ -4343,12 +4278,8 @@ MAX_RESERVATION_RETRIES = 2
 </div>
 <p>参加者が「何も動かない」と言っている場合、まず予約サイトのタブが開いているかを確認します。</p>
 <p>WebMCP tool は、ブラウザ側のページが開かれていて、登録処理が実行されている間だけ見えるからです。</p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="失敗パターンから逆算する" duration="18">
-        <p>このステップでは、よくある失敗を症状から逆算します。</p>
+<h2 is-upgraded>失敗パターンから逆算する</h2>
+<p>このステップでは、よくある失敗を症状から逆算します。</p>
 <p>ハンズオンでは、50人が同時に進みます。すべての参加者が同じところで詰まるとは限りません。症状から見る場所を絞れるようにしておきます。</p>
 <h2 is-upgraded>症状: 予約サイトに席が表示されない</h2>
 <p>まず WebMCP ではなく通常の Web アプリを疑います。</p>
@@ -4485,12 +4416,8 @@ MAX_RESERVATION_RETRIES = 2
 </code></pre>
 </div>
 <p>これで大半の原因は絞れます。</p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="TA 向けデバッグメモ" duration="16">
-        <p>このステップは、当日サポートする TA 向けのメモとしても使えます。</p>
+<h2 is-upgraded>TA 向けデバッグメモ</h2>
+<p>このステップは、当日サポートする TA 向けのメモとしても使えます。</p>
 <p>参加者が詰まったとき、最初からコードを全部読むと時間がかかります。症状に合わせて見る場所を固定しておくと、短い時間で助けやすくなります。</p>
 <h2 is-upgraded>最初に聞くこと</h2>
 <p>参加者に最初に聞くことです。</p>
@@ -5078,7 +5005,7 @@ WebMCP modelContext: NG
 <li><code>near_screen</code>: スクリーンが見やすい</li>
 <li><code>group</code>: グループ参加に向いている</li>
 </ul>
-<p>重み付きランキングを入れる場合も、WebMCP の schema と Agent instruction を同時に更新します。tool が返す情報と Agent が期待する情報がずれると、判断が不安定になります。</p>
+<p>重み付きランキングを入れる場合も、WebMCP の schema と Pydantic model、scoring helper を同時に更新します。tool が返す情報と Python helper が期待する情報がずれると、判断が不安定になります。</p>
 <h2 is-upgraded>なぜ重みを明示するのか</h2>
 <p>本編の explanation は、候補と preference を見て score を返します。</p>
 <p>この score は説明可能ですが、数式として固定されているわけではありません。</p>
@@ -5143,7 +5070,7 @@ WebMCP modelContext: NG
 </code></pre>
 </div>
 <p>この変更を入れると、parser は希望タグだけでなく、どのタグを強く優先するかも返せます。</p>
-<p>ただし、モデルを増やすと instruction も変える必要があります。</p>
+<p>ただし、モデルを増やすと schema、description、helper の変換処理も変える必要があります。</p>
 <p><code>preference_parser_agent</code> には、次のような指示を追加します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -5275,7 +5202,7 @@ free_text:
       </google-codelab-step>
     
       <google-codelab-step label="Extra: 複数席予約に拡張する" duration="12">
-        <p>本編では1席だけ予約しました。複数席予約を扱うには、API、WebMCP form tool、Agent instruction をすべて変える必要があります。</p>
+        <p>本編では1席だけ予約しました。複数席予約を扱うには、API、WebMCP form tool、Pydantic model、Workflow の retry/rollback 処理をすべて変える必要があります。</p>
 <h2 is-upgraded>変える場所</h2>
 <ul>
 <li><code>reserveSeat</code> を複数席対応にする</li>
@@ -5583,7 +5510,7 @@ EXPLANATION_A2A_URL=http://localhost:8103
 <p>LLM 単体は、予約 API を直接呼べません。</p>
 <p>外部世界に触るには tool が必要です。</p>
 <h2 is-upgraded>Agent</h2>
-<p>LLM に tool、instruction、実行環境を持たせたアプリケーションです。</p>
+<p>LLM に tool、schema、状態、実行環境を持たせたアプリケーションです。</p>
 <p>今回の specialist agent は、役割ごとに分けています。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">

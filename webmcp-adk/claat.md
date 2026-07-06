@@ -66,7 +66,16 @@ Duration: 0:07:00
 
 Duration: 0:12:00
 
-このステップでは、starting template を開き、依存関係と設定ファイルを準備します。完成コードは `webmcp-adk/repos/example`、初期コードは `webmcp-adk/repos/template` にあります。
+このステップでは、starting template を開き、依存関係と設定ファイルを準備します。
+
+参加者が使う GitHub repository は次の2つです。
+
+- template: https://github.com/gdg-jp/webmcp-adk-template
+- example: https://github.com/gdg-jp/webmcp-adk-example
+
+手を動かすときは template を使います。詰まったとき、完成形を確認したいとき、TA と一緒に差分を見るときだけ example を参照してください。
+
+この codelab repository 内にも確認用として `webmcp-adk/repos/template` と `webmcp-adk/repos/example` を置いていますが、当日の参加者向け導線は GitHub の template repository です。
 
 ### テンプレートを開く
 
@@ -82,7 +91,7 @@ VS Code を使う場合は、このディレクトリを開きます。
 code .
 ```
 
-このコードラボでは、参加者向けの操作は `template` で行います。完成コードを確認したいときだけ、`webmcp-adk/repos/example` を参照してください。
+このコードラボでは、参加者向けの操作は `template` で行います。完成コードを確認したいときだけ、GitHub の example repository または `webmcp-adk/repos/example` を参照してください。
 
 ### setup script を実行する
 
@@ -156,7 +165,7 @@ Duration: 0:12:00
 
 ### 3 A2A specialist と coordinator Workflow の責務
 
-今回の Agent は1つの巨大な instruction にすべてを詰め込みません。役割ごとに小さく分けます。
+今回の Agent は1つの巨大な instruction にすべてを詰め込みません。むしろ本編の完成コードでは `instruction=` パラメータを使わず、役割分担、schema、toolset、Workflow node、Python helper で動きを縛ります。
 
 | Agent | 責務 | 使うもの |
 | --- | --- | --- |
@@ -180,11 +189,17 @@ Duration: 0:10:00
 
 このステップでは、これから書くコードの意味を確認します。用語を曖昧にしたまま実装すると、どのファイルが何を担当しているのか分かりにくくなります。
 
+![LLM、Agent、Tool の責務](img/step4-llm-agent-tool.svg)
+
 ### LLM は出力を作る
 
 LLM は、入力された文章や構造化データをもとに、次の文章や JSON のような出力を生成します。単体の LLM は、外部 API を勝手に呼んだり、ブラウザのボタンを押したりできません。
 
 たとえば「前方で通路側がいい」と入力すると、LLM はその希望を理解できます。しかし、現在どの席が空いているかは、外部の予約システムを見なければ分かりません。
+
+ここを混ぜてしまうと、Agent 開発が急に分かりにくくなります。LLM は「言葉を読む」「候補を説明する」「構造化された形へ寄せる」ことが得意です。一方で、「今の空席一覧を取得する」「予約 API を呼ぶ」「何回 retry するかを固定する」ことは、LLM の内側から自然に発生するわけではありません。
+
+このハンズオンでは、LLM に任せる部分を意図的に狭くします。自然文の希望を `SeatPreference` に寄せるところ、WebMCP tool を呼び出すところ、Python が決めた ranking を説明するところは LLM の力を使います。逆に、スコア計算、retry 条件、最終成功条件は Python コードで固定します。
 
 ### Agent は Tool を使って行動する
 
@@ -192,11 +207,43 @@ Agent は LLM に tool、状態、実行ルールを持たせたアプリケー�
 
 今回の `coordinator` は、ユーザーの希望を受け取り、`preference_parser_agent`、`seat_finder_agent`、Python の scoring helper、`reservation_agent` を順番に呼びます。予約済みだった場合は、Python ranking の次候補で再試行します。
 
+ただし、この「順番」は自然言語のお願いとして書くのではなく、`Workflow` と Python node で固定します。ここが今回の設計の中心です。Agent が増えると、なんとなく「全部 LLM に相談して進める」形にしたくなりますが、ハンズオンでは再現性が大切です。どのファイルを直せば挙動が変わるのか、参加者が追えるようにします。
+
+`coordinator` は入口です。`seat_finder_agent` は空席を調べる A2A service、`reservation_agent` は予約する A2A service、`explanation_agent` は説明を補助する A2A service です。service を分けることで、WebMCP の命令型 tool と宣言型 form tool の境界も見えやすくなります。
+
 ### Tool は外部世界との接点
 
 Tool は Agent が外部世界へ触るための小さな関数です。今回の tool は WebMCP 経由でブラウザ上の予約サイトへつながります。
 
-このコードラボでは、tool と Agent の責務を意図的に狭くします。`preference_parser_agent` は希望の構造化だけ、`seat_finder_agent` は検索だけ、`agents/shared/scoring.py` は順位付けだけ、`reservation_agent` は予約だけです。責務を狭くすると、instruction が短くなり、失敗したときに原因を追いやすくなります。
+このコードラボでは、tool と Agent の責務を意図的に狭くします。`preference_parser_agent` は希望の構造化だけ、`seat_finder_agent` は検索だけ、`agents/shared/scoring.py` は順位付けだけ、`reservation_agent` は予約だけです。責務を狭くすると、長いプロンプトに頼らず、失敗したときに原因をコードから追いやすくなります。
+
+Tool は「何でもできる便利関数」ではありません。名前、説明、入力 schema、戻り値の形が、Agent にとっての使い方になります。`list_available_seats` という tool 名なら「席を一覧する」ことが分かります。`reserve_seat` という form tool 名なら「予約という副作用がある」ことが分かります。
+
+今回の WebMCP 実装では、既存の予約サイトにある低レイヤの関数を使い回します。`fetchSeats()`、`fetchSeatDetail()`、`fetchReservations()`、`reserveSeat()` はもともと人間向け UI のためにあります。WebMCP はそれを Agent からも見える入口として公開します。
+
+![座席予約 Agent の境界](img/step4-agent-boundaries.svg)
+
+### 今回の責務分担を先に覚える
+
+この先の実装では、次の分担が何度も出てきます。
+
+| 担当 | やること | やらないこと |
+| --- | --- | --- |
+| `preference_parser_agent` | 自然文を `SeatPreference` に寄せる | 空席検索、予約 |
+| `seat_finder_agent` | 命令型 WebMCP tool で候補を集める | 最終順位決定、予約 |
+| `agents/shared/scoring.py` | Python code で候補をスコアリングする | WebMCP tool 呼び出し |
+| `reservation_agent` | 宣言型 WebMCP form tool で1席を予約する | 候補探し、retry 判断 |
+| `coordinator` | 実行順、state、retry、最終応答を管理する | WebMCP tool の中身を実装する |
+
+この表を覚えておくと、後半でファイルが増えても迷いにくくなります。特に「検索」と「予約」を同じ Agent に持たせないことが大切です。検索は読み取り、予約は状態変更です。状態変更を狭い場所へ閉じ込めると、当日のデバッグでも「どこで予約が走ったか」を追いやすくなります。
+
+### 動かした時の想定動作
+
+このステップではまだコードは動かしません。ここで期待する状態は、用語と役割の見通しが立っていることです。
+
+この後の実装で `seat_finder_agent` が予約しようとしていたら、責務が広がりすぎています。`reservation_agent` が候補探しを始めたら、同じく責務がずれています。`coordinator` が retry 回数を持っていなければ、予約競合時の制御が曖昧になります。
+
+つまり、この時点での成功条件は「どのファイルがどの責務を持つか」を説明できることです。
 
 ## MCP と WebMCP を整理する
 
@@ -263,9 +310,9 @@ WebMCP 実装では、この4関数を作り直しません。すでに存在す
 
 `pair` は2席同時予約ではありません。本編では1席だけ予約します。
 
-## WebMCP の入口を実装する
+## WebMCP を実装してデバッグする
 
-Duration: 0:10:00
+Duration: 0:35:00
 
 このステップでは、ブラウザが公開する WebMCP の入口を取得します。
 
@@ -322,9 +369,7 @@ export function modelContext() {
 
 > **補足:** WebMCP ランタイムがないブラウザでは `modelContext` は未検出になります。本番の確認では WebMCP 対応ブラウザまたは local relay の起動状態を確認してください。
 
-## 命令型 WebMCP を実装する
-
-Duration: 0:18:00
+### 命令型 WebMCP を実装する
 
 このステップでは、JavaScript から WebMCP tool を登録します。`seat_finder_agent` はこの tool を使って、空席や席詳細を取得します。
 
@@ -505,9 +550,7 @@ export function registerImperativeWebMcpTools() {
 
 `seat_finder_agent` は、この3つの tool だけを使います。予約 form tool はまだ使いません。
 
-## 宣言型 WebMCP を実装する
-
-Duration: 0:15:00
+### 宣言型 WebMCP を実装する
 
 このステップでは、予約フォームを WebMCP の宣言型 form tool として公開します。`reservation_agent` はこの form tool を使って、指定された1席を予約します。
 
@@ -579,9 +622,7 @@ public/
 
 この時点で、Web 側の WebMCP 実装は完成です。次は Python の ADK 側から、この WebMCP tool を見つけて使えるようにします。
 
-## WebMCP をデバッグする
-
-Duration: 0:08:00
+### WebMCP をデバッグする
 
 このステップでは、WebMCP の登録状態を確認します。
 
@@ -604,6 +645,25 @@ OK 予約フォームの宣言型 WebMCP 属性
 ```
 
 `modelContext` が NG の場合、WebMCP ランタイムまたは relay 側の問題です。`fetchSeats` が NG の場合、`BOARD_URL` または運営 API 側の問題です。切り分けのために、API と WebMCP は別々に確認します。
+
+### 動かした時の想定動作
+
+このステップが完了すると、通常の予約サイトとしての動きは変わらず、Agent から見える入口だけが増えます。
+
+ブラウザで `http://localhost:5173/` を開くと、座席一覧が表示され、フォームから手動予約できます。これは WebMCP を追加する前からある通常 UI です。次に `http://localhost:5173/debug.html` を開いて WebMCP チェックを押すと、`modelContext`、命令型 tool、宣言型 form tool の状態が表示されます。
+
+期待する見え方は次の通りです。
+
+```text
+WebMCP modelContext: OK
+Imperative tools: OK
+Declarative form tool: OK
+reserve_seat form: OK
+```
+
+ここで NG が出ても、すぐに ADK 側へ進まないでください。ADK 側はブラウザで登録された WebMCP tool を使うため、ブラウザ側の登録が見えていない状態では specialist agent も tool を発見できません。
+
+画面イメージとしては、通常の予約サイト、デバッグページ、運営ボードの3つをブラウザで開いておくと分かりやすくなります。手動予約ができること、debug page で WebMCP が OK になること、運営ボードで予約者 ID が表示されることを別々に確認します。
 
 ## ADK multi-agent の設計を確認する
 
@@ -654,9 +714,9 @@ MAX_RESERVATION_RETRIES = 2
 
 候補数を変えたい場合は `MAX_SEAT_CANDIDATES` を変更します。競合時の再試行回数を変えたい場合は `MAX_RESERVATION_RETRIES` を変更します。
 
-### 共通 instruction を確認する
+### 共通説明を確認する
 
-`agents/shared/instructions.py` には、席タグの説明や共通制約があります。
+`agents/shared/instructions.py` には、席タグの説明や共通制約があります。ファイル名は `instructions.py` ですが、本編の Agent 定義では `instruction=` パラメータに長文を入れません。教材用の共通テキストやメッセージ生成の材料として残しておきます。
 
 このファイルを分けておくと、A2A specialist services と coordinator で同じ説明を使い回せます。タグの意味が agent ごとにずれると、parser、finder、explanation、coordinator の判断が食い違います。
 
@@ -762,9 +822,9 @@ def build_webmcp_connection_params() -> StdioConnectionParams:
 +    return _build_toolset(["reserve_seat"])
 ```
 
-> **Tips:** finder 用と reservation 用で別関数にしておくと、Agent の責務と toolset の責務が対応します。ADK 側の tool filter が使えない場合でも、関数名と instruction を読むだけで「どの Agent が何を使うか」が分かります。
+> **Tips:** finder 用と reservation 用で別関数にしておくと、Agent の責務と toolset の責務が対応します。ADK 側の tool filter が使えない場合でも、関数名と接続先を分けておけば「どの Agent が何を使うか」をコードで追えます。
 
-ADK のバージョンによって tool filter の扱いが変わる可能性があります。そのため、関数名で意図を分け、さらに各 Agent の instruction でも「使ってよい tool」を制限します。
+ADK のバージョンによって tool filter の扱いが変わる可能性があります。そのため、関数名で意図を分け、toolset を組み立てる段階で「使ってよい tool」を制限します。
 
 ここまで実装すると、`tools/webmcp_tools.py` の主要部分は次の状態になります。
 
@@ -793,7 +853,15 @@ def build_reservation_webmcp_toolset() -> McpToolset:
     return _build_toolset(["reserve_seat"])
 ```
 
-`tool_filter` が使える ADK バージョンでは tool 名で絞ります。使えない場合でも、関数名と Agent instruction で意図を固定します。
+`tool_filter` が使える ADK バージョンでは tool 名で絞ります。使えない場合でも、finder と reservation の toolset 関数を分けることで、教材上の責務境界をコードに残します。
+
+### 動かした時の想定動作
+
+この時点では、まだ ADK Web から予約を実行しません。期待する状態は、Python 側が WebMCP local relay へ接続する準備を持っていることです。
+
+後で `seat_finder_agent` が起動すると、`build_finder_webmcp_toolset()` 経由で `list_available_seats`、`get_seat_detail`、`list_reservations` が見えるようになります。`reservation_agent` が起動すると、`build_reservation_webmcp_toolset()` 経由で `reserve_seat` form tool が見えるようになります。
+
+ここで失敗する場合、ブラウザ側ではなく Python と relay の接続を疑います。具体的には `bunx @mcp-b/webmcp-local-relay` が起動できるか、`.env` が読まれているか、Web ページを先に開いているかを確認します。
 
 ## 共有モデルを追加する
 
@@ -931,6 +999,12 @@ MAX_RESERVATION_RETRIES = 2
 ```
 
 この値は、後続の specialist agent と coordinator Workflow から参照します。
+
+### 動かした時の想定動作
+
+このステップのコードは画面を直接変えません。期待する状態は、Workflow の途中結果を `SeatPreference`、`SeatCandidates`、`RankedSeats`、`ReservationWorkflowResult` として読めるようになることです。
+
+ADK Web Inspector では、各 agent や node の出力が文字列として表示される場合があります。その場合でも、Python helper 側ではこの model に寄せて処理します。つまり、画面上の見え方が少し揺れても、Workflow の内部では同じ形にそろえる準備ができます。
 
 ## shared helper を実装する
 
@@ -1117,6 +1191,14 @@ agents/shared/
 
 このあと実装する specialist agent と coordinator Workflow は、この shared layer を使います。
 
+### 動かした時の想定動作
+
+このステップが完了すると、Agent の出力が多少揺れても Python 側で扱いやすくなります。
+
+たとえば parser が `preferred_tags` に重複を返しても、`normalize_preference()` が重複を落とします。finder の出力が dict や model や text に揺れても、`coerce_seat_candidates()` が候補 list へ寄せます。予約失敗の文字列に `seat_already_reserved` が含まれていれば、`is_reserved_conflict()` が retry 対象として判定します。
+
+参加者がここで見るべき成功条件は、画面ではなくコードの責務です。LLM の出力を信じ切らず、Workflow に渡す前に Python helper で整える構造になっていれば OK です。
+
 ## preference_parser_agent を実装する
 
 Duration: 0:16:00
@@ -1125,7 +1207,7 @@ Duration: 0:16:00
 
 なぜ parser を分けるのでしょうか。
 
-1つの Agent が「希望を読む」「WebMCP で検索する」「候補を比較する」「予約する」まで全部やると、instruction が長くなります。instruction が長くなると、どの失敗がどの責務に由来するのか見えにくくなります。
+1つの Agent が「希望を読む」「WebMCP で検索する」「候補を比較する」「予約する」まで全部やると、自然言語の制約が増えます。プロンプトで頑張るほど、どの失敗がどの責務に由来するのか見えにくくなります。
 
 parser を分けると、最初に「ユーザーは何を望んでいるのか」を構造化できます。後続の finder と explanation は、その構造を見て動けます。
 
@@ -1137,9 +1219,9 @@ parser を分けると、最初に「ユーザーは何を望んでいるのか�
 
 そのため、ここで見るポイントは3つです。
 
-- `instruction` にタグの意味が入っているか
+- `description` と `SeatPreference` の field description が役割を表しているか
 - `output_schema=SeatPreference` が指定されているか
-- follow-up question をしない指示があるか
+- follow-up question をしない前提が schema と Workflow 側で吸収されているか
 
 parser が聞き返しを始めると、Workflow が1ターンで終わらなくなります。このハンズオンでは、曖昧な希望は `notes` に残して先へ進めます。
 
@@ -1149,17 +1231,12 @@ parser が聞き返しを始めると、Workflow が1ターンで終わらなく
  preference_parser_agent = Agent(
      name="preference_parser_agent",
      model="gemini-2.0-flash",
-     description="Parses a participant's natural-language seat request into seat preference tags.",
+     description=(
+         "Convert a participant's seat request into SeatPreference. Supported tags are "
+         "front, aisle, quiet, and pair. Put positive wishes in preferred_tags, unwanted "
+         "conditions in avoided_tags, preserve nuance in free_text, and do not ask follow-up questions."
+     ),
      mode="single_turn",
-     instruction=f"""
--Parse the participant's request into SeatPreference.
-+Parse the participant's request into SeatPreference.
- 
- {SEAT_TAG_GUIDE}
- 
-- The completed agent should return SeatPreference and should not ask follow-up questions.
-+Do not ask follow-up questions. Keep uncertain nuance in notes.
- """.strip(),
      output_schema=SeatPreference,
  )
 ```
@@ -1176,21 +1253,12 @@ parser が聞き返しを始めると、Workflow が1ターンで終わらなく
 preference_parser_agent = Agent(
     name="preference_parser_agent",
     model="gemini-2.0-flash",
-    description="Parses a participant's natural-language seat request into seat preference tags.",
+    description=(
+        "Convert a participant's seat request into SeatPreference. Supported tags are "
+        "front, aisle, quiet, and pair. Put positive wishes in preferred_tags, unwanted "
+        "conditions in avoided_tags, preserve nuance in free_text, and do not ask follow-up questions."
+    ),
     mode="single_turn",
-    instruction=f"""
-You parse a participant's seat request into a SeatPreference object.
-
-{SEAT_TAG_GUIDE}
-
-Rules:
-- Use only these preferred or avoided tags when possible: front, aisle, quiet, pair.
-- Put positive wishes in preferred_tags.
-- Put conditions the participant wants to avoid in avoided_tags.
-- Keep the original nuance in free_text.
-- Add short notes when the request is vague or when a tag is inferred.
-- Do not ask follow-up questions. This hands-on keeps the flow single-turn.
-""".strip(),
     output_schema=SeatPreference,
 )
 ```
@@ -1224,13 +1292,19 @@ Rules:
 
 この中間出力があると、explanation が「なぜこの席を選んだか」を説明しやすくなります。
 
+### 動かした時の想定動作
+
+ADK Web で最終実行したとき、parser は最初に呼ばれます。期待する出力は、自由文のままではなく `preferred_tags`、`avoided_tags`、`free_text`、`notes` を持つ `SeatPreference` です。
+
+たとえば「前方で通路側」と入力した場合は、`preferred_tags` に `front` と `aisle` が入る想定です。ここで `preferred_tags` が空でも、`normalize_preference()` が最低限の補完を行います。つまり、parser は完璧である必要はありません。後続の helper と組み合わせて安定させます。
+
 ## seat_finder_agent を実装する
 
 Duration: 0:14:00
 
 このステップでは、空席調査担当の specialist agent を実装します。
 
-### instruction と tools を設定する
+### description と tools を設定する
 
 `agents/seat_finder/agent.py` を更新します。
 
@@ -1246,32 +1320,12 @@ Duration: 0:14:00
  seat_finder_agent = Agent(
      name="seat_finder_agent",
      model="gemini-2.0-flash",
-     description="Finds available single-seat candidates from WebMCP imperative tools.",
-     instruction=f"""
--Use the browser WebMCP tools to inspect the current seat board.
-+Use the browser WebMCP tools to inspect the current seat board.
-+
-+{SEAT_TAG_GUIDE}
-+
-+- Use only list_available_seats, get_seat_detail, and list_reservations.
-+- Never call reserve_seat.
-+- Return raw useful facts. Python code extracts and ranks candidates.
-+
-+Tool rules:
-+- Use only imperative WebMCP tools: list_available_seats, get_seat_detail, and list_reservations.
-+- Never call reserve_seat or any reservation action.
-+- Start with list_available_seats. Use get_seat_detail for promising seats when more detail helps.
-+- Use list_reservations only to avoid conflicting with already visible bookings.
-+
-+Return up to {MAX_SEAT_CANDIDATES} candidates. For each candidate include:
-+- seatId
-+- label or display name if available
-+- matching tags
-+- a concise reason connected to the participant's preference
-+- any tradeoff or uncertainty
-+
-+If no good candidate exists, say so and suggest which condition to relax.
- """.strip(),
+     description=(
+         "Use only imperative WebMCP tools to inspect the live seat board. Return raw facts "
+         "about available single-seat candidates: seat IDs, labels, tags, availability, details, "
+         "and visible reservation state. Do not reserve seats."
+     ),
+     mode="single_turn",
      tools=[
 -        # TODO(Handson): Add build_finder_webmcp_toolset() after implementing it.
 +        build_finder_webmcp_toolset(),
@@ -1279,7 +1333,7 @@ Duration: 0:14:00
  )
 ```
 
-> **Tips:** `tools=[build_finder_webmcp_toolset()]` を入れることで、この Agent だけが命令型 WebMCP tool を使えるようになります。instruction 側でも `reserve_seat` を使わないと明記し、検索と予約を分離します。
+> **Tips:** `tools=[build_finder_webmcp_toolset()]` を入れることで、この Agent だけが命令型 WebMCP tool を使えるようになります。予約側の toolset を渡さないことが、検索と予約の分離になります。
 
 `seat_finder_agent` は予約しません。候補を探し、理由を添えて返すだけです。責務を狭くすることで、予約競合の処理を coordinator に集められます。
 
@@ -1291,35 +1345,23 @@ Duration: 0:14:00
 seat_finder_agent = Agent(
     name="seat_finder_agent",
     model="gemini-2.0-flash",
-    description="Finds available single-seat candidates from WebMCP imperative tools.",
+    description=(
+        "Use only imperative WebMCP tools to inspect the live seat board. Return raw facts "
+        "about available single-seat candidates: seat IDs, labels, tags, availability, details, "
+        "and visible reservation state. Do not reserve seats."
+    ),
     mode="single_turn",
-    instruction=f"""
-You find candidate seats for a participant.
-
-{SEAT_TAG_GUIDE}
-
-{COMMON_CONSTRAINTS}
-
-Tool rules:
-- Use only imperative WebMCP tools: list_available_seats, get_seat_detail, and list_reservations.
-- Never call reserve_seat or any reservation action.
-- Start with list_available_seats. Use get_seat_detail for promising seats when more detail helps.
-- Use list_reservations only to avoid conflicting with already visible bookings.
-
-Return up to {MAX_SEAT_CANDIDATES} candidates. For each candidate include:
-- seatId
-- label or display name if available
-- matching tags
-- a concise reason connected to the participant's preference
-- any tradeoff or uncertainty
-
-If no good candidate exists, say so and suggest which condition to relax.
-""".strip(),
     tools=[build_finder_webmcp_toolset()],
 )
 ```
 
 この時点で、ブラウザ上の空席情報を Agent から取得できるようになります。
+
+### 動かした時の想定動作
+
+最終実行時、`seat_finder_agent` は A2A service として起動し、WebMCP relay 経由でブラウザ上の命令型 tool を呼びます。
+
+期待する動きは、最初に空席一覧を取得し、必要に応じて席詳細や予約一覧を確認することです。ここでは予約は行いません。もし ADK Web Inspector で `reserve_seat` が finder 側から呼ばれていたら、toolset の分離が崩れています。
 
 ## explanation_agent を薄くする
 
@@ -1354,29 +1396,11 @@ Duration: 0:16:00
  explanation_agent = Agent(
      name="explanation_agent",
      model="gemini-2.0-flash",
-     description="Explains Python-generated seat ranking without changing it.",
+     description=(
+         "Explain the Python-generated seat ranking without changing seat order, scores, "
+         "seat IDs, candidates, or reservation decisions."
+     ),
      mode="single_turn",
-     instruction=f"""
-+The Python workflow already ranked the seats.
-+Explain that ranking briefly without changing the order.
- 
--Use these shared texts:
-+{SEAT_TAG_GUIDE}
- 
--{SEAT_TAG_GUIDE}
-+{COMMON_CONSTRAINTS}
- 
--{COMMON_CONSTRAINTS}
--
--The completed agent should rank up to {MAX_RANKED_SEATS} seats and return RankedSeats.
-+Rules:
-+- Do not reorder seats.
-+- Do not invent new seats.
-+- Explain why the first ranked seat is the best option.
-+- Mention meaningful tradeoffs if they are present.
-+- Keep the output short.
-+- Do not reserve seats.
- """.strip(),
      output_schema=RankedSeats,
  )
 ```
@@ -1393,24 +1417,11 @@ explanation には WebMCP tool を渡しません。ここを守ることで、W
 explanation_agent = Agent(
     name="explanation_agent",
     model="gemini-2.0-flash",
-    description="Explains Python-generated seat ranking without changing it.",
+    description=(
+        "Explain the Python-generated seat ranking without changing seat order, scores, "
+        "seat IDs, candidates, or reservation decisions."
+    ),
     mode="single_turn",
-    instruction=f"""
-The Python workflow already ranked the seats.
-Explain that ranking briefly without changing the order.
-
-{SEAT_TAG_GUIDE}
-
-{COMMON_CONSTRAINTS}
-
-Rules:
-- Do not reorder seats.
-- Do not invent new seats.
-- Explain why the first ranked seat is the best option.
-- Mention meaningful tradeoffs if they are present.
-- Keep the output short.
-- Do not reserve seats.
-""".strip(),
     output_schema=RankedSeats,
 )
 ```
@@ -1470,6 +1481,12 @@ SeatCandidates:
 
 > **Tip:** 順位がおかしい場合は `explanation_agent` ではなく `score_candidate()` を見ます。説明が薄い場合だけ `explanation_agent` を調整します。
 
+### 動かした時の想定動作
+
+最終実行時、`explanation_agent` は Python がすでに作った ranking を説明します。期待する動きは、順位を変えず、seat ID を変えず、score を変えず、理由だけを読みやすくすることです。
+
+ここで新しい候補席が増えたり、Python ranking と違う順番で返ってきたりする場合は、説明担当の責務が広がりすぎています。本編では ranking の正しさは `agents/shared/scoring.py` で確認し、説明の読みやすさだけを explanation 側で見ます。
+
 ## reservation_agent を実装する
 
 Duration: 0:12:00
@@ -1492,27 +1509,11 @@ Duration: 0:12:00
  reservation_agent = Agent(
      name="reservation_agent",
      model="gemini-2.0-flash",
-     description="Attempts exactly one specified single-seat reservation.",
-     instruction=f"""
--Use only reserve_seat for the specified seatId.
-+Use only reserve_seat for the specified seatId.
-+Attempt it once. Do not retry; Python workflow controls retry.
-+
-+{COMMON_CONSTRAINTS}
-+
-+Tool rules:
-+- Use only reserve_seat.
-+- Attempt the specified seat exactly once.
-+- Do not search for alternatives.
-+- Do not call list_available_seats, get_seat_detail, or list_reservations.
-+
-+Return a structured result:
-+- status: success or failure
-+- seatId
-+- code: include tool error code such as seat_already_reserved when available
-+- message: short human-readable result
-+- rawResult: include important fields returned by the tool
- """.strip(),
+     description=(
+         "Use only the declarative WebMCP form tool reserve_seat to attempt the specified "
+         "single-seat reservation once. Return the tool result so the Python workflow can inspect it."
+     ),
+     mode="single_turn",
      tools=[
 -        # TODO(Handson): Add build_reservation_webmcp_toolset() after implementing it.
 +        build_reservation_webmcp_toolset(),
@@ -1532,31 +1533,22 @@ Duration: 0:12:00
 reservation_agent = Agent(
     name="reservation_agent",
     model="gemini-2.0-flash",
-    description="Attempts exactly one specified single-seat reservation.",
+    description=(
+        "Use only the declarative WebMCP form tool reserve_seat to attempt the specified "
+        "single-seat reservation once. Return the tool result so the Python workflow can inspect it."
+    ),
     mode="single_turn",
-    instruction=f"""
-You reserve one specified seat through the WebMCP reserve_seat form tool.
-
-{COMMON_CONSTRAINTS}
-
-Tool rules:
-- Use only reserve_seat.
-- Attempt the specified seat exactly once.
-- Do not search for alternatives.
-- Do not call list_available_seats, get_seat_detail, or list_reservations.
-
-Return a structured result:
-- status: success or failure
-- seatId
-- code: include tool error code such as seat_already_reserved when available
-- message: short human-readable result
-- rawResult: include important fields returned by the tool
-""".strip(),
     tools=[build_reservation_webmcp_toolset()],
 )
 ```
 
 この時点で、予約を1回だけ実行する専門 Agent ができました。次に coordinator で4つの specialist をつなぎます。
+
+### 動かした時の想定動作
+
+最終実行時、`reservation_agent` は指定された `seatId` を `reserve_seat` form tool へ渡します。期待する動きは、1席を1回だけ予約し、その結果を coordinator へ返すことです。
+
+成功すれば `success` や予約済み seat ID が返ります。競合していれば `seat_already_reserved` を含む失敗が返ります。ここで次候補を探したり、勝手に retry したりしないことが重要です。retry は coordinator Workflow が担当します。
 
 ## coordinator を実装する
 
@@ -1623,7 +1615,7 @@ Workflow では、途中結果を `ctx.state` に保存できます。
 
 specialist agent へ渡す文章は、coordinator 側の関数で組み立てます。
 
-これにより、specialist agent の instruction に長い workflow を書かずに済みます。
+これにより、specialist agent に長い自然言語の workflow を持たせずに済みます。
 
 `agents/coordinator/agent.py`
 
@@ -1852,9 +1844,7 @@ specialist agent へ渡す文章は、coordinator 側の関数で組み立てま
      name="coordinator",
 -    model="gemini-2.0-flash",
 -    description="Coordinates seat search and one-seat reservation for the hands-on.",
--    instruction=f"""
 -...
--""".strip(),
 -    tools=[
 -        ...
 +    description="Runs the coded seat search and reservation workflow.",
@@ -2074,6 +2064,14 @@ root_agent = Workflow(
 
 これで、実装パートの Python 側も一通りつながりました。ADK Web から選ぶ root は `coordinator` ですが、実際の処理は3つの A2A specialist service と coordinator Workflow node に分かれています。
 
+### 動かした時の想定動作
+
+`coordinator` を ADK Web から実行すると、処理は必ず `reserve_best_matching_seat` node に入ります。そこから parser、finder、Python ranking、explanation、reservation の順に進みます。
+
+成功時の最終応答には、予約した席 ID、選定理由、予約者 connpass ID、運営ボードで確認する案内が入ります。失敗時には、試した候補、失敗理由、条件を緩める提案が入ります。
+
+この時点での完成条件は、実行順が prompt 任せではなく Python code で固定されていることです。ADK Web Inspector で node の順番を見たとき、reservation が ranking より前に動いていなければ OK です。
+
 ## ADK Web で動かす
 
 Duration: 0:10:00
@@ -2149,9 +2147,9 @@ coordinator Workflow
 }
 ```
 
-ここで `preferred_tags` が空の場合は、parser の instruction が弱い可能性があります。`front`, `aisle`, `quiet`, `pair` のタグ説明が instruction に入っているか確認してください。
+ここで `preferred_tags` が空の場合は、`SeatPreference` の schema、parser の `description`、または `normalize_preference()` の補完ルールが弱い可能性があります。`front`, `aisle`, `quiet`, `pair` が field description と正規化処理に反映されているか確認してください。
 
-逆に、ユーザーが言っていないタグが大量に入る場合は、parser が推測しすぎています。その場合は「明示または自然に推測できるタグだけを入れる」と instruction に加えると安定します。
+逆に、ユーザーが言っていないタグが大量に入る場合は、parser が推測しすぎています。その場合は `normalize_tags()` と `SUPPORTED_TAGS` で余計な値を落とし、必要なら `SeatPreference` の field description を具体化します。
 
 ### finder の出力を見る
 
@@ -2163,7 +2161,7 @@ coordinator Workflow
 2. 必要に応じて `get_seat_detail` が呼ばれているか
 3. `reserve_seat` を呼んでいないか
 
-finder が `reserve_seat` を呼ぶ場合は責務違反です。`seat_finder_agent` の instruction に「Never call reserve_seat」を入れてください。
+finder が `reserve_seat` を呼ぶ場合は責務違反です。`seat_finder_agent` に予約用 toolset が渡っていないか、`build_finder_webmcp_toolset()` が `reserve_seat` を含んでいないか確認してください。
 
 ### explanation の出力を見る
 
@@ -2240,9 +2238,7 @@ coordinator は `seat_already_reserved` のときだけ次候補を試します�
 
 実際の席 ID は、運営 API の座席状態によって変わります。
 
-## 予約競合と retry を確認する
-
-Duration: 0:14:00
+### 予約競合と retry の完成実装を確認する
 
 複数人で同時にハンズオンを進めると、Agent が選んだ席が予約直前に埋まることがあります。これは異常ではありません。
 
@@ -2262,7 +2258,7 @@ retry は「次にどの候補を試すか」という判断を含みます。�
 
 ### ranking と retry の関係
 
-`explanation_agent` は最大3件の `rankedSeats` を返します。
+Python の `rank_seat_candidates()` は最大3件の `rankedSeats` を返します。
 
 coordinator は、その順番に予約を試します。
 
@@ -2293,11 +2289,11 @@ retry してよいのは `seat_already_reserved` だけです。
 
 retry の条件を絞ると、問題が隠れにくくなります。
 
-### 競合を観察する方法
+### 競合が起きた場合の見え方
 
-当日は50人が同じ予約ボードを使うため、自然に競合が起きます。
+当日は50人が同じ予約ボードを使うため、自然に競合が起きる可能性があります。ただし、ここで時間を使って意図的に競合を再現する必要はありません。retry 処理は coordinator の完成実装として最初から入れておきます。
 
-競合が起きたら、ADK Web の実行ログで次を確認します。
+もし競合が起きたら、ADK Web の実行ログでは次のように見えます。
 
 1. Python ranking が第1候補を返した
 2. `reservation_agent` が第1候補を予約しようとした
@@ -2319,22 +2315,7 @@ def is_reserved_conflict(value: Any) -> bool:
     return "seat_already_reserved" in normalized or "already reserved" in normalized
 ```
 
-API や WebMCP form tool が別の error code を返す場合、この判定に引っかかりません。
-
-たとえば API が `already_booked` を返すなら、coordinator 側の判定も更新する必要があります。
-
-```diff python
- def is_reserved_conflict(value: Any) -> bool:
-     normalized = text(value).lower()
--    return "seat_already_reserved" in normalized or "already reserved" in normalized
-+    return (
-+        "seat_already_reserved" in normalized
-+        or "already reserved" in normalized
-+        or "already_booked" in normalized
-+    )
-```
-
-ただし、本ハンズオンでは運営 API の error code を `seat_already_reserved` に揃える前提です。参加者がここを変える必要は基本的にありません。
+本ハンズオンでは運営 API の error code を `seat_already_reserved` に揃える前提です。参加者がここを変える必要は基本的にありません。もし当日の API 仕様が変わった場合は、TA または講師が example 側の完成実装を更新します。
 
 ### 運営ボードで確認する
 
@@ -2382,7 +2363,7 @@ Python import error が出る場合は、`uv sync` が完了しているか確�
 
 ### Agent が存在しない席を予約しようとする
 
-`seat_finder_agent` と `coordinator` の instruction を確認します。どちらにも「tool の結果だけを根拠にする」「存在しない席を推測しない」という制約が必要です。
+`seat_finder_agent` に渡している toolset と、`coerce_seat_candidates()` の変換結果を確認します。「tool の結果だけを根拠にする」「存在しない席を推測しない」という制約は、候補抽出と ranking の入力チェックで守ります。
 
 ### 予約済みで失敗する
 
@@ -2538,9 +2519,9 @@ LLM Agent は自然文を扱えますが、Workflow で複数の Agent をつな
 | `explanation_agent` | WebMCP tool を呼ばない |
 | `reservation_agent` | 候補探索や retry をしない |
 
-この「しないこと」は instruction にも書きますが、最終的には Python Workflow 側でも守ります。
+この「しないこと」は自然言語の説明だけに頼らず、最終的には Python Workflow 側で守ります。
 
-たとえば reservation agent が retry しないことは instruction にも書きます。しかし本当に retry 回数を決めているのは `reserve_ranked_candidates()` の `for` loop です。
+たとえば reservation agent が retry しないことは、予約用 toolset と coordinator の `for` loop で担保します。本当に retry 回数を決めているのは `reserve_ranked_candidates()` です。
 
 ### coordinator は考える Agent ではなく制御する Workflow
 
@@ -2628,7 +2609,7 @@ example では `.env` を読み、`bunx @mcp-b/webmcp-local-relay` を起動す�
 
 ### shared helper の差分
 
-コード主体で読む場合、最初に見るのは specialist agent の instruction ではありません。
+コード主体で読む場合、最初に見るのは specialist agent の自然言語説明ではありません。
 
 template と example の主な差分は shared helper です。
 
@@ -2775,7 +2756,7 @@ return "seat_already_reserved" in normalized or "already reserved" in normalized
 
 coordinator の改善は prompt ではなくコードです。
 
-たとえば retry 回数を変えたい場合は、instruction ではなく `MAX_RESERVATION_RETRIES` を変えます。
+たとえば retry 回数を変えたい場合は、自然言語の説明ではなく `MAX_RESERVATION_RETRIES` を変えます。
 
 ```python
 MAX_RESERVATION_RETRIES = 2
@@ -2965,7 +2946,7 @@ Agent から見ると、`reserve_seat` は単なる JavaScript 関数ではあ�
 | 命令型 WebMCP tool | 空席一覧、席詳細、予約一覧の取得 | `seat_finder_agent` |
 | 宣言型 WebMCP form tool | 指定席の予約 | `reservation_agent` |
 
-この分担を守ると、Agent instruction が単純になります。
+この分担を守ると、Agent 定義が単純になります。
 
 `seat_finder_agent` は予約しません。
 
@@ -3033,7 +3014,7 @@ multi-agent では、Agent の数が増えるほど「何を渡したのか」�
 - `quiet`
 - `pair`
 
-タグを増やしすぎると、参加者が schema と instruction の両方を追いにくくなります。
+タグを増やしすぎると、参加者が schema と scoring logic の両方を追いにくくなります。
 
 最初は少ないタグで、Agent がどのように判断するかを観察する方が学びやすくなります。
 
@@ -3045,7 +3026,7 @@ Extra で増やすなら、次のようなタグが候補です。
 - `wide_desk`
 - `group`
 
-タグを増やすときは、WebMCP tool が返す seat data、parser instruction、`score_candidate()`、codelab の説明を一緒に更新します。
+タグを増やすときは、WebMCP tool が返す seat data、`SeatPreference` の field description、`score_candidate()`、codelab の説明を一緒に更新します。
 
 ### SeatCandidate は finder の成果物
 
@@ -3179,7 +3160,7 @@ ADK Web Inspector で実行結果を見るときにも効きます。
 
 Pydantic model だけ見ても、Agent の振る舞いは決まりません。
 
-Agent instruction だけ見ても、出力の形は保証されません。
+自然言語の説明だけ見ても、出力の形は保証されません。
 
 この2つをセットで読むと、意図が分かります。
 
@@ -3187,7 +3168,7 @@ Agent instruction だけ見ても、出力の形は保証されません。
 Pydantic model:
   出力の形を決める
 
-Agent instruction:
+Agent description:
   その形に何を入れるかを決める
 ```
 
@@ -3389,9 +3370,7 @@ coordinator の最終応答には、次を含めます。
 
 運営ボードに反映されたかどうかは、最後にブラウザで確認します。
 
-## ADK Web Inspector で境界を見る
-
-Duration: 0:16:00
+### ADK Web Inspector で境界を見る
 
 このステップでは、ADK Web で実行した後に、どこを見ると原因を切り分けられるかを確認します。
 
@@ -3431,9 +3410,9 @@ parser の出力では、次を確認します。
 - `free_text` に元の希望が残っているか
 - `notes` に補足があるか
 
-たとえば「前方で通路側」と入力して `front` も `aisle` も入っていない場合、parser instruction が弱い可能性があります。
+たとえば「前方で通路側」と入力して `front` も `aisle` も入っていない場合、parser の `description` や `SeatPreference` の field description が弱い可能性があります。
 
-逆に、ユーザーが言っていないタグがたくさん入る場合もあります。その場合は「明示された希望だけを preferred_tags に入れる」と instruction に書きます。
+逆に、ユーザーが言っていないタグがたくさん入る場合もあります。その場合は、field description を具体化し、`normalize_preference()` で unsupported tag を落とします。
 
 ### finder の tool 呼び出しを見る
 
@@ -3464,7 +3443,7 @@ explanation の出力では、次を確認します。
 
 explanation が存在しない seat ID を返している場合は、explanation input に candidate IDs が渡っているか確認します。
 
-candidate IDs を渡しているのに違う ID を返す場合は、「candidate IDs に含まれる seatId だけを返す」と instruction を強めます。
+candidate IDs を渡しているのに違う ID を返す場合は、`coerce_seat_candidates()` と ranking input の検証を強め、candidate IDs に含まれない seatId を Python 側で落とします。
 
 ### reservation の action 呼び出しを見る
 
@@ -3510,9 +3489,7 @@ reservation では、宣言型 WebMCP form tool `reserve_seat` が呼ばれて�
 8. 運営ボードに connpass ID が出たか
 ```
 
-## WebMCP debug page の読み方
-
-Duration: 0:16:00
+### WebMCP debug page の読み方
 
 このステップでは、`public/debug.html` の役割をもう少し詳しく見ます。
 
@@ -3613,9 +3590,7 @@ debug page が OK で予約が失敗する場合は、Agent 側の実装を見�
 
 WebMCP tool は、ブラウザ側のページが開かれていて、登録処理が実行されている間だけ見えるからです。
 
-## 失敗パターンから逆算する
-
-Duration: 0:18:00
+### 失敗パターンから逆算する
 
 このステップでは、よくある失敗を症状から逆算します。
 
@@ -3767,9 +3742,7 @@ ADK Web の応答だけで完成と判断しません。
 
 これで大半の原因は絞れます。
 
-## TA 向けデバッグメモ
-
-Duration: 0:16:00
+### TA 向けデバッグメモ
 
 このステップは、当日サポートする TA 向けのメモとしても使えます。
 
@@ -4297,7 +4270,7 @@ Duration: 0:12:00
 - `near_screen`: スクリーンが見やすい
 - `group`: グループ参加に向いている
 
-重み付きランキングを入れる場合も、WebMCP の schema と Agent instruction を同時に更新します。tool が返す情報と Agent が期待する情報がずれると、判断が不安定になります。
+重み付きランキングを入れる場合も、WebMCP の schema と Pydantic model、scoring helper を同時に更新します。tool が返す情報と Python helper が期待する情報がずれると、判断が不安定になります。
 
 ### なぜ重みを明示するのか
 
@@ -4350,7 +4323,7 @@ class SeatPreference(BaseModel):
 
 この変更を入れると、parser は希望タグだけでなく、どのタグを強く優先するかも返せます。
 
-ただし、モデルを増やすと instruction も変える必要があります。
+ただし、モデルを増やすと schema、description、helper の変換処理も変える必要があります。
 
 `preference_parser_agent` には、次のような指示を追加します。
 
@@ -4459,7 +4432,7 @@ parser が正しいのに順位が変なら、`score_candidate()` を直しま�
 
 Duration: 0:12:00
 
-本編では1席だけ予約しました。複数席予約を扱うには、API、WebMCP form tool、Agent instruction をすべて変える必要があります。
+本編では1席だけ予約しました。複数席予約を扱うには、API、WebMCP form tool、Pydantic model、Workflow の retry/rollback 処理をすべて変える必要があります。
 
 ### 変える場所
 
@@ -4764,7 +4737,7 @@ LLM 単体は、予約 API を直接呼べません。
 
 ### Agent
 
-LLM に tool、instruction、実行環境を持たせたアプリケーションです。
+LLM に tool、schema、状態、実行環境を持たせたアプリケーションです。
 
 今回の specialist agent は、役割ごとに分けています。
 

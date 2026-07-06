@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">LLM、Agent、Tool の責務</title>
+  <desc id="desc">LLM は判断と言語化、Agent は状態と実行制御、Tool は外部システム接続を担当することを示す図。</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}
+      .card{fill:#fff;stroke:#d8dee9;stroke-width:2}
+      .title{font:700 30px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#172033}
+      .label{font:700 25px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#172033}
+      .body{font:500 19px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#344054}
+      .small{font:500 17px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#475467}
+      .arrow{stroke:#667085;stroke-width:4;fill:none;marker-end:url(#arrow)}
+      .accent1{fill:#e8f1ff}
+      .accent2{fill:#eaf8ef}
+      .accent3{fill:#fff4df}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#667085"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="640"/>
+  <text class="title" x="60" y="70">LLM / Agent / Tool は同じものではない</text>
+  <rect class="card" x="64" y="130" width="300" height="360" rx="18"/>
+  <rect class="accent1" x="88" y="154" width="252" height="72" rx="14"/>
+  <text class="label" x="116" y="199">LLM</text>
+  <text class="body" x="94" y="274">文章を読み、構造化し、</text>
+  <text class="body" x="94" y="306">説明を生成する。</text>
+  <text class="small" x="94" y="360">単体では API も</text>
+  <text class="small" x="94" y="388">ブラウザも操作できない。</text>
+  <rect class="card" x="450" y="130" width="300" height="360" rx="18"/>
+  <rect class="accent2" x="474" y="154" width="252" height="72" rx="14"/>
+  <text class="label" x="502" y="199">Agent</text>
+  <text class="body" x="480" y="274">LLM に tool、schema、</text>
+  <text class="body" x="480" y="306">状態、実行環境を持たせる。</text>
+  <text class="small" x="480" y="360">Workflow で順番や retry を</text>
+  <text class="small" x="480" y="388">コードとして固定する。</text>
+  <rect class="card" x="836" y="130" width="300" height="360" rx="18"/>
+  <rect class="accent3" x="860" y="154" width="252" height="72" rx="14"/>
+  <text class="label" x="888" y="199">Tool</text>
+  <text class="body" x="866" y="274">外部世界への入口。</text>
+  <text class="body" x="866" y="306">API、WebMCP、DB など。</text>
+  <text class="small" x="866" y="360">名前、説明、schema が</text>
+  <text class="small" x="866" y="388">Agent の手がかりになる。</text>
+  <path class="arrow" d="M370 310 C400 310 418 310 444 310"/>
+  <path class="arrow" d="M756 310 C786 310 804 310 830 310"/>
+  <text class="small" x="92" y="555">このハンズオンでは、LLM の自由判断を減らし、Workflow / helper / Pydantic model で動きを固定します。</text>
+</svg>
