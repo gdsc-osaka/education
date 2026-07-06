@@ -37,7 +37,7 @@
   <rect x="730" y="275" width="290" height="48" rx="12" fill="#E6F4EA"/>
   <text x="752" y="305" font-family="Arial, sans-serif" font-size="16" fill="#137333">seat_finder_agent</text>
   <rect x="730" y="345" width="290" height="48" rx="12" fill="#FEF7E0"/>
-  <text x="752" y="375" font-family="Arial, sans-serif" font-size="16" fill="#A14200">seat_ranker_agent</text>
+  <text x="752" y="375" font-family="Arial, sans-serif" font-size="16" fill="#A14200">explanation_agent</text>
   <rect x="730" y="415" width="290" height="48" rx="12" fill="#FCE8E6"/>
   <text x="752" y="445" font-family="Arial, sans-serif" font-size="16" fill="#A50E0E">reservation_agent</text>
   <text x="730" y="518" font-family="Arial, sans-serif" font-size="16" fill="#5f6368">Workflow code controls order and retry</text>

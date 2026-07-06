@@ -38,7 +38,7 @@
   <text x="785" y="354" font-family="Arial, sans-serif" font-size="17" fill="#137333">seat_finder_agent</text>
   <rect x="760" y="406" width="250" height="58" rx="12" fill="#FCE8E6"/>
   <text x="785" y="442" font-family="Arial, sans-serif" font-size="17" fill="#A50E0E">reservation_agent</text>
-  <text x="760" y="512" font-family="Arial, sans-serif" font-size="16" fill="#5f6368">AgentTool でローカル multi-agent</text>
+  <text x="760" y="512" font-family="Arial, sans-serif" font-size="16" fill="#5f6368">RemoteA2aAgent で A2A services</text>
 
   <path d="M350 330 H395" stroke="#202124" stroke-width="5" marker-end="url(#arrow)"/>
   <path d="M670 330 H715" stroke="#202124" stroke-width="5" marker-end="url(#arrow)"/>

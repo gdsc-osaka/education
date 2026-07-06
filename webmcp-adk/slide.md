@@ -99,7 +99,7 @@ Google I/O Extended 2026 @ Osaka ハンズオン
 
 # 今日のゴール
 
-自然文で希望を伝えると、4 specialist と coordinator Workflow が WebMCP 経由で席を予約します
+自然文で希望を伝えると、A2A specialist services と coordinator Workflow が WebMCP 経由で席を予約します
 
 ---
 
@@ -108,7 +108,7 @@ Google I/O Extended 2026 @ Osaka ハンズオン
 1. LLM / Agent / Tool
 2. MCP と WebMCP
 3. 宣言型と命令型 WebMCP
-4. 4 specialist + Workflow 構成
+4. A2A specialist services
 5. 今日触るファイル
 6. 進め方
 
@@ -140,7 +140,7 @@ Agent は LLM に **Tool** と **実行の流れ** を持たせたアプリで�
 - 1つの巨大な instruction より、責務が読みやすい
 - WebMCP の「調べる」と「予約する」を別々に扱える
 - 失敗したときに、検索・予約・調整のどこで詰まったか見やすい
-- A2A 化する Extra へ自然につながる
+- A2A service として分けることで責務境界がコードに出る
 
 </div>
 
@@ -194,9 +194,23 @@ WebMCP 風の shim は使いません
 
 ### 宣言型
 
-- フォームや action の意味を公開
-- 予約フォームを `reserve_seat` として扱う
+- `<form>` 属性で意味を公開
+- 予約フォームを `reserve_seat` tool として扱う
 - `reservation_agent` が使う
+
+---
+
+## コードで縛るところ
+
+LLM に任せる範囲を狭くし、毎回同じにしたい判断は Python に置きます
+
+| Python helper | 担当 |
+| --- | --- |
+| `preference.py` | tag 正規化 |
+| `scoring.py` | 候補の点数化 |
+| `reservation.py` | 競合判定と最終 message |
+| `coordinator/specialists.py` | RemoteA2aAgent |
+| `coordinator/agent.py` | Workflow と retry |
 
 ---
 
@@ -212,15 +226,28 @@ WebMCP 風の shim は使いません
 
 ---
 
-## 4 specialist + Workflow
+## A2A services + Workflow
 
 | Agent | 役割 | 使うもの |
 | --- | --- | --- |
-| `coordinator` | ユーザーの入口、候補選択、retry | `Workflow` |
-| `preference_parser_agent` | 希望をタグへ構造化 | structured output |
-| `seat_finder_agent` | 空席調査、最大3候補を返す | 命令型 WebMCP |
-| `seat_ranker_agent` | 候補をスコア順に並べる | structured output |
-| `reservation_agent` | 指定された1席を1回だけ予約 | 宣言型 WebMCP |
+| `coordinator` | ユーザーの入口、候補選択、retry | Workflow, port 8100 |
+| `seat_finder_agent` | 空席調査 | A2A, port 8101 |
+| `reservation_agent` | 指定席を1回だけ予約 | A2A, port 8102 |
+| `explanation_agent` | Python ranking の説明補助 | A2A, port 8103 |
+| `preference_parser_agent` | 希望をタグへ構造化 | coordinator 内 local agent |
+
+---
+
+## create-multi-agent と同じ形
+
+coordinator は remote specialist を直接 node 実行しません  
+`RemoteA2aAgent` を Workflow node からコードで呼びます
+
+```text
+RemoteA2aAgent
+  -> remote agent
+  -> coordinator Workflow node
+```
 
 ---
 
@@ -240,17 +267,23 @@ WebMCP 風の shim は使いません
 
 ### Web
 
+- `public/index.html`
 - `public/script.js`
 - 命令型 WebMCP tool
-- 宣言型 WebMCP action
+- 宣言型 WebMCP form 属性
 
 ### Agent
 
 - `tools/webmcp_tools.py`
-- `agents/preference_parser/agent.py`
+- `agents/shared/preference.py`
+- `agents/shared/scoring.py`
+- `agents/shared/reservation.py`
+- `agents/_common.py`
+- `agents/coordinator/specialists.py`
 - `agents/seat_finder/agent.py`
-- `agents/seat_ranker/agent.py`
 - `agents/reservation/agent.py`
+- `agents/explanation/agent.py`
+- `agents/preference_parser/agent.py`
 - `agents/coordinator/agent.py`
 
 ---
@@ -275,7 +308,7 @@ WebMCP を足す状況を想定します
 
 - MCP relay への接続
 - WebMCP toolset
-- specialist agent の instruction
+- preference / scoring / reservation helper
 - coordinator の `Workflow` node 実装
 
 ---
@@ -285,8 +318,9 @@ WebMCP を足す状況を想定します
 1. `setup` を実行します
 2. `.env` に Gemini API key を貼ります
 3. 予約サイトを先に開きます
-4. ADK Web を開いて Agent と話します
-5. 運営ボードで connpass ID を確認します
+4. `make run` で A2A services と ADK Web を起動します
+5. ADK Web を開いて Agent と話します
+6. 運営ボードで connpass ID を確認します
 
 困ったら `#260718_webmcp_agent` と TA を使ってください!
 
@@ -316,8 +350,9 @@ WebMCP を足す状況を想定します
 - debug page の実装を読む
 - 重み付きランキングに広げる
 - 複数席予約に広げる
-- A2A で specialist agent を分離する
-- specialist prompt と出力形式を改善する
+- Vertex / Reasoning Engine へ A2A services を deploy する
+- specialist service を追加する
+- helper と出力形式を改善する
 
 ---
 

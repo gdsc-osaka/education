@@ -1,4 +1,4 @@
-summary: WebMCP と Google ADK のローカル multi-agent で座席予約エージェントを作る
+summary: WebMCP と Google ADK のA2A multi-agent で座席予約エージェントを作る
 id: webmcp-adk
 categories: Web, AI
 environments: Web
@@ -12,17 +12,17 @@ author: GDG on Campus University of Osaka
 
 Duration: 0:07:00
 
-このコードラボでは、すでに完成している座席予約サイトに WebMCP を追加し、Google ADK のローカル multi-agent からその Web ページを操作できるようにします。
+このコードラボでは、すでに完成している座席予約サイトに WebMCP を追加し、Google ADK のA2A multi-agent からその Web ページを操作できるようにします。
 
 ![WebMCP と ADK multi-agent で座席を予約する完成イメージ](img/step1-final-result.svg)
 
 ### このコードラボで作るもの
 
-完成すると、ADK Web で `coordinator` に「前方で通路側の席がいいです」と依頼すると、4つの specialist agent と coordinator Workflow が役割分担して座席を予約します。
+完成すると、ADK Web で `coordinator` に「前方で通路側の席がいいです」と依頼すると、3つの A2A specialist service と coordinator Workflow が役割分担して座席を予約します。
 
-`preference_parser_agent` は自然文の希望を構造化します。`seat_finder_agent` は命令型 WebMCP tool で空席を探します。`seat_ranker_agent` は候補席をスコア順に並べます。`reservation_agent` は宣言型 WebMCP action で指定された 1 席を予約します。
+`preference_parser_agent` は自然文の希望を構造化します。`seat_finder_agent` は命令型 WebMCP tool で空席を探します。`agents/shared/scoring.py` は候補席をスコア順に並べ、`explanation_agent` はその理由説明を補助します。`reservation_agent` は宣言型 WebMCP form tool で指定された 1 席を予約します。
 
-`coordinator` は prompt ではなく Python の `Workflow` node として実行順を固定します。parser → finder → ranker → reservation の順に呼び、予約競合が起きた場合は ranking の次候補を試します。
+`coordinator` は prompt ではなく Python の `Workflow` node として実行順を固定します。parser → finder A2A service → Python ranking → explanation A2A service → reservation A2A service の順に呼び、予約競合が起きた場合は ranking の次候補を試します。
 
 最後に、運営がホストする `BOARD_URL` の予約閲覧ページで、自分の connpass ID が表示されることを確認します。
 
@@ -32,10 +32,10 @@ Duration: 0:07:00
 - API、MCP、WebMCP の違いを説明する方法
 - 既存の Web サイトに WebMCP の入口を追加する方法
 - 命令型 WebMCP tool で情報取得機能を公開する方法
-- 宣言型 WebMCP action で予約フォームを公開する方法
+- 宣言型 WebMCP form tool で予約フォームを公開する方法
 - 自然文の希望を structured output に変換する方法
-- finder と ranker を分けて判断を見やすくする方法
-- ADK の `Workflow` でローカル multi-agent の実行順をコードとして固定する方法
+- finder / reservation / explanation を A2A service として分ける方法
+- ADK の `Workflow` で A2A multi-agent の実行順をコードとして固定する方法
 - 予約競合時に coordinator が再試行する流れを設計する方法
 
 ### 必要なもの
@@ -58,9 +58,9 @@ Duration: 0:07:00
 - 管理 endpoint、リセット endpoint、認証認可
 - 複数席の同時予約
 - WebMCP ランタイムそのものの実装
-- 本編での A2A 化
+- Vertex / Reasoning Engine deploy
 
-本編ではローカル multi-agent を扱います。A2A で specialist agent を別プロセスへ分離する発展は Extra に置きます。
+本編では A2A multi-agent を扱います。Vertex / Reasoning Engine への deploy は Extra に置きます。
 
 ## セットアップする
 
@@ -154,7 +154,7 @@ Duration: 0:12:00
 
 あなたが追加するのは、既存サイトの機能を Agent に見つけてもらうための WebMCP 部分です。現実の開発でも、すでに動いている社内ツールや業務サイトに対して「Agent から使えるようにして」と頼まれることがあります。このコードラボは、その状況を小さく再現しています。
 
-### 4 specialist と coordinator Workflow の責務
+### 3 A2A specialist と coordinator Workflow の責務
 
 今回の Agent は1つの巨大な instruction にすべてを詰め込みません。役割ごとに小さく分けます。
 
@@ -163,16 +163,16 @@ Duration: 0:12:00
 | `coordinator` | ユーザーの入口、実行順、retry 管理、最終応答 | ADK Workflow |
 | `preference_parser_agent` | 自然文の希望を `SeatPreference` へ変換する | structured output |
 | `seat_finder_agent` | 空席を調査し、最大3件の候補を理由つきで返す | 命令型 WebMCP |
-| `seat_ranker_agent` | preference と候補を比較し、スコア順に並べる | structured output |
+| `agents/shared/scoring.py` | preference と候補を比較し、スコア順に並べる | Python helper |
 | `reservation_agent` | 指定された1席を1回だけ予約する | 宣言型 WebMCP |
 
-この分担にすると、WebMCP の2つの型と Agent の役割が対応します。調べる Agent は命令型 tool を使い、予約する Agent は宣言型 action を使います。希望を読む Agent と候補を順位付けする Agent は WebMCP を直接触らず、LLM が得意な構造化と比較判断だけを担当します。
+この分担にすると、WebMCP の2つの型と Agent の役割が対応します。調べる Agent は命令型 tool を使い、予約する Agent は宣言型 form tool を使います。希望を読む Agent と候補を順位付けする Agent は WebMCP を直接触らず、LLM が得意な構造化と比較判断だけを担当します。
 
 ### 本編と Extra の境界
 
-本編ではローカル multi-agent を作ります。`Workflow` の node から specialist agent を順番に呼び出し、検索、予約、retry の流れを Python コードとして固定します。
+本編では A2A multi-agent を作ります。`Workflow` の node から `RemoteA2aAgent` を持つ remote agent を順番に呼び出し、検索、予約、retry の流れを Python コードとして固定します。
 
-A2A は Extra です。A2A は specialist agent を別プロセスや別サービスとして公開する段階で効いてきます。本編では WebMCP と ADK multi-agent の関係を理解することを優先します。
+本編では A2A を扱います。specialist agent を別プロセスの service として公開し、coordinator から RemoteA2aAgent で呼び出します。
 
 ## LLM、Agent、Tool を整理する
 
@@ -190,13 +190,13 @@ LLM は、入力された文章や構造化データをもとに、次の文章�
 
 Agent は LLM に tool、状態、実行ルールを持たせたアプリケーションです。Agent は「この情報が必要だから tool を呼ぶ」「失敗したから別の手段を試す」のような流れを作れます。
 
-今回の `coordinator` は、ユーザーの希望を受け取り、`preference_parser_agent`、`seat_finder_agent`、`seat_ranker_agent`、`reservation_agent` を順番に呼びます。予約済みだった場合は、ranker が並べた次候補で再試行します。
+今回の `coordinator` は、ユーザーの希望を受け取り、`preference_parser_agent`、`seat_finder_agent`、Python の scoring helper、`reservation_agent` を順番に呼びます。予約済みだった場合は、Python ranking の次候補で再試行します。
 
 ### Tool は外部世界との接点
 
 Tool は Agent が外部世界へ触るための小さな関数です。今回の tool は WebMCP 経由でブラウザ上の予約サイトへつながります。
 
-このコードラボでは、tool と Agent の責務を意図的に狭くします。`preference_parser_agent` は希望の構造化だけ、`seat_finder_agent` は検索だけ、`seat_ranker_agent` は順位付けだけ、`reservation_agent` は予約だけです。責務を狭くすると、instruction が短くなり、失敗したときに原因を追いやすくなります。
+このコードラボでは、tool と Agent の責務を意図的に狭くします。`preference_parser_agent` は希望の構造化だけ、`seat_finder_agent` は検索だけ、`agents/shared/scoring.py` は順位付けだけ、`reservation_agent` は予約だけです。責務を狭くすると、instruction が短くなり、失敗したときに原因を追いやすくなります。
 
 ## MCP と WebMCP を整理する
 
@@ -218,9 +218,9 @@ MCP の重要な点は、tool の名前、説明、入力 schema が Agent に�
 
 ### WebMCP は Web ページを Agent に見せる
 
-WebMCP は Web ページ上の機能を Agent に見つけやすくします。通常の Web ページは人間がクリックする前提で作られています。WebMCP を追加すると、Web ページ上の関数やフォームが Agent から tool/action として見えるようになります。
+WebMCP は Web ページ上の機能を Agent に見つけやすくします。通常の Web ページは人間がクリックする前提で作られています。WebMCP を追加すると、Web ページ上の関数やフォームが Agent から tool として見えるようになります。
 
-今回の予約サイトでは、命令型 WebMCP で情報取得 tool を登録し、宣言型 WebMCP で予約フォームを action として登録します。
+今回の予約サイトでは、命令型 WebMCP で情報取得 tool を登録し、宣言型 WebMCP で予約フォームを form tool として公開します。
 
 ## 既存予約サイトを読む
 
@@ -275,7 +275,7 @@ Duration: 0:10:00
 
 ここで実装する `modelContext()` は、WebMCP の入口を1箇所に集めるための helper です。
 
-後続の `registerTool()` と `registerAction()` は、毎回 `document.modelContext` を直接参照しません。まず `modelContext()` を呼び、WebMCP runtime が見つかるかを確認します。こうしておくと、ランタイム差分が出たときに直す場所が1箇所で済みます。
+後続の `registerTool()` と `HTML form 属性` は、毎回 `document.modelContext` を直接参照しません。まず `modelContext()` を呼び、WebMCP runtime が見つかるかを確認します。こうしておくと、ランタイム差分が出たときに直す場所が1箇所で済みます。
 
 この関数では、次の順で候補を見ます。
 
@@ -314,11 +314,11 @@ export function modelContext() {
 }
 ```
 
-この時点では、まだ tool も action も登録していません。まず「WebMCP の入口を見つける」だけを完成させます。
+この時点では、まだ命令型 tool も宣言型 form tool も用意していません。まず「WebMCP の入口を見つける」だけを完成させます。
 
 ### デバッグページで確認する
 
-`http://localhost:5173/debug.html` を開き、WebMCP チェックを押します。まだ tool/action は登録していないため、ここでは `modelContext` の検出状態を確認します。
+`http://localhost:5173/debug.html` を開き、WebMCP チェックを押します。まだ tool は登録していないため、ここでは `modelContext` の検出状態を確認します。
 
 > **補足:** WebMCP ランタイムがないブラウザでは `modelContext` は未検出になります。本番の確認では WebMCP 対応ブラウザまたは local relay の起動状態を確認してください。
 
@@ -503,142 +503,81 @@ export function registerImperativeWebMcpTools() {
 }
 ```
 
-`seat_finder_agent` は、この3つの tool だけを使います。予約 action はまだ使いません。
+`seat_finder_agent` は、この3つの tool だけを使います。予約 form tool はまだ使いません。
 
 ## 宣言型 WebMCP を実装する
 
 Duration: 0:15:00
 
-このステップでは、予約フォームを WebMCP action として公開します。`reservation_agent` はこの action を使って、指定された1席を予約します。
+このステップでは、予約フォームを WebMCP の宣言型 form tool として公開します。`reservation_agent` はこの form tool を使って、指定された1席を予約します。
 
-### 予約 action を登録する
+### 予約フォームに属性を追加する
 
-`registerDeclarativeWebMcpReservation()` を次のように更新します。
+`public/index.html` の予約フォームを次のように更新します。
 
-この関数では、予約フォームを Agent から使える action として公開します。
+命令型 tool は「JavaScript から関数を登録する」形でした。宣言型 WebMCP は違います。既存の `<form>` に `toolname`、`tooldescription`、`toolautosubmit` を書き、Web ページ上の通常フォームを Agent から使える tool として公開します。
 
-命令型 tool は「JavaScript の関数を登録する」形でした。宣言型 action では、既存フォームの意味も一緒に伝えます。`form.selector` と `fields` を指定することで、Web ページ上のどのフォームが予約 action に対応するかを示します。
-
-この action も、通常 UI の予約処理を作り直しません。handler の中では既存の `reserveSeat()` を呼びます。人間がフォームから予約しても、Agent が WebMCP action から予約しても、同じ低レイヤの予約関数を通る構造です。
+この form tool も、通常 UI の予約処理を作り直しません。`toolautosubmit` によりフォーム送信が発火し、既存の submit handler が `reserveSeat()` を呼びます。人間がフォームから予約しても、Agent が WebMCP form tool から予約しても、同じ低レイヤの予約関数を通る構造です。
 
 `reservation_agent` は、この `reserve_seat` だけを使います。空席調査や候補選定はしません。
 
-`public/script.js`
+`public/index.html`
 
-```diff js
- export function registerDeclarativeWebMcpReservation() {
--  // TODO(Handson): Register the reserve_seat declarative action for the reservation form.
--  return {
--    registered: false,
--    reason: "TODO(Handson): register declarative WebMCP reservation action",
--  };
-+  const status = webMcpStatus();
-+  if (!status.available) {
-+    return { registered: false, reason: "document.modelContext is not available" };
-+  }
-+  if (webMcpRegistrationState.declarative) {
-+    return { registered: true, reason: "already registered" };
-+  }
-+  if (!status.hasRegisterAction) {
-+    return { registered: false, reason: "action registration API is not available" };
-+  }
-+
-+  registerAction(
-+    {
-+      name: "reserve_seat",
-+      title: "Reserve one seat",
-+      description: "Reserve exactly one seat for the configured connpass ID.",
-+      inputSchema: {
-+        type: "object",
-+        required: ["seatId"],
-+        properties: {
-+          seatId: { type: "string" },
-+          displayName: { type: "string" },
-+          note: { type: "string" },
-+        },
-+      },
-+      form: {
-+        selector: "#reservationForm",
-+        fields: {
-+          seatId: "#seatId",
-+          displayName: "#displayName",
-+          note: "#note",
-+        },
-+      },
-+    },
-+    async ({ seatId, displayName, note } = {}) =>
-+      reserveSeat({
-+        seatId,
-+        displayName: displayName || config.connpassId,
-+        note,
-+      }),
-+  );
-+
-+  webMcpRegistrationState.declarative = true;
-+  return { registered: true, reason: "registered" };
- }
+```diff html
+       <section class="panel">
+         <h2>予約</h2>
+-        <form id="reservationForm" class="form" method="post">
++        <form
++          id="reservationForm"
++          class="form"
++          method="post"
++          toolname="reserve_seat"
++          tooldescription="Reserve exactly one seat for the configured connpass ID."
++          toolautosubmit
++        >
+           <label>
+             席 ID
+             <input id="seatId" name="seatId" autocomplete="off" required />
+           </label>
 ```
 
-> **Tips:** `form.selector` と `fields` は、Web ページ上の既存フォームと WebMCP action の対応を示します。これにより、Agent 用に別の予約処理を作らず、通常 UI と同じ `reserveSeat()` を再利用できます。
+> **Tips:** 宣言型 WebMCP では、フォームの入力欄は通常の HTML と同じ `name` 属性で識別されます。今回なら `seatId`、`displayName`、`note` が Agent から渡せる入力になります。
 
-命令型 tool は「関数を登録する」感覚が強い実装です。宣言型 action は、既存のフォームに意味を与える実装です。
+命令型 tool は「関数を登録する」感覚が強い実装です。宣言型 form tool は、既存のフォームに意味を与える実装です。
 
 今回の予約フォームは人間も使えます。WebMCP を追加すると、Agent も同じ予約機能を使えるようになります。これが「既存サイトに WebMCP を足す」感覚です。
 
-ここまで実装すると、宣言型 WebMCP 登録部分は次の状態になります。
+### form 属性の意味を読む
 
-`public/script.js`
+`toolname` は、Agent から見える tool 名です。
 
-```js
-export function registerDeclarativeWebMcpReservation() {
-  const status = webMcpStatus();
-  if (!status.available) {
-    return { registered: false, reason: "document.modelContext is not available" };
-  }
-  if (webMcpRegistrationState.declarative) {
-    return { registered: true, reason: "already registered" };
-  }
-  if (!status.hasRegisterAction) {
-    return { registered: false, reason: "action registration API is not available" };
-  }
-
-  registerAction(
-    {
-      name: "reserve_seat",
-      title: "Reserve one seat",
-      description: "Reserve exactly one seat for the configured connpass ID.",
-      inputSchema: {
-        type: "object",
-        required: ["seatId"],
-        properties: {
-          seatId: { type: "string" },
-          displayName: { type: "string" },
-          note: { type: "string" },
-        },
-      },
-      form: {
-        selector: "#reservationForm",
-        fields: {
-          seatId: "#seatId",
-          displayName: "#displayName",
-          note: "#note",
-        },
-      },
-    },
-    async ({ seatId, displayName, note } = {}) =>
-      reserveSeat({
-        seatId,
-        displayName: displayName || config.connpassId,
-        note,
-      }),
-  );
-
-  webMcpRegistrationState.declarative = true;
-  return { registered: true, reason: "registered" };
-}
+```html
+toolname="reserve_seat"
 ```
 
-この時点で、Web 側の WebMCP 実装は完成です。次は Python の ADK 側から、この WebMCP tool/action を見つけて使えるようにします。
+`tooldescription` は、Agent が「いつ使うべきか」を判断するための説明です。短くてもよいので、副作用があること、1席だけ予約すること、設定済みの connpass ID を使うことが伝わる文にします。
+
+```html
+tooldescription="Reserve exactly one seat for the configured connpass ID."
+```
+
+`toolautosubmit` は、Agent が form tool を呼んだときにフォーム送信まで進めるための属性です。本編では「Agent が席を予約する」ことが成功条件なので付けます。
+
+### 現在のコードベース
+
+ここまで進めると、Web 側の関係ファイルは次の状態になります。
+
+```text
+public/
+  index.html      # 宣言型 WebMCP form 属性を追加したファイル
+  script.js       # 通常 UI、API client、命令型 WebMCP tools
+  debug.html      # デバッグ画面
+  debug.js        # API / WebMCP チェック
+  style.css       # 見た目
+  config.js       # setup で生成される設定
+```
+
+この時点で、Web 側の WebMCP 実装は完成です。次は Python の ADK 側から、この WebMCP tool を見つけて使えるようにします。
 
 ## WebMCP をデバッグする
 
@@ -650,7 +589,7 @@ Duration: 0:08:00
 
 ブラウザで `http://localhost:5173/debug.html` を開きます。
 
-**API チェック**を押すと、`fetchSeats` と `fetchReservations` が動くか確認できます。**WebMCP チェック**を押すと、`modelContext`、命令型 tool 登録、宣言型 action 登録の状態を確認できます。
+**API チェック**を押すと、`fetchSeats` と `fetchReservations` が動くか確認できます。**WebMCP チェック**を押すと、`modelContext`、命令型 tool 登録、宣言型 form tool 登録の状態を確認できます。
 
 **期待される状態:**
 
@@ -661,7 +600,7 @@ OK fetchSeats
 OK fetchReservations
 OK modelContext
 OK registerImperativeWebMcpTools
-OK registerDeclarativeWebMcpReservation
+OK 予約フォームの宣言型 WebMCP 属性
 ```
 
 `modelContext` が NG の場合、WebMCP ランタイムまたは relay 側の問題です。`fetchSeats` が NG の場合、`BOARD_URL` または運営 API 側の問題です。切り分けのために、API と WebMCP は別々に確認します。
@@ -678,18 +617,29 @@ Duration: 0:12:00
 
 ```text
 agents/
+  _common.py
   coordinator/
     agent.py
+    specialists.py
+  preference_parser/
+    agent.py
   seat_finder/
+    agent.py
+  explanation/
     agent.py
   reservation/
     agent.py
   shared/
     instructions.py
+    models.py
+    preference.py
+    reservation.py
+    scoring.py
     settings.py
+    utils.py
 ```
 
-`coordinator` が ADK Web で選ぶ root agent です。4つの specialist agent は coordinator から呼ばれます。
+`coordinator` が ADK Web で選ぶ root agent です。`seat_finder`、`reservation`、`explanation` は A2A service として別 port で起動し、`agents/coordinator/specialists.py` の `RemoteA2aAgent` proxy 経由で呼ばれます。
 
 ### 設定値を確認する
 
@@ -708,7 +658,7 @@ MAX_RESERVATION_RETRIES = 2
 
 `agents/shared/instructions.py` には、席タグの説明や共通制約があります。
 
-このファイルを分けておくと、4つの specialist agent と coordinator で同じ説明を使い回せます。タグの意味が agent ごとにずれると、parser、finder、ranker、coordinator の判断が食い違います。
+このファイルを分けておくと、A2A specialist services と coordinator で同じ説明を使い回せます。タグの意味が agent ごとにずれると、parser、finder、explanation、coordinator の判断が食い違います。
 
 ## WebMCP toolset を実装する
 
@@ -722,7 +672,7 @@ Duration: 0:15:00
 
 この関数は、ADK 側から WebMCP local relay を起動するための接続設定を作ります。
 
-ブラウザ上の WebMCP tool/action は、Python プロセスから直接見えるわけではありません。ADK は MCP client として stdio server に接続し、その stdio server がブラウザ側の WebMCP runtime とつながります。
+ブラウザ上の WebMCP tool は、Python プロセスから直接見えるわけではありません。ADK は MCP client として stdio server に接続し、その stdio server がブラウザ側の WebMCP runtime とつながります。
 
 このコードラボでは、relay command を環境変数で差し替えられるようにします。
 
@@ -791,7 +741,7 @@ def build_webmcp_connection_params() -> StdioConnectionParams:
 
 関数を分ける理由は、Agent ごとに責務を見やすくするためです。
 
-`seat_finder_agent` は情報取得だけを行います。`reservation_agent` は予約 action だけを行います。両方が同じ WebMCP relay に接続するとしても、呼び出してよい tool/action は分けておく方が教材として読みやすくなります。
+`seat_finder_agent` は情報取得だけを行います。`reservation_agent` は予約 form tool だけを行います。両方が同じ WebMCP relay に接続するとしても、呼び出してよい tool は分けておく方が教材として読みやすくなります。
 
 `tools/webmcp_tools.py`
 
@@ -928,11 +878,11 @@ class SeatPreference(BaseModel):
 
 `preferred_tags` は「前方がいい」「通路側がいい」のような前向きな希望です。`avoided_tags` は「うるさい場所は避けたい」「出入りしにくい席は嫌だ」のような避けたい条件です。
 
-このコードラボではタグを `front`, `aisle`, `quiet`, `pair` に絞ります。タグを絞ることで、ranker が比較しやすくなります。タグを増やす拡張は Extra に置きます。
+このコードラボではタグを `front`, `aisle`, `quiet`, `pair` に絞ります。タグを絞ることで、explanation が比較しやすくなります。タグを増やす拡張は Extra に置きます。
 
 ### RankedSeat
 
-`RankedSeat` は ranker の出力です。
+`RankedSeat` は explanation の出力です。
 
 ```python
 class RankedSeat(BaseModel):
@@ -952,7 +902,7 @@ class RankedSeat(BaseModel):
 
 この設定ファイルは、Workflow 全体の上限値を1箇所に集める場所です。
 
-finder、ranker、coordinator のそれぞれに数値を直書きすると、変更時にずれます。たとえば finder は5件返すのに ranker は3件しか見ない、coordinator は2件しか retry しない、という状態が意図せず起きるかもしれません。
+finder、explanation、coordinator のそれぞれに数値を直書きすると、変更時にずれます。たとえば finder は5件返すのに explanation は3件しか見ない、coordinator は2件しか retry しない、という状態が意図せず起きるかもしれません。
 
 そこで、候補数、ランキング数、retry 回数を shared settings として置きます。
 
@@ -964,11 +914,11 @@ finder、ranker、coordinator のそれぞれに数値を直書きすると、�
  MAX_RESERVATION_RETRIES = 2
 ```
 
-> **Tips:** finder の候補数、ranker の順位付け件数、coordinator の retry 回数は別の概念です。最初はすべて 3 件相当にそろえますが、定数を分けておくと後から安全に調整できます。
+> **Tips:** finder の候補数、explanation の順位付け件数、coordinator の retry 回数は別の概念です。最初はすべて 3 件相当にそろえますが、定数を分けておくと後から安全に調整できます。
 
-`MAX_SEAT_CANDIDATES` は finder が返す候補数です。`MAX_RANKED_SEATS` は ranker が順位付けして coordinator に渡す候補数です。
+`MAX_SEAT_CANDIDATES` は finder が返す候補数です。`MAX_RANKED_SEATS` は explanation が順位付けして coordinator に渡す候補数です。
 
-今はどちらも 3 です。値を分けておくと、将来 finder は5件拾い、ranker は3件に絞る、という拡張がしやすくなります。
+今はどちらも 3 です。値を分けておくと、将来 finder は5件拾い、explanation は3件に絞る、という拡張がしやすくなります。
 
 ここまで実装すると、設定ファイルは次の状態になります。
 
@@ -982,6 +932,191 @@ MAX_RESERVATION_RETRIES = 2
 
 この値は、後続の specialist agent と coordinator Workflow から参照します。
 
+## shared helper を実装する
+
+Duration: 0:20:00
+
+このステップでは、Agent に任せすぎていた判断を Python の helper に移します。
+
+ここが今回のコード主体化の中心です。
+
+LLM は自然文を読んだり、WebMCP tool を呼んだりできます。しかし、候補数の上限、タグの正規化、score の計算、retry してよい失敗の判定は、毎回同じ結果になってほしい処理です。
+
+毎回同じであってほしい処理は、prompt ではなく Python code にします。
+
+### utils.py を追加する
+
+`agents/shared/utils.py` を作成します。
+
+このファイルは ADK の出力を扱いやすい形へ変換します。Agent の出力は、文字列、Pydantic model、dict、イベントの parts など、実行経路によって形が揺れることがあります。
+
+`dump()` と `text()` を用意しておくと、coordinator の中で毎回 `hasattr(...)` を書かなくて済みます。
+
+`agents/shared/utils.py`
+
+```python
+from __future__ import annotations
+
+import json
+from typing import Any
+
+
+def dump(value: Any) -> Any:
+    if value is None:
+        return None
+    if hasattr(value, "model_dump"):
+        return value.model_dump()
+    if isinstance(value, list):
+        return [dump(item) for item in value]
+    if isinstance(value, tuple):
+        return [dump(item) for item in value]
+    if isinstance(value, dict):
+        return {key: dump(item) for key, item in value.items()}
+    return value
+
+
+def text(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value.strip()
+    if hasattr(value, "model_dump_json"):
+        return value.model_dump_json(indent=2)
+    if isinstance(value, dict | list):
+        return json.dumps(dump(value), ensure_ascii=False, indent=2)
+
+    parts = getattr(value, "parts", None)
+    if parts:
+        return "\n".join(part.text for part in parts if getattr(part, "text", None)).strip()
+
+    return str(value).strip()
+```
+
+この helper は目立ちませんが、Workflow をコードとして読みやすくする土台です。
+
+### preference.py を追加する
+
+`agents/shared/preference.py` を作成します。
+
+parser agent は `SeatPreference` を返しますが、LLM の出力をそのまま後続へ渡すと、未対応タグや重複タグが混ざることがあります。
+
+そこで `normalize_preference()` で次を保証します。
+
+- `front / aisle / quiet / pair` 以外を除外する
+- tag を lowercase にそろえる
+- 重複を消す
+- 空の場合は gentle default として `quiet` を入れる
+
+`agents/shared/preference.py`
+
+```python
+SUPPORTED_TAGS = {"front", "aisle", "quiet", "pair"}
+DEFAULT_PREFERRED_TAGS = ["quiet"]
+
+
+def normalize_tags(values: list[str] | tuple[str, ...] | None) -> list[str]:
+    tags: list[str] = []
+    seen: set[str] = set()
+    for value in values or []:
+        tag = str(value).strip().lower()
+        if tag in SUPPORTED_TAGS and tag not in seen:
+            tags.append(tag)
+            seen.add(tag)
+    return tags
+```
+
+このような正規化は LLM に任せるより、コードで固定する方が向いています。
+
+### scoring.py を追加する
+
+`agents/shared/scoring.py` を作成します。
+
+本編の順位決定は `explanation_agent` ではなく、Python の `score_candidate()` と `rank_seat_candidates()` が行います。
+
+`score_candidate()` の考え方です。
+
+```text
+base score: 5
+preferred tag に一致: +2
+avoided tag に一致: -3
+予約不可っぽい状態: -5
+finderReason あり: +1
+最後に 1〜10 に丸める
+```
+
+`agents/shared/scoring.py`
+
+```python
+def score_candidate(preference: SeatPreference, candidate: SeatCandidate) -> RankedSeat:
+    tags = set(candidate.tags)
+    preferred = set(preference.preferred_tags)
+    avoided = set(preference.avoided_tags)
+    matched = sorted(tags & preferred)
+    avoided_hits = sorted(tags & avoided)
+
+    score = 5
+    score += len(matched) * 2
+    score -= len(avoided_hits) * 3
+    if candidate.availability.lower() in {"reserved", "unavailable", "false"}:
+        score -= 5
+    if candidate.finderReason:
+        score += 1
+    score = max(1, min(10, score))
+
+    reason_bits = []
+    if matched:
+        reason_bits.append(f"matches preferred tags: {', '.join(matched)}")
+    if not matched:
+        reason_bits.append("keeps the request feasible even without a direct tag match")
+    tradeoffs = [f"matches avoided tag: {tag}" for tag in avoided_hits]
+    if not candidate.tags:
+        tradeoffs.append("seat tags were not available in the finder output")
+
+    return RankedSeat(
+        seatId=candidate.seatId,
+        score=score,
+        reason="; ".join(reason_bits),
+        tradeoffs=tradeoffs,
+    )
+```
+
+score の式をコードにすると、参加者は「なぜこの席になったか」を読み解けます。ハンズオンが prompt 調整だけで終わらず、普通のプログラミングとして扱いやすくなります。
+
+### reservation.py を追加する
+
+`agents/shared/reservation.py` を作成します。
+
+retry するかどうかは、reservation agent ではなく coordinator が判断します。その判断に使う関数が `is_reserved_conflict()` です。
+
+`agents/shared/reservation.py`
+
+```python
+def is_reserved_conflict(value: Any) -> bool:
+    normalized = text(value).lower()
+    return "seat_already_reserved" in normalized or "already reserved" in normalized
+```
+
+この関数が `True` のときだけ、coordinator は次候補を試します。
+
+API URL 間違い、Gemini API key 未設定、WebMCP relay 未接続のような失敗は retry しても直りません。だから retry 条件をコードで狭くします。
+
+### 現在のコードベース
+
+ここまでで、ADK 側の shared layer は次の構成になります。
+
+```text
+agents/shared/
+  instructions.py
+  models.py
+  preference.py
+  reservation.py
+  scoring.py
+  settings.py
+  utils.py
+```
+
+このあと実装する specialist agent と coordinator Workflow は、この shared layer を使います。
+
 ## preference_parser_agent を実装する
 
 Duration: 0:16:00
@@ -992,7 +1127,7 @@ Duration: 0:16:00
 
 1つの Agent が「希望を読む」「WebMCP で検索する」「候補を比較する」「予約する」まで全部やると、instruction が長くなります。instruction が長くなると、どの失敗がどの責務に由来するのか見えにくくなります。
 
-parser を分けると、最初に「ユーザーは何を望んでいるのか」を構造化できます。後続の finder と ranker は、その構造を見て動けます。
+parser を分けると、最初に「ユーザーは何を望んでいるのか」を構造化できます。後続の finder と explanation は、その構造を見て動けます。
 
 ### agent.py を更新する
 
@@ -1017,22 +1152,13 @@ parser が聞き返しを始めると、Workflow が1ターンで終わらなく
      description="Parses a participant's natural-language seat request into seat preference tags.",
      mode="single_turn",
      instruction=f"""
--TODO(Handson): Write the preference parser instruction.
-+You parse a participant's seat request into a SeatPreference object.
+-Parse the participant's request into SeatPreference.
++Parse the participant's request into SeatPreference.
  
--Use this guide:
-+{SEAT_TAG_GUIDE}
+ {SEAT_TAG_GUIDE}
  
--{SEAT_TAG_GUIDE}
--
--The completed agent should return SeatPreference and should not ask follow-up questions.
-+Rules:
-+- Use only these preferred or avoided tags when possible: front, aisle, quiet, pair.
-+- Put positive wishes in preferred_tags.
-+- Put conditions the participant wants to avoid in avoided_tags.
-+- Keep the original nuance in free_text.
-+- Add short notes when the request is vague or when a tag is inferred.
-+- Do not ask follow-up questions. This hands-on keeps the flow single-turn.
+- The completed agent should return SeatPreference and should not ask follow-up questions.
++Do not ask follow-up questions. Keep uncertain nuance in notes.
  """.strip(),
      output_schema=SeatPreference,
  )
@@ -1096,7 +1222,7 @@ Rules:
 }
 ```
 
-この中間出力があると、ranker が「なぜこの席を選んだか」を説明しやすくなります。
+この中間出力があると、explanation が「なぜこの席を選んだか」を説明しやすくなります。
 
 ## seat_finder_agent を実装する
 
@@ -1122,20 +1248,14 @@ Duration: 0:14:00
      model="gemini-2.0-flash",
      description="Finds available single-seat candidates from WebMCP imperative tools.",
      instruction=f"""
--TODO(Handson): Write the seat finder instruction.
--
--Use these shared constants as source text:
--
--{SEAT_TAG_GUIDE}
--
--{COMMON_CONSTRAINTS}
--
--The completed agent should return up to {MAX_SEAT_CANDIDATES} candidates.
-+You find candidate seats for a participant.
+-Use the browser WebMCP tools to inspect the current seat board.
++Use the browser WebMCP tools to inspect the current seat board.
 +
 +{SEAT_TAG_GUIDE}
 +
-+{COMMON_CONSTRAINTS}
++- Use only list_available_seats, get_seat_detail, and list_reservations.
++- Never call reserve_seat.
++- Return raw useful facts. Python code extracts and ranks candidates.
 +
 +Tool rules:
 +- Use only imperative WebMCP tools: list_available_seats, get_seat_detail, and list_reservations.
@@ -1201,44 +1321,44 @@ If no good candidate exists, say so and suggest which condition to relax.
 
 この時点で、ブラウザ上の空席情報を Agent から取得できるようになります。
 
-## seat_ranker_agent を実装する
+## explanation_agent を薄くする
 
 Duration: 0:16:00
 
-このステップでは、finder が返した候補席を順位付けする Agent を作ります。
+このステップでは、`explanation_agent` の役割を「順位決定」ではなく「説明補助」に寄せます。
 
-finder と ranker を分ける理由は、WebMCP と判断ロジックを混ぜないためです。
+今回の本編では、最終的な順位は Python の `agents/shared/scoring.py` が決めます。LLM に順位を任せると柔軟ですが、教材としては「なぜその順番になったか」「どこを直せば点数が変わるか」が見えにくくなります。
 
-finder はブラウザにある WebMCP tool を使って「今どの席が空いているか」を調べます。ranker はその候補と `SeatPreference` を見て「どの席が一番合っているか」を判断します。
+そこで、`rank_seat_candidates()` が候補を deterministic に並べ、`explanation_agent` はその結果を短く説明する補助役にします。
 
-この分担にすると、WebMCP tool の呼び出しに失敗したのか、ランキングの判断が期待と違うのかを切り分けやすくなります。
+この分担にすると、順位がおかしいときは `score_candidate()` を見ればよく、説明文がおかしいときだけ `explanation_agent` を見ればよくなります。
 
 ### agent.py を更新する
 
-`agents/seat_ranker/agent.py` を更新します。
+`agents/explanation/agent.py` を更新します。
 
-`seat_ranker_agent` は WebMCP tool を持ちません。
+`explanation_agent` は WebMCP tool を持ちません。
 
-finder が集めた候補と parser が作った preference を見て、候補を比較するだけです。ここで WebMCP tool を渡さないことで、ranker が勝手に再検索したり予約したりする余地を減らします。
+また、候補を並べ替えません。Python workflow がすでに作った順位を受け取り、その理由を人間に読みやすくまとめるだけです。
 
 ここで見るポイントは4つです。
 
 - 候補外の seat ID を返さないこと
-- `preferred_tags` を加点すること
-- `avoided_tags` を減点すること
-- score、reason、tradeoffs を返すこと
+- Python ranking を並べ替えないこと
+- WebMCP tool を持たないこと
+- 説明が短く、予約結果に添えやすいこと
 
-`agents/seat_ranker/agent.py`
+`agents/explanation/agent.py`
 
 ```diff python
- seat_ranker_agent = Agent(
-     name="seat_ranker_agent",
+ explanation_agent = Agent(
+     name="explanation_agent",
      model="gemini-2.0-flash",
-     description="Ranks seat candidates against parsed participant preferences.",
+     description="Explains Python-generated seat ranking without changing it.",
      mode="single_turn",
      instruction=f"""
--TODO(Handson): Write the seat ranker instruction.
-+You rank available seat candidates for a single-seat reservation.
++The Python workflow already ranked the seats.
++Explain that ranking briefly without changing the order.
  
 -Use these shared texts:
 +{SEAT_TAG_GUIDE}
@@ -1249,58 +1369,57 @@ finder が集めた候補と parser が作った preference を見て、候補�
 -{COMMON_CONSTRAINTS}
 -
 -The completed agent should rank up to {MAX_RANKED_SEATS} seats and return RankedSeats.
-+Ranking rules:
-+- Use only candidates provided in the input.
-+- Prefer seats whose tags match the parsed preferred_tags.
-+- Penalize seats that match avoided_tags.
-+- Consider finderReason and detail when tags are tied.
-+- Return up to {MAX_RANKED_SEATS} ranked seats.
-+- Score each seat from 1 to 10.
-+- Explain the strongest reason and any tradeoffs.
++Rules:
++- Do not reorder seats.
++- Do not invent new seats.
++- Explain why the first ranked seat is the best option.
++- Mention meaningful tradeoffs if they are present.
++- Keep the output short.
 +- Do not reserve seats.
  """.strip(),
      output_schema=RankedSeats,
  )
 ```
 
-> **Tips:** ranker には `tools` を渡しません。候補を増やす・取り直す役割ではなく、finder が渡した候補だけを `RankedSeats` に並べ替える役割だからです。
+> **Tips:** explanation には `tools` を渡しません。候補を増やす・取り直す・予約する役割ではなく、Python ranking の説明だけを担当するからです。
 
-ranker には WebMCP tool を渡しません。ranker は候補を見て並べ替えるだけです。ここを守ることで、WebMCP の宣言型・命令型の話と、LLM の比較判断の話が分かれます。
+explanation には WebMCP tool を渡しません。ここを守ることで、WebMCP の宣言型・命令型の話と、Python scoring の話が分かれます。
 
-ここまで実装すると、`seat_ranker_agent` は次の状態になります。
+ここまで実装すると、`explanation_agent` は次の状態になります。
 
-`agents/seat_ranker/agent.py`
+`agents/explanation/agent.py`
 
 ```python
-seat_ranker_agent = Agent(
-    name="seat_ranker_agent",
+explanation_agent = Agent(
+    name="explanation_agent",
     model="gemini-2.0-flash",
-    description="Ranks seat candidates against parsed participant preferences.",
+    description="Explains Python-generated seat ranking without changing it.",
     mode="single_turn",
     instruction=f"""
-You rank available seat candidates for a single-seat reservation.
+The Python workflow already ranked the seats.
+Explain that ranking briefly without changing the order.
 
 {SEAT_TAG_GUIDE}
 
 {COMMON_CONSTRAINTS}
 
-Ranking rules:
-- Use only candidates provided in the input.
-- Prefer seats whose tags match the parsed preferred_tags.
-- Penalize seats that match avoided_tags.
-- Consider finderReason and detail when tags are tied.
-- Return up to {MAX_RANKED_SEATS} ranked seats.
-- Score each seat from 1 to 10.
-- Explain the strongest reason and any tradeoffs.
+Rules:
+- Do not reorder seats.
+- Do not invent new seats.
+- Explain why the first ranked seat is the best option.
+- Mention meaningful tradeoffs if they are present.
+- Keep the output short.
 - Do not reserve seats.
 """.strip(),
     output_schema=RankedSeats,
 )
 ```
 
-この時点で、候補を順位付けする専門 Agent ができました。
+この時点で、Python ranking を説明する専門 Agent ができました。
 
 ### スコアの考え方
+
+順位そのものは `agents/shared/scoring.py` の `score_candidate()` が決めます。
 
 このコードラボの `score` は厳密な数式ではありません。参加者が理解しやすいよう、次の目安にします。
 
@@ -1309,50 +1428,47 @@ Ranking rules:
 | 9-10 | 希望タグにかなり一致し、懸念が少ない |
 | 7-8 | 主要な希望に一致するが、小さな tradeoff がある |
 | 5-6 | 一部一致するが、重要な希望が欠ける |
-| 1-4 | 条件に合いにくい |
+| 1-4 | 条件に合いにくい、または空席状態に懸念がある |
 
-ranker の出力は、最終的な予約結果の説明にも使います。単に seatId を返すだけでなく、`reason` と `tradeoffs` を入れることが大事です。
+`score_candidate()` は、希望タグに一致したら加点し、避けたいタグに一致したら減点します。空席状態に懸念がある場合も減点します。
+
+この点数設計はあえて素朴にしています。ハンズオン中に「なぜ A03 が上なのか」をコードで追えることを優先するためです。
 
 ### 入力と出力の例
 
-ranker には、coordinator が次のような情報を渡します。
+Python helper には、coordinator が次のような構造を渡します。
 
 ```text
-Original request:
-前方で通路側、できれば静かな席がいいです。
+SeatPreference:
+  preferred_tags = ["front", "aisle", "quiet"]
+  avoided_tags = []
 
-Parsed preference:
-preferred_tags=['front', 'aisle', 'quiet'] avoided_tags=[] ...
-
-Finder output:
-- A03: front, aisle, quiet
-- B01: aisle, pair
-- C05: quiet
+SeatCandidates:
+  A03: tags = ["front", "aisle", "quiet"]
+  B01: tags = ["aisle", "pair"]
+  C05: tags = ["quiet"]
 ```
 
-期待する出力のイメージ:
+期待する Python ranking のイメージ:
 
 ```json
-{
-  "rankedSeats": [
-    {
-      "seatId": "A03",
-      "score": 10,
-      "reason": "front, aisle, quiet のすべてに一致する",
-      "tradeoffs": []
-    },
-    {
-      "seatId": "B01",
-      "score": 7,
-      "reason": "aisle に一致し、出入りしやすい",
-      "tradeoffs": ["front と quiet は明示されていない"]
-    }
-  ],
-  "summary": "A03 が希望に最も近い"
-}
+[
+  {
+    "seatId": "A03",
+    "score": 10,
+    "reason": "matches preferred tags: aisle, front, quiet",
+    "tradeoffs": []
+  },
+  {
+    "seatId": "B01",
+    "score": 7,
+    "reason": "matches preferred tags: aisle",
+    "tradeoffs": []
+  }
+]
 ```
 
-> **Tip:** ranker の出力が薄い場合は、instruction に「tradeoffs を必ず1つ以上検討する」と追加すると説明が改善しやすくなります。
+> **Tip:** 順位がおかしい場合は `explanation_agent` ではなく `score_candidate()` を見ます。説明が薄い場合だけ `explanation_agent` を調整します。
 
 ## reservation_agent を実装する
 
@@ -1364,7 +1480,7 @@ Duration: 0:12:00
 
 `agents/reservation/agent.py` を更新します。
 
-`reservation_agent` は、状態を変える action を呼ぶ唯一の specialist agent です。
+`reservation_agent` は、状態を変える `reserve_seat` form tool を呼ぶ唯一の specialist agent です。
 
 この Agent に許可する tool は `reserve_seat` だけです。検索 tool を渡さないことで、reservation が勝手に候補探しや retry をしないようにします。
 
@@ -1378,14 +1494,9 @@ Duration: 0:12:00
      model="gemini-2.0-flash",
      description="Attempts exactly one specified single-seat reservation.",
      instruction=f"""
--TODO(Handson): Write the reservation agent instruction.
--
--Use this shared constant as source text:
--
--{COMMON_CONSTRAINTS}
--
--The completed agent should attempt exactly one specified single-seat reservation.
-+You reserve one specified seat through the WebMCP reserve_seat action.
+-Use only reserve_seat for the specified seatId.
++Use only reserve_seat for the specified seatId.
++Attempt it once. Do not retry; Python workflow controls retry.
 +
 +{COMMON_CONSTRAINTS}
 +
@@ -1424,7 +1535,7 @@ reservation_agent = Agent(
     description="Attempts exactly one specified single-seat reservation.",
     mode="single_turn",
     instruction=f"""
-You reserve one specified seat through the WebMCP reserve_seat action.
+You reserve one specified seat through the WebMCP reserve_seat form tool.
 
 {COMMON_CONSTRAINTS}
 
@@ -1455,7 +1566,7 @@ Duration: 0:18:00
 
 ここで重要なのは、検索、予約、retry の流れを prompt に書かないことです。LLM に「この順番でやってね」とお願いするだけだと、うまくいくときは簡単ですが、失敗時の再現性が落ちます。
 
-今回の coordinator は `Workflow` です。Python の `reserve_best_matching_seat` node が `preference_parser_agent`、`seat_finder_agent`、`seat_ranker_agent`、`reservation_agent` を順番に呼びます。`seat_already_reserved` の場合だけ ranking の次候補へ進む retry も、この node の `for` ループで制御します。
+今回の coordinator は `Workflow` です。Python の `reserve_best_matching_seat` node が `preference_parser_agent`、`seat_finder_remote`、Python scoring helper、`explanation_remote`、`reservation_remote` を順番に呼びます。remote agent の中では `RemoteA2aAgent` が specialist A2A service を呼びます。
 
 ### Workflow に必要な import を確認する
 
@@ -1466,7 +1577,6 @@ Duration: 0:18:00
 ```diff python
  from __future__ import annotations
  
- import re
  from typing import Any
  
 -from google.adk import Agent
@@ -1474,246 +1584,259 @@ Duration: 0:18:00
 +from google.adk import Context, Workflow
 +from google.adk.workflow import node
  
+ from agents.coordinator.specialists import (
+     explanation_remote,
+     seat_finder_remote,
+     reservation_remote,
+ )
  from agents.preference_parser.agent import preference_parser_agent
- from agents.reservation.agent import reservation_agent
- from agents.seat_ranker.agent import seat_ranker_agent
- from agents.seat_finder.agent import seat_finder_agent
-+from agents.shared.instructions import FINAL_RESPONSE_EXPECTATIONS
++from agents.shared.models import RankedSeat, SeatCandidates, SeatPreference, TriedSeat
++from agents.shared.preference import normalize_preference
++from agents.shared.reservation import build_failure_result, build_success_result, is_reserved_conflict
++from agents.shared.scoring import coerce_seat_candidates, rank_seat_candidates
  from agents.shared.settings import MAX_RANKED_SEATS, MAX_RESERVATION_RETRIES
++from agents.shared.utils import text
 ```
 
-> **Tips:** `Agent` と `AgentTool` ではなく `Workflow` と `@node` を使うことで、実行順を prompt ではなく Python code として固定します。`FINAL_RESPONSE_EXPECTATIONS` は最終応答に含めるべき確認項目を coordinator へ渡すための共有テキストです。
+> **Tips:** `RemoteA2aAgent` の定義は `agents/coordinator/specialists.py` に分けます。`create-multi-agent` と同じく、coordinator 本体は Workflow の制御に集中します。
 
 `Context` は workflow node の実行文脈です。`ctx.run_node(...)` を使うと、node の中から別の node や Agent を実行できます。
 
-### 入出力ヘルパーを書く
+### Workflow の state 名を決める
 
-specialist agent の出力は文字列、`Content`、dict などになる可能性があります。教材では細かい型に深入りしすぎないよう、まず文字列へ寄せる helper を置きます。
+Workflow では、途中結果を `ctx.state` に保存できます。
 
-`agents/coordinator/agent.py`
-
-```diff python
-+def _text_from_output(value: Any) -> str:
-+    if value is None:
-+        return ""
-+    if isinstance(value, str):
-+        return value
-+    if isinstance(value, dict):
-+        return str(value)
-+
-+    parts = getattr(value, "parts", None)
-+    if parts:
-+        return "\n".join(
-+            part.text for part in parts if getattr(part, "text", None)
-+        ).strip()
-+
-+    return str(value)
-```
-
-> **Tips:** specialist agent の戻り値は常に素朴な文字列とは限りません。`_text_from_output` で一度文字列へ寄せると、後続の helper や最終応答で扱いやすくなります。
-
-次に、finder の文章から候補席 ID を取り出す helper を置きます。
+今回保存するのは、希望、候補、ランキング、試行履歴です。
 
 `agents/coordinator/agent.py`
 
 ```diff python
-+def _extract_seat_ids(text: str) -> list[str]:
-+    seen: set[str] = set()
-+    seat_ids: list[str] = []
-+    for match in re.finditer(r"\b[A-Z][0-9]{1,3}\b|\bseat[-_][A-Za-z0-9-]+\b", text):
-+        seat_id = match.group(0)
-+        if seat_id not in seen:
-+            seen.add(seat_id)
-+            seat_ids.append(seat_id)
-+    return seat_ids
-+
-+
-+def _is_reserved_conflict(text: str) -> bool:
-+    normalized = text.lower()
-+    return "seat_already_reserved" in normalized or "already reserved" in normalized
++STATE_PREFERENCE = "seat_preference"
++STATE_CANDIDATES = "seat_candidates"
++STATE_RANKED_SEATS = "ranked_seats"
++STATE_TRIED_SEATS = "tried_seats"
 ```
 
-> **Tips:** `_extract_seat_ids` は finder の出力から予約候補を取り出し、`_is_reserved_conflict` は retry してよい失敗かどうかを判定します。retry 条件を helper に分けると、後から error code が増えても coordinator 本体を読みやすく保てます。
+> **Tips:** state は ADK Web の Inspector で途中状態を追うときにも役立ちます。失敗時に「parser は正しく動いたか」「finder は候補を返したか」「ranking は作られたか」を見分けやすくなります。
 
-ranker の出力から seat ID を取り出す helper も追加します。
+### Agent に渡す入力を組み立てる
+
+specialist agent へ渡す文章は、coordinator 側の関数で組み立てます。
+
+これにより、specialist agent の instruction に長い workflow を書かずに済みます。
 
 `agents/coordinator/agent.py`
 
 ```diff python
-+def _extract_ranked_seat_ids(value: Any) -> list[str]:
-+    if value is None:
-+        return []
-+    if isinstance(value, dict):
-+        ranked = value.get("rankedSeats") or value.get("ranked_seats") or []
-+        return [item["seatId"] for item in ranked if isinstance(item, dict) and item.get("seatId")]
++def build_finder_input(request_text: str, preference: SeatPreference) -> str:
++    return "\n\n".join(
++        [
++            "Find available seats for this participant.",
++            "Use the browser WebMCP tools to inspect the live reservation page.",
++            "Return seat IDs, labels, tags, availability, and a short reason.",
++            "Do not reserve a seat.",
++            "",
++            "Original request:",
++            request_text,
++            "Parsed preference:",
++            preference.model_dump_json(indent=2),
++        ]
++    )
 +
-+    ranked = getattr(value, "rankedSeats", None)
-+    if ranked:
-+        return [item.seatId for item in ranked if getattr(item, "seatId", None)]
 +
-+    return _extract_seat_ids(_text_from_output(value))
++def build_explanation_input(
++    preference: SeatPreference,
++    candidates: SeatCandidates,
++    ranked_seats: list[RankedSeat],
++) -> str:
++    return "\n\n".join(
++        [
++            "The Python workflow has already ranked these seats. Do not reorder them.",
++            "Write a short explanation of the ranking for the final response.",
++            "Preference:",
++            preference.model_dump_json(indent=2),
++            "Candidates:",
++            candidates.model_dump_json(indent=2),
++            "Code ranking:",
++            "\n".join(f"{item.seatId}: score={item.score}; {item.reason}" for item in ranked_seats),
++        ]
++    )
 ```
 
-> **Tips:** ranker は `RankedSeats`、dict、文字列のいずれかに近い形で結果を返す可能性があります。教材では細かい SDK 型に寄りすぎず、最終的に seat ID のリストへ寄せる helper として扱います。
+> **Tips:** `build_explanation_input()` は explanation に順位を決めさせる入力ではありません。「すでに Python がこう並べたので説明して」と伝える入力です。
 
-structured output が期待通り `RankedSeats` として返る場合も、辞書に近い形で返る場合も、最終的には seat ID のリストに寄せます。
+予約 agent へ渡す入力も、席 ID と ranking 理由だけに絞ります。
+
+`agents/coordinator/agent.py`
+
+```diff python
++def build_reservation_input(seat_id: str, preference: SeatPreference, ranked_seat: RankedSeat) -> str:
++    return "\n".join(
++        [
++            "Reserve exactly one seat through reserve_seat.",
++            f"seatId={seat_id}",
++            f"score={ranked_seat.score}",
++            f"reason={ranked_seat.reason}",
++            f"preferred_tags={', '.join(preference.preferred_tags)}",
++            "Attempt this seat once and return the tool result.",
++        ]
++    )
+```
+
+> **Tips:** 予約 agent に「次候補を探す」「retry する」という情報を渡さないのがポイントです。副作用のある予約処理は workflow が順番を管理します。
 
 ### Workflow node を実装する
 
-`reserve_best_matching_seat` が実際の制御点です。
+ここから、Workflow の処理を小さな関数に分けます。
+
+`reserve_best_matching_seat` に全部書くこともできます。しかし、参加者が読む教材としては、処理の境界が見えている方が理解しやすくなります。
 
 ここでは次の順番をコードで固定します。
 
 1. ユーザーの依頼文を文字列にする
 2. `preference_parser_agent` を実行する
-3. `seat_finder_agent` を実行する
-4. 候補席 ID を取り出す
-5. `seat_ranker_agent` を実行する
-6. ranking の上位から最大 `1 + MAX_RESERVATION_RETRIES` 回まで `reservation_agent` を実行する
-7. `seat_already_reserved` 以外なら完了として返す
+3. `seat_finder_remote` 経由で remote `seat_finder_agent` を実行する
+4. `coerce_seat_candidates()` で候補を typed model に寄せる
+5. `rank_seat_candidates()` で deterministic ranking を作る
+6. `explanation_remote` 経由で remote `explanation_agent` に ranking の説明だけを依頼する
+7. ranking の上位から最大 `1 + MAX_RESERVATION_RETRIES` 回まで `reservation_remote` 経由で remote `reservation_agent` を実行する
+8. `seat_already_reserved` 以外なら完了として返す
 
 `agents/coordinator/agent.py`
 
 ```diff python
-+@node(rerun_on_resume=True)
-+async def reserve_best_matching_seat(ctx: Context, user_request: Any) -> str:
-+    request_text = _text_from_output(user_request) or _text_from_output(ctx.user_content)
-+    tried: list[dict[str, str]] = []
-+
++async def parse_preferences(ctx: Context, request_text: str) -> SeatPreference:
 +    preference_output = await ctx.run_node(
 +        preference_parser_agent,
 +        node_input=request_text,
 +        run_id="parse-preferences",
 +        use_sub_branch=True,
 +    )
-+    preference_text = _text_from_output(preference_output)
++    preference = normalize_preference(preference_output, original_request=request_text)
++    ctx.state[STATE_PREFERENCE] = preference.model_dump()
++    return preference
 +
++async def find_candidates(
++    ctx: Context,
++    request_text: str,
++    preference: SeatPreference,
++) -> SeatCandidates:
 +    finder_output = await ctx.run_node(
-+        seat_finder_agent,
-+        node_input="\n".join(
-+            [
-+                "Find available seats for this parsed preference.",
-+                "",
-+                "Original request:",
-+                request_text,
-+                "",
-+                "Parsed preference:",
-+                preference_text,
-+            ]
-+        ),
++        seat_finder_remote,
++        node_input=build_finder_input(request_text, preference),
 +        run_id="find-seats",
 +        use_sub_branch=True,
 +    )
-+    finder_text = _text_from_output(finder_output)
-+    candidate_ids = _extract_seat_ids(finder_text)
++    candidates = coerce_seat_candidates(finder_output)
++    ctx.state[STATE_CANDIDATES] = candidates.model_dump()
++    return candidates
+```
+> **Tips:** `normalize_preference()` と `coerce_seat_candidates()` があるため、coordinator は LLM の戻り値をそのまま信じません。一度 typed model に寄せ、後続の処理が同じ形で読めるようにします。
+
+次に ranking を作ります。
+
+`agents/coordinator/agent.py`
+
+```diff python
++async def rank_candidates(
++    ctx: Context,
++    preference: SeatPreference,
++    candidates: SeatCandidates,
++) -> list[RankedSeat]:
++    ranked_seats = rank_seat_candidates(preference, candidates, limit=MAX_RANKED_SEATS)
++    ctx.state[STATE_RANKED_SEATS] = [item.model_dump() for item in ranked_seats]
 +
-+    if not candidate_ids:
++    if ranked_seats:
++        await ctx.run_node(
++            explanation_remote,
++            node_input=build_explanation_input(preference, candidates, ranked_seats),
++            run_id="explain-ranking",
++            use_sub_branch=True,
++        )
++    return ranked_seats
+```
+
+> **Tips:** `explanation_remote` の結果を順位決定には使いません。順位決定は `rank_seat_candidates()` の戻り値です。remote agent は ADK Web Inspector で「説明用 specialist が呼ばれた」ことを見せるためにも残しています。
+
+最後に予約を試します。
+
+`agents/coordinator/agent.py`
+
+```diff python
++async def reserve_ranked_candidates(
++    ctx: Context,
++    preference: SeatPreference,
++    ranked_seats: list[RankedSeat],
++) -> str:
++    tried_seats: list[TriedSeat] = []
++    max_attempts = 1 + MAX_RESERVATION_RETRIES
++
++    for ranked_seat in ranked_seats[:max_attempts]:
++        reservation_output = await ctx.run_node(
++            reservation_remote,
++            node_input=build_reservation_input(ranked_seat.seatId, preference, ranked_seat),
++            run_id=f"reserve-{ranked_seat.seatId}",
++            use_sub_branch=True,
++        )
++        tried = TriedSeat(
++            seatId=ranked_seat.seatId,
++            reason=ranked_seat.reason,
++            result=text(reservation_output),
++        )
++        tried_seats.append(tried)
++        ctx.state[STATE_TRIED_SEATS] = [item.model_dump() for item in tried_seats]
++
++        if not is_reserved_conflict(reservation_output):
++            result = build_success_result(
++                seat_id=ranked_seat.seatId,
++                preference=preference,
++                ranked_seat=ranked_seat,
++                tried_seats=tried_seats,
++                reservation_output=reservation_output,
++            )
++            return result.message
++
++    result = build_failure_result(
++        preference=preference,
++        ranked_seats=ranked_seats,
++        tried_seats=tried_seats,
++    )
++    return result.message
+```
+
+> **Tips:** retry 条件は `is_reserved_conflict()` だけです。認証情報がない、seat ID が不正、API endpoint が違う、といった失敗は retry しても直りません。だから `seat_already_reserved` だけを次候補 retry の対象にします。
+
+最後に root node を書きます。
+
+`agents/coordinator/agent.py`
+
+```diff python
++@node(rerun_on_resume=True)
++async def reserve_best_matching_seat(ctx: Context, user_request: Any) -> str:
++    request_text = text(user_request) or text(ctx.user_content)
++    preference = await parse_preferences(ctx, request_text)
++    candidates = await find_candidates(ctx, request_text, preference)
++
++    if not candidates.candidates:
 +        return "\n".join(
 +            [
 +                "条件に合う候補席を特定できませんでした。",
 +                "",
-+                "finder の結果:",
-+                finder_text or "(empty)",
-+                "",
-+                "解析した希望:",
-+                preference_text or "(empty)",
++                f"希望タグ: {', '.join(preference.preferred_tags) or 'なし'}",
++                f"避けたいタグ: {', '.join(preference.avoided_tags) or 'なし'}",
 +                "",
 +                "front / aisle / quiet / pair などの条件を少し緩めて、もう一度依頼してください。",
 +            ]
 +        )
 +
-+    ranker_output = await ctx.run_node(
-+        seat_ranker_agent,
-+        node_input="\n".join(
-+            [
-+                "Rank these seat candidates.",
-+                "",
-+                "Original request:",
-+                request_text,
-+                "",
-+                "Parsed preference:",
-+                preference_text,
-+                "",
-+                "Finder output:",
-+                finder_text,
-+                "",
-+                "Candidate IDs:",
-+                ", ".join(candidate_ids),
-+            ]
-+        ),
-+        run_id="rank-seats",
-+        use_sub_branch=True,
-+    )
-+    ranker_text = _text_from_output(ranker_output)
-+    ranked_ids = _extract_ranked_seat_ids(ranker_output)[:MAX_RANKED_SEATS]
-+    if not ranked_ids:
-+        ranked_ids = candidate_ids[:MAX_RANKED_SEATS]
++    ranked_seats = await rank_candidates(ctx, preference, candidates)
++    if not ranked_seats:
++        return "候補席は見つかりましたが、ランキングを作成できませんでした。条件を少し変えてもう一度依頼してください。"
 +
-+    max_attempts = 1 + MAX_RESERVATION_RETRIES
-+    for seat_id in ranked_ids[:max_attempts]:
-+        reservation_input = (
-+            f"Reserve exactly one seat. seatId={seat_id}\n"
-+            f"Participant request: {request_text}\n"
-+            f"Parsed preference: {preference_text}\n"
-+            f"Ranking result: {ranker_text}\n"
-+            "Attempt this seat once and return the tool result."
-+        )
-+        reservation_output = await ctx.run_node(
-+            reservation_agent,
-+            node_input=reservation_input,
-+            run_id=f"reserve-{seat_id}",
-+            use_sub_branch=True,
-+        )
-+        reservation_text = _text_from_output(reservation_output)
-+        tried.append({"seatId": seat_id, "result": reservation_text})
-+
-+        if not _is_reserved_conflict(reservation_text):
-+            return "\n".join(
-+                [
-+                    "予約ワークフローが完了しました。",
-+                    "",
-+                    f"予約した席 ID: {seat_id}",
-+                    "解析した希望:",
-+                    preference_text,
-+                    "",
-+                    "選定理由:",
-+                    ranker_text or finder_text,
-+                    "",
-+                    "予約結果:",
-+                    reservation_text,
-+                    "",
-+                    "予約者 connpass ID は予約サイトの設定値が使われています。",
-+                    "運営 BOARD_URL の予約閲覧ページで、自分の connpass ID が表示されることを確認してください。",
-+                    "",
-+                    FINAL_RESPONSE_EXPECTATIONS,
-+                ]
-+            )
-+
-+    tried_lines = "\n".join(
-+        f"- {item['seatId']}: {item['result']}" for item in tried
-+    )
-+    return "\n".join(
-+        [
-+            "候補席を試しましたが、予約を完了できませんでした。",
-+            "",
-+            "試した候補:",
-+            tried_lines,
-+            "",
-+            "解析した希望:",
-+            preference_text,
-+            "",
-+            "ランキング結果:",
-+            ranker_text,
-+            "",
-+            "finder の候補理由:",
-+            finder_text,
-+            "",
-+            "front / aisle / quiet / pair などの条件を緩めて、もう一度依頼してください。",
-+        ]
-+    )
-```
++    return await reserve_ranked_candidates(ctx, preference, ranked_seats)
++```
 
-> **Tips:** この node が今回の制御の中心です。`ctx.run_node(...)` で parser、finder、ranker、reservation を順番に呼び、`for seat_id in ranked_ids[:max_attempts]` で競合時だけ次候補へ進みます。
+> **Tips:** この node が今回の制御の中心です。`ctx.run_node(...)` で parser と finder と reservation を呼び、ranking と retry は Python helper と `for` ループで決めます。
 
 `rerun_on_resume=True` は `ctx.run_node(...)` を使う node で必要です。動的に子 node を実行する workflow は、中断や再開が起きたときに親 node を再実行できる必要があります。
 
@@ -1752,203 +1875,192 @@ coordinator は「実行順を決める係」です。候補を探す判断は `
 ```python
 from __future__ import annotations
 
-import re
 from typing import Any
 
 from google.adk import Context, Workflow
 from google.adk.workflow import node
 
 from agents.preference_parser.agent import preference_parser_agent
-from agents.reservation.agent import reservation_agent
-from agents.seat_ranker.agent import seat_ranker_agent
-from agents.seat_finder.agent import seat_finder_agent
-from agents.shared.instructions import FINAL_RESPONSE_EXPECTATIONS
+from agents.coordinator.specialists import (
+    explanation_remote,
+    seat_finder_remote,
+    reservation_remote,
+)
+from agents.shared.models import RankedSeat, SeatCandidates, SeatPreference, TriedSeat
+from agents.shared.preference import normalize_preference
+from agents.shared.reservation import (
+    build_failure_result,
+    build_success_result,
+    is_reserved_conflict,
+)
+from agents.shared.scoring import coerce_seat_candidates, rank_seat_candidates
 from agents.shared.settings import MAX_RANKED_SEATS, MAX_RESERVATION_RETRIES
+from agents.shared.utils import text
+
+STATE_PREFERENCE = "seat_preference"
+STATE_CANDIDATES = "seat_candidates"
+STATE_RANKED_SEATS = "ranked_seats"
+STATE_TRIED_SEATS = "tried_seats"
 
 
-def _text_from_output(value: Any) -> str:
-    if value is None:
-        return ""
-    if isinstance(value, str):
-        return value
-    if isinstance(value, dict):
-        return str(value)
-
-    parts = getattr(value, "parts", None)
-    if parts:
-        return "\n".join(
-            part.text for part in parts if getattr(part, "text", None)
-        ).strip()
-
-    return str(value)
-
-
-def _extract_seat_ids(text: str) -> list[str]:
-    seen: set[str] = set()
-    seat_ids: list[str] = []
-    for match in re.finditer(r"\b[A-Z][0-9]{1,3}\b|\bseat[-_][A-Za-z0-9-]+\b", text):
-        seat_id = match.group(0)
-        if seat_id not in seen:
-            seen.add(seat_id)
-            seat_ids.append(seat_id)
-    return seat_ids
+def build_finder_input(request_text: str, preference: SeatPreference) -> str:
+    return "\n\n".join(
+        [
+            "Find available seats for this participant.",
+            "Use the browser WebMCP tools to inspect the live reservation page.",
+            "Return seat IDs, labels, tags, availability, and a short reason.",
+            "Do not reserve a seat.",
+            "",
+            "Original request:",
+            request_text,
+            "Parsed preference:",
+            preference.model_dump_json(indent=2),
+        ]
+    )
 
 
-def _extract_ranked_seat_ids(value: Any) -> list[str]:
-    if value is None:
-        return []
-    if isinstance(value, dict):
-        ranked = value.get("rankedSeats") or value.get("ranked_seats") or []
-        return [item["seatId"] for item in ranked if isinstance(item, dict) and item.get("seatId")]
+def build_explanation_input(
+    preference: SeatPreference,
+    candidates: SeatCandidates,
+    ranked_seats: list[RankedSeat],
+) -> str:
+    return "\n\n".join(
+        [
+            "The Python workflow has already ranked these seats. Do not reorder them.",
+            "Write a short explanation of the ranking for the final response.",
+            "Preference:",
+            preference.model_dump_json(indent=2),
+            "Candidates:",
+            candidates.model_dump_json(indent=2),
+            "Code ranking:",
+            "\n".join(f"{item.seatId}: score={item.score}; {item.reason}" for item in ranked_seats),
+        ]
+    )
 
-    ranked = getattr(value, "rankedSeats", None)
-    if ranked:
-        return [item.seatId for item in ranked if getattr(item, "seatId", None)]
 
-    return _extract_seat_ids(_text_from_output(value))
+def build_reservation_input(seat_id: str, preference: SeatPreference, ranked_seat: RankedSeat) -> str:
+    return "\n".join(
+        [
+            "Reserve exactly one seat through reserve_seat.",
+            f"seatId={seat_id}",
+            f"score={ranked_seat.score}",
+            f"reason={ranked_seat.reason}",
+            f"preferred_tags={', '.join(preference.preferred_tags)}",
+            "Attempt this seat once and return the tool result.",
+        ]
+    )
 
 
-def _is_reserved_conflict(text: str) -> bool:
-    normalized = text.lower()
-    return "seat_already_reserved" in normalized or "already reserved" in normalized
-
-
-@node(rerun_on_resume=True)
-async def reserve_best_matching_seat(ctx: Context, user_request: Any) -> str:
-    request_text = _text_from_output(user_request) or _text_from_output(ctx.user_content)
-    tried: list[dict[str, str]] = []
-
-    preference_output = await ctx.run_node(
+async def parse_preferences(ctx: Context, request_text: str) -> SeatPreference:
+    parser_output = await ctx.run_node(
         preference_parser_agent,
         node_input=request_text,
         run_id="parse-preferences",
         use_sub_branch=True,
     )
-    preference_text = _text_from_output(preference_output)
+    preference = normalize_preference(parser_output, original_request=request_text)
+    ctx.state[STATE_PREFERENCE] = preference.model_dump()
+    return preference
 
+
+async def find_candidates(
+    ctx: Context,
+    request_text: str,
+    preference: SeatPreference,
+) -> SeatCandidates:
     finder_output = await ctx.run_node(
-        seat_finder_agent,
-        node_input="\n".join(
-            [
-                "Find available seats for this parsed preference.",
-                "",
-                "Original request:",
-                request_text,
-                "",
-                "Parsed preference:",
-                preference_text,
-            ]
-        ),
+        seat_finder_remote,
+        node_input=build_finder_input(request_text, preference),
         run_id="find-seats",
         use_sub_branch=True,
     )
-    finder_text = _text_from_output(finder_output)
-    candidate_ids = _extract_seat_ids(finder_text)
+    candidates = coerce_seat_candidates(finder_output)
+    ctx.state[STATE_CANDIDATES] = candidates.model_dump()
+    return candidates
 
-    if not candidate_ids:
+
+async def rank_candidates(
+    ctx: Context,
+    preference: SeatPreference,
+    candidates: SeatCandidates,
+) -> list[RankedSeat]:
+    ranked_seats = rank_seat_candidates(preference, candidates, limit=MAX_RANKED_SEATS)
+    ctx.state[STATE_RANKED_SEATS] = [item.model_dump() for item in ranked_seats]
+
+    if ranked_seats:
+        await ctx.run_node(
+            explanation_remote,
+            node_input=build_explanation_input(preference, candidates, ranked_seats),
+            run_id="explain-ranking",
+            use_sub_branch=True,
+        )
+    return ranked_seats
+
+
+async def reserve_ranked_candidates(
+    ctx: Context,
+    preference: SeatPreference,
+    ranked_seats: list[RankedSeat],
+) -> str:
+    tried_seats: list[TriedSeat] = []
+    max_attempts = 1 + MAX_RESERVATION_RETRIES
+
+    for ranked_seat in ranked_seats[:max_attempts]:
+        reservation_output = await ctx.run_node(
+            reservation_remote,
+            node_input=build_reservation_input(ranked_seat.seatId, preference, ranked_seat),
+            run_id=f"reserve-{ranked_seat.seatId}",
+            use_sub_branch=True,
+        )
+        tried = TriedSeat(
+            seatId=ranked_seat.seatId,
+            reason=ranked_seat.reason,
+            result=text(reservation_output),
+        )
+        tried_seats.append(tried)
+        ctx.state[STATE_TRIED_SEATS] = [item.model_dump() for item in tried_seats]
+
+        if not is_reserved_conflict(reservation_output):
+            result = build_success_result(
+                seat_id=ranked_seat.seatId,
+                preference=preference,
+                ranked_seat=ranked_seat,
+                tried_seats=tried_seats,
+                reservation_output=reservation_output,
+            )
+            return result.message
+
+    result = build_failure_result(
+        preference=preference,
+        ranked_seats=ranked_seats,
+        tried_seats=tried_seats,
+    )
+    return result.message
+
+
+@node(rerun_on_resume=True)
+async def reserve_best_matching_seat(ctx: Context, user_request: Any) -> str:
+    request_text = text(user_request) or text(ctx.user_content)
+    preference = await parse_preferences(ctx, request_text)
+    candidates = await find_candidates(ctx, request_text, preference)
+
+    if not candidates.candidates:
         return "\n".join(
             [
                 "条件に合う候補席を特定できませんでした。",
                 "",
-                "finder の結果:",
-                finder_text or "(empty)",
-                "",
-                "解析した希望:",
-                preference_text or "(empty)",
+                f"希望タグ: {', '.join(preference.preferred_tags) or 'なし'}",
+                f"避けたいタグ: {', '.join(preference.avoided_tags) or 'なし'}",
                 "",
                 "front / aisle / quiet / pair などの条件を少し緩めて、もう一度依頼してください。",
             ]
         )
 
-    ranker_output = await ctx.run_node(
-        seat_ranker_agent,
-        node_input="\n".join(
-            [
-                "Rank these seat candidates.",
-                "",
-                "Original request:",
-                request_text,
-                "",
-                "Parsed preference:",
-                preference_text,
-                "",
-                "Finder output:",
-                finder_text,
-                "",
-                "Candidate IDs:",
-                ", ".join(candidate_ids),
-            ]
-        ),
-        run_id="rank-seats",
-        use_sub_branch=True,
-    )
-    ranker_text = _text_from_output(ranker_output)
-    ranked_ids = _extract_ranked_seat_ids(ranker_output)[:MAX_RANKED_SEATS]
-    if not ranked_ids:
-        ranked_ids = candidate_ids[:MAX_RANKED_SEATS]
+    ranked_seats = await rank_candidates(ctx, preference, candidates)
+    if not ranked_seats:
+        return "候補席は見つかりましたが、ランキングを作成できませんでした。条件を少し変えてもう一度依頼してください。"
 
-    max_attempts = 1 + MAX_RESERVATION_RETRIES
-    for seat_id in ranked_ids[:max_attempts]:
-        reservation_input = (
-            f"Reserve exactly one seat. seatId={seat_id}\n"
-            f"Participant request: {request_text}\n"
-            f"Parsed preference: {preference_text}\n"
-            f"Ranking result: {ranker_text}\n"
-            "Attempt this seat once and return the tool result."
-        )
-        reservation_output = await ctx.run_node(
-            reservation_agent,
-            node_input=reservation_input,
-            run_id=f"reserve-{seat_id}",
-            use_sub_branch=True,
-        )
-        reservation_text = _text_from_output(reservation_output)
-        tried.append({"seatId": seat_id, "result": reservation_text})
-
-        if not _is_reserved_conflict(reservation_text):
-            return "\n".join(
-                [
-                    "予約ワークフローが完了しました。",
-                    "",
-                    f"予約した席 ID: {seat_id}",
-                    "解析した希望:",
-                    preference_text,
-                    "",
-                    "選定理由:",
-                    ranker_text or finder_text,
-                    "",
-                    "予約結果:",
-                    reservation_text,
-                    "",
-                    "予約者 connpass ID は予約サイトの設定値が使われています。",
-                    "運営 BOARD_URL の予約閲覧ページで、自分の connpass ID が表示されることを確認してください。",
-                    "",
-                    FINAL_RESPONSE_EXPECTATIONS,
-                ]
-            )
-
-    tried_lines = "\n".join(
-        f"- {item['seatId']}: {item['result']}" for item in tried
-    )
-    return "\n".join(
-        [
-            "候補席を試しましたが、予約を完了できませんでした。",
-            "",
-            "試した候補:",
-            tried_lines,
-            "",
-            "解析した希望:",
-            preference_text,
-            "",
-            "ランキング結果:",
-            ranker_text,
-            "",
-            "finder の候補理由:",
-            finder_text,
-            "",
-            "front / aisle / quiet / pair などの条件を緩めて、もう一度依頼してください。",
-        ]
-    )
+    return await reserve_ranked_candidates(ctx, preference, ranked_seats)
 
 
 root_agent = Workflow(
@@ -1960,7 +2072,7 @@ root_agent = Workflow(
 )
 ```
 
-これで、実装パートの Python 側も一通りつながりました。ADK Web から選ぶ root は `coordinator` ですが、実際の処理は4つの specialist agent と Workflow node に分かれています。
+これで、実装パートの Python 側も一通りつながりました。ADK Web から選ぶ root は `coordinator` ですが、実際の処理は3つの A2A specialist service と coordinator Workflow node に分かれています。
 
 ## ADK Web で動かす
 
@@ -1973,7 +2085,7 @@ Duration: 0:10:00
 予約サイトを開いたまま、別ターミナルで次を実行します。
 
 ```bash
-./scripts/start-agent.sh
+make run
 ```
 
 Windows の場合は次を実行します。
@@ -1992,7 +2104,7 @@ ADK Web に次のように入力します。
 前方で通路側の席がいいです。空いている席を探して予約してください。
 ```
 
-coordinator は `preference_parser_agent` に希望の構造化を依頼し、`seat_finder_agent` に候補探しを依頼し、`seat_ranker_agent` に順位付けを依頼し、最後に `reservation_agent` に予約を依頼します。
+coordinator は `preference_parser_agent` に希望の構造化を依頼し、`seat_finder_agent` に候補探しを依頼し、Python の `rank_seat_candidates()` で順位付けし、最後に `reservation_agent` に予約を依頼します。
 
 **期待される応答の形:**
 
@@ -2016,11 +2128,11 @@ ADK Web では、最終応答だけでなく途中の tool / node 呼び出し�
 coordinator Workflow
   -> preference_parser_agent
   -> seat_finder_agent
-  -> seat_ranker_agent
+  -> explanation_agent
   -> reservation_agent
 ```
 
-もし `seat_ranker_agent` が呼ばれていない場合、coordinator の `reserve_best_matching_seat` node が古いままです。`agents/coordinator/agent.py` に `ctx.run_node(seat_ranker_agent, ...)` が入っているか確認してください。
+もし `explanation_agent` が呼ばれていない場合、coordinator の `reserve_best_matching_seat` node が古いままです。`agents/coordinator/agent.py` に `ctx.run_node(explanation_remote, ...)` が入っているか確認してください。
 
 もし `reservation_agent` が先に呼ばれている場合、それは設計と違います。予約は ranking の後です。予約を急ぐほど競合に強くなりそうに見えますが、今回の教材では「なぜその席を選んだか」を説明できることを優先します。
 
@@ -2053,11 +2165,11 @@ coordinator Workflow
 
 finder が `reserve_seat` を呼ぶ場合は責務違反です。`seat_finder_agent` の instruction に「Never call reserve_seat」を入れてください。
 
-### ranker の出力を見る
+### explanation の出力を見る
 
-`seat_ranker_agent` は WebMCP を直接使いません。
+`explanation_agent` は WebMCP を直接使いません。
 
-ranker の出力は次のような形を期待します。
+explanation の出力は次のような形を期待します。
 
 ```json
 {
@@ -2073,7 +2185,7 @@ ranker の出力は次のような形を期待します。
 }
 ```
 
-`reason` が「良さそうだから」のように薄い場合、ranker が `SeatPreference` と候補タグを比較できていません。coordinator から ranker に渡している `Parsed preference` と `Finder output` を確認してください。
+`reason` が「良さそうだから」のように薄い場合、explanation が `SeatPreference` と候補タグを比較できていません。coordinator から explanation に渡している `Parsed preference` と `Finder output` を確認してください。
 
 ### reservation の出力を見る
 
@@ -2108,7 +2220,7 @@ coordinator は `seat_already_reserved` のときだけ次候補を試します�
 
 - 予約した席 ID
 - parser が解釈した希望
-- ranker が選んだ理由
+- explanation が選んだ理由
 - 予約者 connpass ID
 - `BOARD_URL` で確認する案内
 
@@ -2121,7 +2233,7 @@ coordinator は `seat_already_reserved` のときだけ次候補を試します�
 - 試した候補 seat ID
 - 各候補の失敗理由
 - parser の解釈
-- ranker のランキング
+- explanation のランキング
 - 条件を緩める提案
 
 失敗応答が短すぎると、TA はどこを見ればよいか分からなくなります。教材では、成功時より失敗時の情報を厚くする方が親切です。
@@ -2150,7 +2262,7 @@ retry は「次にどの候補を試すか」という判断を含みます。�
 
 ### ranking と retry の関係
 
-`seat_ranker_agent` は最大3件の `rankedSeats` を返します。
+`explanation_agent` は最大3件の `rankedSeats` を返します。
 
 coordinator は、その順番に予約を試します。
 
@@ -2177,7 +2289,7 @@ retry してよいのは `seat_already_reserved` だけです。
 | API URL 間違い | しない | 何度試しても直らない |
 | Gemini API key 未設定 | しない | Agent 自体が動かない |
 | WebMCP relay 未接続 | しない | ブラウザと relay の接続を直す必要がある |
-| input schema mismatch | しない | action 登録または tool 呼び出しの実装を直す必要がある |
+| input schema mismatch | しない | form 属性確認または tool 呼び出しの実装を直す必要がある |
 
 retry の条件を絞ると、問題が隠れにくくなります。
 
@@ -2187,7 +2299,7 @@ retry の条件を絞ると、問題が隠れにくくなります。
 
 競合が起きたら、ADK Web の実行ログで次を確認します。
 
-1. `seat_ranker_agent` が第1候補を返した
+1. Python ranking が第1候補を返した
 2. `reservation_agent` が第1候補を予約しようとした
 3. `reservation_agent` が `seat_already_reserved` を返した
 4. `coordinator` が第2候補を予約しようとした
@@ -2199,21 +2311,21 @@ retry の条件を絞ると、問題が隠れにくくなります。
 
 retry が動かない場合、まず reservation agent の返す失敗文字列を見ます。
 
-coordinator の `_is_reserved_conflict()` は、次の文字列を見ています。
+`agents/shared/reservation.py` の `is_reserved_conflict()` は、次の文字列を見ています。
 
 ```python
-def _is_reserved_conflict(text: str) -> bool:
-    normalized = text.lower()
+def is_reserved_conflict(value: Any) -> bool:
+    normalized = text(value).lower()
     return "seat_already_reserved" in normalized or "already reserved" in normalized
 ```
 
-API や WebMCP action が別の error code を返す場合、この判定に引っかかりません。
+API や WebMCP form tool が別の error code を返す場合、この判定に引っかかりません。
 
 たとえば API が `already_booked` を返すなら、coordinator 側の判定も更新する必要があります。
 
 ```diff python
- def _is_reserved_conflict(text: str) -> bool:
-     normalized = text.lower()
+ def is_reserved_conflict(value: Any) -> bool:
+     normalized = text(value).lower()
 -    return "seat_already_reserved" in normalized or "already reserved" in normalized
 +    return (
 +        "seat_already_reserved" in normalized
@@ -2239,7 +2351,7 @@ Agent の最終応答だけで成功判断しないでください。
 - `public/config.js` の `boardUrl`
 - `.env` の `BOARD_URL`
 - ブラウザで開いている予約サイトが最新の `public/config.js` を読んでいるか
-- 予約 action が `reserveSeat()` を呼んでいるか
+- 予約 form tool が `reserveSeat()` を呼んでいるか
 - connpass ID が setup で入力した値になっているか
 
 特に `BOARD_URL` を貼り替えた後、古いブラウザタブを開きっぱなしにしていると、古い `public/config.js` の値で動くことがあります。ページを再読み込みしてください。
@@ -2322,11 +2434,11 @@ UI
 WebMCP helpers
   ├─ modelContext
   ├─ registerTool
-  └─ registerAction
+  └─ HTML form 属性
 
 WebMCP registration
   ├─ registerImperativeWebMcpTools
-  └─ registerDeclarativeWebMcpReservation
+  └─ 予約フォームの宣言型 WebMCP 属性
 ```
 
 参加者が触るのは下の2つだけです。API client と UI は完成済みです。
@@ -2345,7 +2457,7 @@ function modelContext() {
 
 この関数は、WebMCP が使える環境かどうかを判断する入口です。通常 UI は `modelContext()` が `null` でも動くようにします。
 
-### registerTool と registerAction
+### registerTool と HTML form 属性
 
 ブラウザやライブラリの実装差分に備えて、登録 helper を用意しています。
 
@@ -2373,7 +2485,7 @@ get_seat_detail
 list_reservations
 ```
 
-宣言型 WebMCP は、予約 action に使います。
+宣言型 WebMCP は、予約 form tool に使います。
 
 ```text
 reserve_seat
@@ -2387,17 +2499,20 @@ Agent 側は次の順番で読むと理解しやすいです。
 
 ```text
 agents/shared/models.py
-agents/shared/instructions.py
 agents/shared/settings.py
+agents/shared/preference.py
+agents/shared/scoring.py
+agents/shared/reservation.py
+agents/shared/utils.py
 tools/webmcp_tools.py
 agents/preference_parser/agent.py
 agents/seat_finder/agent.py
-agents/seat_ranker/agent.py
+agents/explanation/agent.py
 agents/reservation/agent.py
 agents/coordinator/agent.py
 ```
 
-最初に model と setting を読むと、後続の Agent が何を期待しているか分かります。
+最初に model、setting、shared helper を読むと、後続の Agent が何を期待しているか分かります。
 
 ### shared models は契約
 
@@ -2420,12 +2535,12 @@ LLM Agent は自然文を扱えますが、Workflow で複数の Agent をつな
 | --- | --- |
 | `preference_parser_agent` | WebMCP tool を呼ばない |
 | `seat_finder_agent` | 予約しない |
-| `seat_ranker_agent` | WebMCP tool を呼ばない |
+| `explanation_agent` | WebMCP tool を呼ばない |
 | `reservation_agent` | 候補探索や retry をしない |
 
-この「しないこと」を書くのが重要です。
+この「しないこと」は instruction にも書きますが、最終的には Python Workflow 側でも守ります。
 
-Agent instruction は、やってほしいことだけでなく、やってほしくないことも明示すると安定しやすくなります。
+たとえば reservation agent が retry しないことは instruction にも書きます。しかし本当に retry 回数を決めているのは `reserve_ranked_candidates()` の `for` loop です。
 
 ### coordinator は考える Agent ではなく制御する Workflow
 
@@ -2468,9 +2583,13 @@ Duration: 0:14:00
 ```text
 public/script.js
 tools/webmcp_tools.py
+agents/shared/models.py
+agents/shared/preference.py
+agents/shared/scoring.py
+agents/shared/reservation.py
 agents/preference_parser/agent.py
 agents/seat_finder/agent.py
-agents/seat_ranker/agent.py
+agents/explanation/agent.py
 agents/reservation/agent.py
 agents/coordinator/agent.py
 ```
@@ -2486,7 +2605,7 @@ template の `public/script.js` には、WebMCP 登録部分にだけ `TODO(Hand
 ```text
 modelContext()
 registerImperativeWebMcpTools()
-registerDeclarativeWebMcpReservation()
+public/index.html の #reservationForm
 ```
 
 通常 UI や API client の差分を追い始めると時間が溶けます。今回の学習対象ではありません。
@@ -2507,13 +2626,27 @@ example では `.env` を読み、`bunx @mcp-b/webmcp-local-relay` を起動す�
 
 この差分は、WebMCP と ADK をつなぐ低レイヤです。ここが動かないと、Agent はブラウザ上の tool を発見できません。
 
+### shared helper の差分
+
+コード主体で読む場合、最初に見るのは specialist agent の instruction ではありません。
+
+template と example の主な差分は shared helper です。
+
+```text
+agents/shared/preference.py
+agents/shared/scoring.py
+agents/shared/reservation.py
+```
+
+ここに、tag 正規化、candidate scoring、retry 判定、最終 message 作成の TODO があります。
+
+この3つを実装すると、Agent の判断がかなり Python code に寄ります。
+
 ### preference_parser の差分
 
 parser は WebMCP を直接使いません。
 
-template と example の主な差分は instruction です。
-
-`output_schema=SeatPreference` は template にもあります。参加者は、どのように `preferred_tags` と `avoided_tags` を埋めるかを instruction に書きます。
+`output_schema=SeatPreference` は template にもあります。parser は自然文を構造化し、`normalize_preference()` が tag を整えます。
 
 ### seat_finder の差分
 
@@ -2535,21 +2668,21 @@ tools=[build_finder_webmcp_toolset()]
 
 この差分は小さいですが重要です。toolset を登録しないと、Agent は WebMCP の空席取得 tool を使えません。
 
-### seat_ranker の差分
+### explanation の差分
 
-ranker は WebMCP tool を持ちません。
+explanation は WebMCP tool を持ちません。
 
-template と example の差分は instruction です。
+本編の順位は `agents/shared/scoring.py` が決めます。
 
-ranker には「候補にない seat ID を作らない」「score は 1〜10」「tradeoffs を書く」といったルールを入れます。
+`explanation_agent` は Python が決めた順位を説明する補助役です。順位を変える役ではありません。
 
 ### reservation の差分
 
-reservation は宣言型 WebMCP action 用の toolset を持ちます。
+reservation は宣言型 WebMCP form tool 用の toolset を持ちます。
 
 finder と同じく、template では tools がコメントです。example では `build_reservation_webmcp_toolset()` を登録します。
 
-reservation agent には「指定された席を1回だけ予約する」と書きます。retry は coordinator の仕事です。
+reservation agent は指定された席を1回だけ予約します。retry は coordinator の `reserve_ranked_candidates()` が管理します。
 
 ### coordinator の差分
 
@@ -2558,32 +2691,30 @@ coordinator は差分が一番大きいファイルです。
 template では、Workflow node の中に大きめの TODO が残っています。
 
 ```python
-# TODO(Handson): Run preference_parser_agent with ctx.run_node().
-# TODO(Handson): Run seat_finder_agent with ctx.run_node().
-# TODO(Handson): Run seat_ranker_agent and choose ranked IDs.
-# TODO(Handson): Run reservation_agent once for this seat_id.
+# TODO(Handson): Rank candidates with Python code, then ask explanation_agent only for explanation.
+# TODO(Handson): Attempt each ranked seat once, retrying only seat_already_reserved conflicts.
 ```
 
-example では、それぞれ `ctx.run_node(...)` として実装されます。
+example では、`ctx.run_node(...)` と shared helper を組み合わせて実装されます。
 
 このファイルは、codelab の ADK 側の山場です。細かい文法より、Workflow の流れを理解することを優先してください。
 
-## Agent instruction を改善する
+## コード制御を改善する
 
 Duration: 0:14:00
 
-このステップでは、完成後に Agent instruction を改善する観点を確認します。
+このステップでは、完成後に Python helper を改善する観点を確認します。
 
-ハンズオン中は、まず完成コードに近い instruction を貼って動かします。余裕があれば、自分の言葉で instruction を調整して挙動を見ます。
+ハンズオン中は、まず完成コードに近い helper を動かします。余裕があれば、score の式や retry 条件を自分で変えて挙動を見ます。
 
-### parser instruction の改善
+### `normalize_preference()` の改善
 
 parser の失敗は、だいたい次の2種類です。
 
 1. タグを拾わなすぎる
 2. タグを推測しすぎる
 
-拾わなすぎる場合は、同義語を instruction に足します。
+拾わなすぎる場合は、parser の説明を少し足す方法もあります。ただし、後続に渡す前の正規化は `normalize_preference()` で固定します。
 
 ```text
 出入りしやすい、端、通路に近い、立ちやすい -> aisle
@@ -2592,60 +2723,53 @@ parser の失敗は、だいたい次の2種類です。
 友達と近い、ペア、隣が空いているとよい -> pair
 ```
 
-推測しすぎる場合は、次のように制限します。
+推測しすぎる場合は、`normalize_tags()` で未対応タグを落とします。
 
-```text
-Only infer a tag when the request strongly implies it.
-Do not add pair unless the participant mentions a companion or pair-friendly seating.
+```python
+if tag in SUPPORTED_TAGS and tag not in seen:
+    tags.append(tag)
 ```
 
-### finder instruction の改善
+### `coerce_seat_candidates()` の改善
 
 finder の失敗は、存在しない席を作ってしまうことです。
 
-finder には次を強く書きます。
+finder agent に注意を書くこともできますが、Workflow 側では `coerce_seat_candidates()` が seat ID を抽出します。
 
-```text
-Never invent seat IDs.
-Use only seat IDs returned by WebMCP tools.
-If tool results are empty, report no candidates.
+```python
+SEAT_ID_PATTERN = re.compile(r"\b[A-Z][0-9]{1,3}\b|\bseat[-_][A-Za-z0-9-]+\b")
 ```
 
-また、finder は予約しません。
+この正規表現を変えれば、運営 API の座席 ID 形式に合わせられます。
 
-```text
-Never call reserve_seat.
+### `score_candidate()` の改善
+
+順位の失敗は、score の式が希望をうまく表せていないことです。
+
+たとえば前方を強くしたい場合は、tag ごとの重みを導入できます。
+
+```python
+TAG_WEIGHTS = {
+    "front": 4,
+    "aisle": 2,
+    "quiet": 2,
+    "pair": 1,
+}
 ```
 
-この1行は非常に重要です。
+このように score の根拠をコードにすると、同じ入力に対して同じ順位になりやすく、TA も説明しやすくなります。
 
-### ranker instruction の改善
+### `is_reserved_conflict()` の改善
 
-ranker の失敗は、理由が薄くなることです。
+retry の失敗は、retry してはいけないエラーまで再試行してしまうことです。
 
-次のような制約を入れると、説明が安定します。
+本編では `seat_already_reserved` だけを retry 対象にします。
 
-```text
-Every ranked seat must mention at least one matched preference.
-Every ranked seat must mention tradeoffs, even when the list is empty.
-Do not rank seats that are not present in the candidate list.
+```python
+return "seat_already_reserved" in normalized or "already reserved" in normalized
 ```
 
-ranker は candidate list だけを見ます。WebMCP tool を呼ばないため、候補にない seat ID を作らないようにする必要があります。
-
-### reservation instruction の改善
-
-reservation の失敗は、勝手に別候補を探しに行くことです。
-
-次を入れます。
-
-```text
-Attempt the specified seat exactly once.
-Do not search for alternatives.
-Do not retry.
-```
-
-reservation agent は「予約 API を1回呼ぶ係」です。判断は coordinator と ranker に寄せます。
+運営 API の error code が増えた場合も、ここに条件を追加するだけで Workflow 全体の retry 方針を調整できます。
 
 ### coordinator Workflow の改善
 
@@ -2657,7 +2781,7 @@ coordinator の改善は prompt ではなくコードです。
 MAX_RESERVATION_RETRIES = 2
 ```
 
-候補数を増やしたい場合は、finder と ranker の設定を見ます。
+候補数を増やしたい場合は、finder と explanation の設定を見ます。
 
 ```python
 MAX_SEAT_CANDIDATES = 3
@@ -2739,7 +2863,7 @@ Use it before selecting candidates.
 Do not use it to reserve a seat.
 ```
 
-最後の `Do not use it to reserve a seat.` が重要です。検索 tool と予約 action を分けているため、Agent が検索 tool に予約まで期待しないようにします。
+最後の `Do not use it to reserve a seat.` が重要です。検索 tool と予約 form tool を分けているため、Agent が検索 tool に予約まで期待しないようにします。
 
 ### inputSchema は Agent への約束
 
@@ -2792,7 +2916,7 @@ WebMCP tool の実行結果は、Agent が次の判断に使います。
 A-01 と A-02 が空いています。A-01 は前の方です。
 ```
 
-文章だけでも LLM は読めます。しかし次の agent へ渡すとき、座席 ID の抽出やタグの比較が不安定になります。今回 `seat_finder_agent` と `seat_ranker_agent` を分けているため、候補情報はなるべく構造を残して渡すのが大切です。
+文章だけでも LLM は読めます。しかし次の agent へ渡すとき、座席 ID の抽出やタグの比較が不安定になります。今回 `seat_finder_agent` と `explanation_agent` を分けているため、候補情報はなるべく構造を残して渡すのが大切です。
 
 ### schema は UI の代わりではない
 
@@ -2815,9 +2939,9 @@ API client:
 
 WebMCP だけを特別扱いすると、既存 UI とロジックが二重になります。今回の `script.js` では、通常 UI と WebMCP が同じ API client を使うようにしています。
 
-### 宣言型 action はフォームの意味を公開する
+### 宣言型 form tool はフォームの意味を公開する
 
-`reserve_seat` は宣言型 WebMCP action として登録します。
+`reserve_seat` は宣言型 WebMCP form tool として登録します。
 
 ここでは「予約フォームに入力して submit する」という UI の意味を、Agent へ伝えます。
 
@@ -2832,14 +2956,14 @@ Agent から見ると、`reserve_seat` は単なる JavaScript 関数ではあ�
 
 今回の本編では 1 席だけ予約します。複数席の同時予約は Extra に回しています。
 
-### 命令型 tool と宣言型 action を混ぜない
+### 命令型 tool と宣言型 form tool を混ぜない
 
 今回の分担は次の通りです。
 
 | 種類 | 用途 | 使う Agent |
 | --- | --- | --- |
 | 命令型 WebMCP tool | 空席一覧、席詳細、予約一覧の取得 | `seat_finder_agent` |
-| 宣言型 WebMCP action | 指定席の予約 | `reservation_agent` |
+| 宣言型 WebMCP form tool | 指定席の予約 | `reservation_agent` |
 
 この分担を守ると、Agent instruction が単純になります。
 
@@ -2849,17 +2973,17 @@ Agent から見ると、`reserve_seat` は単なる JavaScript 関数ではあ�
 
 `coordinator` はその両方を順番に呼びます。
 
-### schema を変更したら instruction も更新する
+### schema を変更したら helper も更新する
 
-WebMCP schema を変えると、Agent 側の instruction も影響を受けます。
+WebMCP schema を変えると、Agent 側だけでなく Python helper も影響を受けます。
 
 たとえば `list_available_seats` の返り値に `distanceToScreen` を追加したとします。
 
-その情報を ranking に使いたいなら、`seat_ranker_agent` の instruction にも「screen に近い席を好む条件がある場合は `distanceToScreen` を見る」と書きます。
+その情報を ranking に使いたいなら、`SeatCandidate` と `score_candidate()` にも `distanceToScreen` の扱いを追加します。
 
-schema だけ増やして instruction を変えない場合、Agent は新しい情報を使うとは限りません。
+schema だけ増やして helper を変えない場合、Python ranking は新しい情報を使いません。
 
-逆に instruction だけ変えて schema を変えない場合、Agent は存在しない情報を期待してしまいます。
+逆に helper だけ変えて schema を変えない場合、存在しない情報を期待してしまいます。
 
 この関係を覚えておくと、Extra の拡張がやりやすくなります。
 
@@ -2921,7 +3045,7 @@ Extra で増やすなら、次のようなタグが候補です。
 - `wide_desk`
 - `group`
 
-タグを増やすときは、WebMCP tool が返す seat data、parser instruction、ranker instruction、codelab の説明を一緒に更新します。
+タグを増やすときは、WebMCP tool が返す seat data、parser instruction、`score_candidate()`、codelab の説明を一緒に更新します。
 
 ### SeatCandidate は finder の成果物
 
@@ -2936,11 +3060,11 @@ Extra で増やすなら、次のようなタグが候補です。
 - `detail`
 - `finderReason`
 
-`seatId` は予約 action に渡すために必要です。
+`seatId` は予約 form tool に渡すために必要です。
 
 `label` は人間に見せるために必要です。
 
-`tags` は ranker が preference と比較するために必要です。
+`tags` は explanation が preference と比較するために必要です。
 
 `availability` は競合や表示状態を説明するために必要です。
 
@@ -2952,7 +3076,7 @@ Extra で増やすなら、次のようなタグが候補です。
 
 `seat_finder_agent` は、空席を調べて候補を出す Agent です。
 
-ここで完全な順位を決めてしまうと、`seat_ranker_agent` の役割が薄くなります。
+ここで完全な順位を決めてしまうと、`explanation_agent` の役割が薄くなります。
 
 finder は次の範囲に集中します。
 
@@ -2962,7 +3086,7 @@ finder は次の範囲に集中します。
 - 最大3件の候補を選ぶ
 - 候補に入れた理由を書く
 
-ranker は次の範囲に集中します。
+explanation は次の範囲に集中します。
 
 - preference と候補を比較する
 - score を付ける
@@ -2996,7 +3120,7 @@ ranker は次の範囲に集中します。
 
 たとえば、前方の通路側は空いているが、静かな席ではない場合があります。
 
-そのとき ranker は、次のような `tradeoffs` を返します。
+そのとき explanation は、次のような `tradeoffs` を返します。
 
 ```json
 {
@@ -3045,7 +3169,7 @@ ADK Web Inspector で実行結果を見るときにも効きます。
 
 - parser は希望を正しくタグにできたか
 - finder は候補を最大3件に絞ったか
-- ranker は score と理由を返したか
+- explanation は score と理由を返したか
 - reservation は1回だけ予約したか
 - coordinator は retry の履歴を残したか
 
@@ -3067,11 +3191,11 @@ Agent instruction:
   その形に何を入れるかを決める
 ```
 
-このコードラボでは、parser と ranker の2箇所で structured output を使っています。
+このコードラボでは、parser と explanation の2箇所で structured output を使っています。
 
 parser は自然文を `SeatPreference` に変換します。
 
-ranker は候補を `RankedSeats` に変換します。
+explanation は候補を `RankedSeats` に変換します。
 
 この2つは、WebMCP を直接呼ばない Agent です。WebMCP tool の呼び出しをしない分、出力形式の設計に集中できます。
 
@@ -3081,7 +3205,7 @@ Duration: 0:18:00
 
 このステップでは、`coordinator` の Python node を、上から順番に追います。
 
-ここは今回の ADK 側で最も大切な場所です。prompt に「parser の次に finder、その次に ranker」と書くのではなく、Python コードで実行順を固定しています。
+ここは今回の ADK 側で最も大切な場所です。prompt に「parser の次に finder、その次に explanation」と書くのではなく、Python コードで実行順を固定しています。
 
 ### Workflow が持つ責務
 
@@ -3093,15 +3217,15 @@ Duration: 0:18:00
 - parser を呼ぶ
 - finder を呼ぶ
 - finder の候補から seat ID を取り出す
-- ranker を呼ぶ
-- ranker の順位から予約候補を決める
+- explanation を呼ぶ
+- explanation の順位から予約候補を決める
 - reservation を候補ごとに呼ぶ
 - `seat_already_reserved` のときだけ次候補へ進む
 - 最終応答を組み立てる
 
 この責務は、どれも「流れの制御」です。
 
-席の良し悪しを判断するのは ranker です。
+席の良し悪しを判断するのは explanation です。
 
 空席を調べるのは finder です。
 
@@ -3121,12 +3245,12 @@ request_text = _textify(user_request or ctx.user_content)
 
 この処理を入れておくと、ADK Web の入力形式が多少変わっても、後続の Agent へ渡す値を安定させられます。
 
-### parser の出力は finder と ranker の両方で使う
+### parser の出力は finder と explanation の両方で使う
 
 parser の出力は、次の2箇所で使います。
 
 - finder に「どんな席を探すべきか」を伝える
-- ranker に「候補をどう比較するか」を伝える
+- explanation に「候補をどう比較するか」を伝える
 
 このため、coordinator は parser output を保持します。
 
@@ -3177,29 +3301,29 @@ if not candidate_ids:
 
 候補がない状態で reservation を呼ぶと、存在しない席を予約しようとする失敗になります。
 
-### ranker は候補を並べ替える
+### explanation は候補を並べ替える
 
-ranker には、ユーザー入力、parser output、finder output、candidate IDs を渡します。
+explanation には、ユーザー入力、parser output、finder output、candidate IDs を渡します。
 
-ranker の仕事は、候補の順番を決めることです。
+explanation の仕事は、候補の順番を決めることです。
 
 ```python
-ranker_output = await ctx.run_node(
-    seat_ranker_agent,
-    node_input=ranker_input,
+explanation_output = await ctx.run_node(
+    explanation_remote,
+    node_input=explanation_input,
     run_id="rank-candidates",
 )
 ```
 
-ranker が seat ID を返せなかった場合は、finder の候補順を fallback として使います。
+explanation が seat ID を返せなかった場合は、finder の候補順を fallback として使います。
 
 この fallback は、ハンズオン中の体験を守るためのものです。
 
-ranker の実装が少し不完全でも、finder が候補を返していれば予約まで進める可能性があります。
+explanation の実装が少し不完全でも、finder が候補を返していれば予約まで進める可能性があります。
 
 ### retry は ranked IDs に対して行う
 
-予約の retry は、ranker が並べた seat ID に対して行います。
+予約の retry は、explanation が並べた seat ID に対して行います。
 
 ```python
 for seat_id in ranked_ids[: 1 + MAX_RESERVATION_RETRIES]:
@@ -3231,7 +3355,7 @@ retry してよいのは `seat_already_reserved` の場合だけです。
 | error | retry するか | 理由 |
 | --- | --- | --- |
 | `seat_already_reserved` | する | 他参加者に先に取られただけなので次候補で解決できる |
-| `invalid_seat_id` | しない | finder/ranker の実装や API との不整合を直す必要がある |
+| `invalid_seat_id` | しない | finder/explanation の実装や API との不整合を直す必要がある |
 | `missing_connpass_id` | しない | 設定ミスなので次候補でも失敗する |
 | `network_error` | しない | 通信やサーバー状態を確認する必要がある |
 
@@ -3247,7 +3371,7 @@ retry はしません。
 
 このルールがあるので、予約処理の副作用を追いやすくなります。
 
-予約 action は状態を変える操作です。何度も勝手に呼ばれると、何が起きたか分かりにくくなります。
+予約 form tool は状態を変える操作です。何度も勝手に呼ばれると、何が起きたか分かりにくくなります。
 
 ### final message は観察しやすく書く
 
@@ -3281,7 +3405,7 @@ ADK Web の画面では、ユーザーの入力と Agent の応答だけでな�
 coordinator
   -> preference_parser_agent
   -> seat_finder_agent
-  -> seat_ranker_agent
+  -> explanation_agent
   -> reservation_agent
 ```
 
@@ -3291,7 +3415,7 @@ coordinator
 coordinator
   -> preference_parser_agent
   -> seat_finder_agent
-  -> seat_ranker_agent
+  -> explanation_agent
   -> reservation_agent (A-01 failed: seat_already_reserved)
   -> reservation_agent (A-03 success)
 ```
@@ -3329,22 +3453,22 @@ finder では、WebMCP tool が呼ばれているかを確認します。
 
 tool が1つも呼ばれていない場合は、ADK 側の `build_finder_webmcp_toolset()` または browser relay の接続を確認します。
 
-### ranker の出力を見る
+### explanation の出力を見る
 
-ranker の出力では、次を確認します。
+explanation の出力では、次を確認します。
 
 - `rankedSeats` が最大3件か
 - 各 seat に `score` があるか
 - `reason` が希望と候補情報に基づいているか
 - `tradeoffs` がある場合に納得できるか
 
-ranker が存在しない seat ID を返している場合は、ranker input に candidate IDs が渡っているか確認します。
+explanation が存在しない seat ID を返している場合は、explanation input に candidate IDs が渡っているか確認します。
 
 candidate IDs を渡しているのに違う ID を返す場合は、「candidate IDs に含まれる seatId だけを返す」と instruction を強めます。
 
 ### reservation の action 呼び出しを見る
 
-reservation では、宣言型 WebMCP action `reserve_seat` が呼ばれているかを見ます。
+reservation では、宣言型 WebMCP form tool `reserve_seat` が呼ばれているかを見ます。
 
 確認する値です。
 
@@ -3367,7 +3491,7 @@ reservation では、宣言型 WebMCP action `reserve_seat` が呼ばれてい�
 - parser が希望を取り違えた
 - finder が候補を見つけられなかった
 - WebMCP tool が見えていなかった
-- ranker が候補外の seat ID を返した
+- explanation が候補外の seat ID を返した
 - reservation が設定不足で失敗した
 - 競合で全候補が取られた
 
@@ -3381,7 +3505,7 @@ reservation では、宣言型 WebMCP action `reserve_seat` が呼ばれてい�
 3. ADK Web に coordinator が出るか
 4. parser output が妥当か
 5. finder が WebMCP tool を呼んだか
-6. ranker が候補内の seat ID を返したか
+6. explanation が候補内の seat ID を返したか
 7. reservation action が呼ばれたか
 8. 運営ボードに connpass ID が出たか
 ```
@@ -3408,7 +3532,7 @@ debug page は、大きく3つを確認します。
 
 API では、`fetchSeats` と `fetchReservations` が運営 API へ届くかを見ます。
 
-WebMCP では、`modelContext()`、`registerImperativeWebMcpTools()`、`registerDeclarativeWebMcpReservation()` が動くかを見ます。
+WebMCP では、`modelContext()`、`registerImperativeWebMcpTools()`、``#reservationForm` の宣言型 WebMCP 属性` が動くかを見ます。
 
 ### 設定が NG の場合
 
@@ -3451,7 +3575,7 @@ WebMCP が NG の場合、ブラウザ側の model context または relay の�
 - `document.modelContext` が存在するか
 - `modelContext()` の TODO を実装したか
 - `registerTool()` が正しく呼ばれているか
-- `registerAction()` が正しく呼ばれているか
+- `HTML form 属性` が正しく呼ばれているか
 - `embed.js` や relay 接続が必要な場合に読み込まれているか
 
 このハンズオンでは WebMCP 風 shim は使いません。必ず WebMCP の正式な検出・実行経路を使います。
@@ -3525,7 +3649,7 @@ WebMCP 登録部分を疑います。
 
 - `modelContext()`
 - `registerImperativeWebMcpTools()`
-- `registerDeclarativeWebMcpReservation()`
+- ``#reservationForm` の宣言型 WebMCP 属性`
 - ブラウザコンソール
 - WebMCP 対応ブラウザまたは relay
 
@@ -3535,7 +3659,7 @@ WebMCP 登録部分を疑います。
 
 `registerTool()` だけ失敗する場合は、tool schema の形を見ます。
 
-`registerAction()` だけ失敗する場合は、action schema や form 参照を見ます。
+`HTML form 属性` だけ失敗する場合は、form 属性 や form 参照を見ます。
 
 ### 症状: ADK Web に coordinator が出ない
 
@@ -3578,29 +3702,29 @@ finder の tools 設定を疑います。
 
 toolset が登録されていても、ブラウザ側に tool が登録されていなければ発見できません。
 
-### 症状: ranker が候補外の席を返す
+### 症状: ranking が候補外の席を返す
 
-ranker input と instruction を疑います。
+candidate 抽出と scoring helper を疑います。
 
 確認する場所です。
 
-- coordinator から ranker へ渡す `candidate_ids`
-- `seat_ranker_agent` の instruction
-- `RankedSeats` の output schema
+- `coerce_seat_candidates()` の出力
+- `rank_seat_candidates()` の入力
+- `RankedSeat` の seatId
 
-ranker には「candidate IDs に含まれる seatId だけを返す」と明示します。
+Python ranking は `SeatCandidates` に入っている席だけを並べます。
 
-それでも候補外が出る場合は、coordinator 側で fallback します。
+それでも候補外が出る場合は、finder 出力の parse が壊れています。
 
-今回の example では、ranker から seat ID を取り出せない場合、finder の候補順を使います。
+今回の example では、`coerce_seat_candidates()` で候補を作り、`rank_seat_candidates()` がその候補だけを並べます。
 
 ### 症状: reservation が毎回失敗する
 
-予約 action と設定を疑います。
+予約 form tool と設定を疑います。
 
 確認する場所です。
 
-- `registerDeclarativeWebMcpReservation()`
+- ``#reservationForm` の宣言型 WebMCP 属性`
 - `reserveSeat()`
 - `connpassId`
 - `seatId`
@@ -3608,7 +3732,7 @@ ranker には「candidate IDs に含まれる seatId だけを返す」と明示
 
 `missing_connpass_id` の場合は、`setup` と `public/config.js` を見ます。
 
-`invalid_seat_id` の場合は、finder/ranker/coordinator の seat ID を見ます。
+`invalid_seat_id` の場合は、finder/explanation/coordinator の seat ID を見ます。
 
 `seat_already_reserved` の場合は、競合として扱い、次候補へ retry します。
 
@@ -3673,7 +3797,7 @@ Duration: 0:16:00
 2. public/script.js
 3. tools/webmcp_tools.py
 4. agents/seat_finder/agent.py
-5. agents/seat_ranker/agent.py
+5. agents/explanation/agent.py
 6. agents/reservation/agent.py
 7. agents/coordinator/agent.py
 ```
@@ -3720,8 +3844,8 @@ finder が tool を呼ばない:
   tools/webmcp_tools.py
   agents/seat_finder/agent.py
 
-ranker が変:
-  agents/seat_ranker/agent.py
+explanation が変:
+  agents/explanation/agent.py
   agents/coordinator/agent.py
 
 予約が変:
@@ -3849,10 +3973,10 @@ ADK Web の応答だけでは完成ではありません。
 
 ```text
 1. debug page の実装を読む
-2. ranker の重みを変更する
+2. explanation の重みを変更する
 3. 座席タグを追加する
 4. 複数席予約を設計する
-5. A2A 化を試す
+5. Vertex deploy を試す
 ```
 
 本編のコードを大きく壊さずに試せるものから順に並べています。
@@ -3893,8 +4017,8 @@ Extra の基本方針です。
 ```text
 本編:
   1席予約
-  4 specialist
-  local Workflow
+  3 A2A specialist
+  A2A Workflow
   WebMCP declarative + imperative
 
 Extra:
@@ -3913,7 +4037,7 @@ Extra:
 
 ### 重み付きランキング
 
-重み付きランキングでは、ranker に計算の観点を渡します。
+重み付きランキングでは、explanation に計算の観点を渡します。
 
 例です。
 
@@ -3929,8 +4053,8 @@ pair: 1点
 この拡張では、主に次を変更します。
 
 - `SeatPreference`
-- `seat_ranker_agent`
-- coordinator から ranker へ渡す input
+- `explanation_agent`
+- coordinator から explanation へ渡す input
 - codelab の説明
 
 WebMCP tool 自体は、そのまま使える場合が多いです。
@@ -3946,7 +4070,7 @@ WebMCP tool 自体は、そのまま使える場合が多いです。
 - `list_available_seats` の返り値に含まれるか
 - `SEAT_TAG_GUIDE` に説明があるか
 - parser が `power` を認識するか
-- ranker が `power` を評価するか
+- explanation が `power` を評価するか
 
 タグは単語を増やすだけではありません。
 
@@ -3961,7 +4085,7 @@ Agent がそのタグをどう判断に使うかまで書く必要がありま�
 - 隣席の定義が必要
 - 一部だけ予約できた場合の扱いが必要
 - 競合時の retry が複雑になる
-- API と WebMCP action の input が変わる
+- API と WebMCP form tool の input が変わる
 - 成功条件の表示が変わる
 
 そのため、本編では1席に絞っています。
@@ -3974,28 +4098,28 @@ reserve_seats(seatIds: string[], connpassId: string)
 
 このような action に変えると、reservation agent も coordinator も変わります。
 
-### A2A 化
+### A2A service の deploy
 
-A2A 化では、local specialist agent を別プロセスとして公開します。
+本編ではすでに A2A service をローカルで起動しています。Extra では deploy 先を変えます。
 
-本編の local Workflow では、次のように呼びます。
+本編の coordinator Workflow では、次のように呼びます。
 
 ```python
-await ctx.run_node(seat_finder_agent, node_input=finder_input)
+await ctx.run_node(seat_finder_remote, node_input=finder_input)
 ```
 
-A2A 化すると、remote agent を node として扱う設計になります。
+deploy 後も coordinator は RemoteA2aAgent として扱います。
 
-ただし、いきなり全 Agent を A2A 化する必要はありません。
+ただし、いきなり全 service を deploy する必要はありません。
 
 最初に切り出しやすいのは、次のどちらかです。
 
 - `seat_finder_agent`
-- `seat_ranker_agent`
+- `explanation_agent`
 
 finder は WebMCP toolset の接続が必要なので、環境依存が出ます。
 
-ranker は WebMCP を直接使わないため、A2A 化の練習に向いています。
+explanation は WebMCP を直接使わないため、deploy の練習に向いています。
 
 ### 評価と prompt 改善
 
@@ -4019,7 +4143,7 @@ Agent を増やすと、動いたかどうかだけでなく、判断の質も�
 例5: 通路側は避けたい
 ```
 
-これらを ADK Web に投げて、parser、finder、ranker、reservation の境界を見ます。
+これらを ADK Web に投げて、parser、finder、explanation、reservation の境界を見ます。
 
 ## Extra: デバッグページの中身を読む
 
@@ -4031,7 +4155,7 @@ Duration: 0:10:00
 
 API チェックは `fetchSeats` と `fetchReservations` を呼びます。これは通常の Web アプリとしての確認です。
 
-WebMCP チェックは `webMcpStatus()`、`registerImperativeWebMcpTools()`、`registerDeclarativeWebMcpReservation()` を呼びます。これは Agent から見える入口の確認です。
+WebMCP チェックは `webMcpStatus()`、`registerImperativeWebMcpTools()`、``#reservationForm` の宣言型 WebMCP 属性` を呼びます。これは Agent から見える入口の確認です。
 
 この2つを分けているのは、原因を切り分けるためです。API が壊れているのか、WebMCP の登録が壊れているのかを同時に疑うと、デバッグが難しくなります。
 
@@ -4092,7 +4216,7 @@ WebMCP チェックでは、次の3つが重要です。
 
 - `modelContext()` が model context を返すか
 - `registerImperativeWebMcpTools()` が tool を登録できるか
-- `registerDeclarativeWebMcpReservation()` が action を登録できるか
+- ``#reservationForm` の宣言型 WebMCP 属性` が action を登録できるか
 
 この3つは、ハンズオンで参加者が実装する主要 TODO と対応しています。
 
@@ -4100,7 +4224,7 @@ debug page が `modelContext` で止まるなら、WebMCP runtime または `mod
 
 imperative だけ失敗するなら、`registerTool()` の schema を見ます。
 
-declarative だけ失敗するなら、`registerAction()` と予約フォームの対応を見ます。
+declarative だけ失敗するなら、`HTML form 属性` と予約フォームの対応を見ます。
 
 ### debug page に追加してよい表示
 
@@ -4113,7 +4237,7 @@ declarative だけ失敗するなら、`registerAction()` と予約フォーム�
 - 取得できた席数
 - 取得できた予約数
 - 登録した WebMCP tool 名
-- 最後に呼ばれた予約 action の結果
+- 最後に呼ばれた予約 form tool の結果
 
 ただし、Gemini API key は表示しません。
 
@@ -4162,7 +4286,7 @@ WebMCP modelContext: NG
 
 Duration: 0:12:00
 
-本編では、`seat_ranker_agent` が候補を 1 から 10 のスコアで並べます。さらに発展させるなら、タグごとの重みを明示し、希望に対する点数をより説明しやすくできます。
+本編では、`agents/shared/scoring.py` が候補を 1 から 10 のスコアで並べます。さらに発展させるなら、タグごとの重みを明示し、希望に対する点数をより説明しやすくできます。
 
 ### 追加する観点
 
@@ -4177,7 +4301,7 @@ Duration: 0:12:00
 
 ### なぜ重みを明示するのか
 
-本編の ranker は、候補と preference を見て score を返します。
+本編の explanation は、候補と preference を見て score を返します。
 
 この score は説明可能ですが、数式として固定されているわけではありません。
 
@@ -4236,9 +4360,9 @@ Use 1 as a weak preference and 5 as a very strong preference.
 Do not invent weights for tags that are not implied by the user request.
 ```
 
-### ranker に計算方針を渡す案
+### explanation に計算方針を渡す案
 
-もう1つの案は、`SeatPreference` はそのままにして、coordinator から ranker へ「重み表」を渡す方法です。
+もう1つの案は、`SeatPreference` はそのままにして、coordinator から explanation へ「重み表」を渡す方法です。
 
 ```json
 {
@@ -4255,9 +4379,9 @@ Do not invent weights for tags that are not implied by the user request.
 
 一方で、ユーザーごとの「最優先」を細かく反映するには弱くなります。
 
-学習目的なら、まず default weights を ranker instruction に書き、その後 `tag_weights` へ広げるのが進めやすいです。
+学習目的なら、まず default weights を `score_candidate()` に書き、その後 `tag_weights` へ広げるのが進めやすいです。
 
-### ranker の理由を点数と対応させる
+### explanation の理由を点数と対応させる
 
 重み付き ranking では、reason に点数の根拠を含めます。
 
@@ -4313,11 +4437,11 @@ parser の段階で「避けたい」と「欲しい」を分ける意味はこ�
 どこでもいいので空いている席をお願いします。
 ```
 
-これらを ADK Web に入れて、parser の weight、finder の候補、ranker の score を見ます。
+これらを ADK Web に入れて、parser の weight、finder の候補、explanation の score を見ます。
 
 期待と違う場合は、まず parser が希望を正しく構造化しているかを確認します。
 
-parser が正しいのに順位が変なら、ranker instruction を直します。
+parser が正しいのに順位が変なら、`score_candidate()` を直します。
 
 ### 完成の目安
 
@@ -4335,13 +4459,13 @@ parser が正しいのに順位が変なら、ranker instruction を直します
 
 Duration: 0:12:00
 
-本編では1席だけ予約しました。複数席予約を扱うには、API、WebMCP action、Agent instruction をすべて変える必要があります。
+本編では1席だけ予約しました。複数席予約を扱うには、API、WebMCP form tool、Agent instruction をすべて変える必要があります。
 
 ### 変える場所
 
 - `reserveSeat` を複数席対応にする
 - `reserve_seat` を `reserve_seats` にする
-- `inputSchema` に `seatIds` を追加する
+- フォームに `name="seatIds"` の入力を追加する
 - `seat_finder_agent` が隣接席を探す
 - `reservation_agent` が複数席の成功/失敗を返す
 - coordinator が部分成功をどう扱うか決める
@@ -4422,9 +4546,9 @@ Content-Type: application/json
 }
 ```
 
-この形を決めると、WebMCP action と reservation agent の設計も決まります。
+この形を決めると、WebMCP form tool と reservation agent の設計も決まります。
 
-### WebMCP action の inputSchema
+### WebMCP form tool の inputSchema
 
 複数席では、`seatId` ではなく `seatIds` を受け取ります。
 
@@ -4465,9 +4589,9 @@ WebMCP schema は入力の形を伝えますが、実際の安全確認は `rese
 
 既存の `SeatCandidate` に無理やり `seatIds` を足すと、1席と複数席の意味が混ざります。
 
-### ranker の比較が変わる
+### explanation の比較が変わる
 
-複数席では、ranker も候補グループを比較します。
+複数席では、explanation も候補グループを比較します。
 
 比較観点です。
 
@@ -4479,7 +4603,7 @@ WebMCP schema は入力の形を伝えますが、実際の安全確認は `rese
 
 たとえば2席のうち1席だけが通路側の場合、それを良いとするか、弱いとするかを決める必要があります。
 
-この判断を曖昧にすると、ranker の reason がぶれます。
+この判断を曖昧にすると、explanation の reason がぶれます。
 
 ### coordinator の retry が変わる
 
@@ -4512,7 +4636,7 @@ WebMCP schema は入力の形を伝えますが、実際の安全確認は `rese
 
 ただし、Extra として Agent 側だけ試すなら、UI は最小限でも構いません。
 
-WebMCP action と API client を先に作り、UI は後で改善できます。
+WebMCP form tool と API client を先に作り、UI は後で改善できます。
 
 ### 小さく始める案
 
@@ -4534,185 +4658,91 @@ retry:
 
 この制約なら、1席予約の構造を保ったまま拡張できます。
 
-## Extra: A2A に分離する
+## Extra: A2A services を deploy する
 
 Duration: 0:15:00
 
-本編の 4つの specialist agent は、同じ Python プロセスのローカル specialist agent です。A2A 化すると、必要な specialist を別プロセスや別サービスとして公開できます。
+本編では、A2A services をローカル port で起動しました。
 
-### 置き換える考え方
+次の発展として、specialist services を Vertex / Reasoning Engine などの外部 runtime へ deploy できます。
 
-本編:
+### ローカルと deploy 後の違い
 
-```python
-finder_output = await ctx.run_node(seat_finder_agent, node_input=request_text)
-reservation_output = await ctx.run_node(reservation_agent, node_input=reservation_input)
+ローカルでは、coordinator は次の URL を見ます。
+
+```text
+SEAT_FINDER_A2A_URL=http://localhost:8101
+RESERVATION_A2A_URL=http://localhost:8102
+EXPLANATION_A2A_URL=http://localhost:8103
 ```
 
-A2A 化:
+deploy 後は、この URL を deploy 先の Agent Card URL または service base URL に差し替えます。
 
-```python
-remote_seat_finder = RemoteA2aAgent(...)
-remote_reservation = RemoteA2aAgent(...)
-finder_output = await ctx.run_node(remote_seat_finder, node_input=request_text)
-reservation_output = await ctx.run_node(remote_reservation, node_input=reservation_input)
-```
+`remote_agent_card_url()` は、base URL、`/.well-known/agent-card.json`、`/v1/card` のどれを渡しても Agent Card URL に寄せる helper です。
 
-A2A は、別チームや別ランタイムで作られた Agent と連携したいときに効きます。本編で責務を分けておくと、A2A への移行が自然になります。
+### 何を deploy するか
 
-### 何を A2A 化するか
-
-A2A 化では、最初に切り出す Agent を選びます。
-
-おすすめは `seat_ranker_agent` です。
+最初に deploy しやすいのは `explanation_agent` です。
 
 理由は、WebMCP を直接使わないからです。
 
-`seat_ranker_agent` は、preference と candidate を受け取り、ranked seats を返します。ブラウザや relay に依存しないため、別プロセス化しても考えることが少なくなります。
+`explanation_agent` は、Python ranking と候補情報を受け取り、説明だけを返します。ブラウザや relay に依存しないため、外部 runtime に出しても考えることが少なくなります。
 
-次に試しやすいのは `preference_parser_agent` です。
+次に試しやすいのは、新しい specialist service の追加です。
 
-これも WebMCP を使わないため、A2A の練習に向いています。
+たとえば `accessibility_agent` を追加し、見やすさ、出入りのしやすさ、混雑しにくさを別軸で説明させることができます。
 
 `seat_finder_agent` と `reservation_agent` は WebMCP toolset を使うため、ブラウザ側との接続をどう扱うかも考える必要があります。
 
-### local と remote の境界
+### deploy で増える観点
 
-local specialist agent は、同じ Python プロセスの中で呼びます。
+外部 runtime に出すと、次の観点が増えます。
 
-remote agent は、別プロセスや別サービスとして呼びます。
-
-境界を越えると、次の観点が増えます。
-
-- agent card
-- endpoint
+- Agent Card URL
+- endpoint の公開範囲
 - timeout
 - 認証
 - ログ
 - 障害時の fallback
 
-本編ではこの複雑さを避けるため、local Workflow にしています。
-
-A2A Extra は、multi-agent の責務分割を保ったまま、配置だけを変える練習です。
+本編ではこの複雑さを避けるため、ローカル A2A services にしています。
 
 ### coordinator の見え方
 
-A2A 化しても、coordinator の考え方は変えません。
+deploy しても、coordinator の考え方は変えません。
 
-coordinator は parser、finder、ranker、reservation の順番を制御します。
+coordinator は引き続き `RemoteA2aAgent` として使います。
 
-変わるのは、node として呼ぶ相手です。
-
-```text
-本編:
-  local Agent object
-
-A2A:
-  RemoteA2aAgent
+```python
+seat_finder_remote = RemoteA2aAgent(
+    name="seat_finder_agent",
+    agent_card=remote_agent_card_url("SEAT_FINDER_A2A_URL", "http://localhost:8101"),
+)
 ```
+
+変えるのは `.env` の URL です。
 
 Workflow の流れ自体を prompt に戻さないことが大切です。
 
-A2A にしても、実行順と retry は coordinator の Python code で管理します。
-
-### remote ranker の入出力
-
-`seat_ranker_agent` を remote にする場合、入出力を明確にします。
-
-入力です。
-
-```json
-{
-  "userRequest": "前方で通路側がいいです",
-  "preference": {
-    "preferred_tags": ["front", "aisle"],
-    "avoided_tags": [],
-    "free_text": "前方で通路側がいいです"
-  },
-  "candidates": [
-    {
-      "seatId": "A-01",
-      "tags": ["front", "aisle"]
-    }
-  ]
-}
-```
-
-出力です。
-
-```json
-{
-  "rankedSeats": [
-    {
-      "seatId": "A-01",
-      "score": 9,
-      "reason": "front と aisle を満たしています。",
-      "tradeoffs": []
-    }
-  ]
-}
-```
-
-この入出力が曖昧だと、remote にしたときにデバッグが難しくなります。
-
-local の時点で structured output を用意しているのは、A2A 化しやすくするためでもあります。
-
-### timeout と失敗時の扱い
-
-remote agent は、local agent より失敗要因が増えます。
-
-たとえば次があります。
-
-- remote process が起動していない
-- endpoint が間違っている
-- agent card が取れない
-- timeout する
-- remote 側の model call が失敗する
-
-この失敗を reservation の競合 retry と混ぜないようにします。
-
-`seat_already_reserved` は予約競合です。
-
-remote ranker の timeout はシステム接続の失敗です。
-
-同じ retry で扱わない方が安全です。
-
-### A2A 化しても WebMCP は本物を使う
-
-A2A 化は Agent 間通信の話です。
-
-WebMCP を置き換える話ではありません。
-
-`seat_finder_agent` や `reservation_agent` が Web ページの tool/action を使う場合は、A2A 化しても WebMCP の正式な検出・実行経路を使います。
-
-WebMCP 風 shim に置き換えない、という本編の方針は Extra でも同じです。
-
-### 小さな A2A 化手順
-
-発展課題として進めるなら、次の順が扱いやすいです。
-
-```text
-1. seat_ranker_agent を別プロセスで起動する
-2. agent card を確認する
-3. coordinator から RemoteA2aAgent として呼ぶ
-4. local ranker と同じ入力で同じ形の output が返るか確認する
-5. うまくいったら parser も切り出す
-6. 最後に finder / reservation の切り出しを検討する
-```
-
-この順なら、WebMCP 接続と A2A 接続を同時にデバッグせずに済みます。
-
-### A2A Extra の完成目安
+### deploy 後の完成目安
 
 完成の目安です。
 
 - coordinator は引き続き Workflow
-- 少なくとも1つの specialist が remote
-- remote agent の入出力が local と同じ形
+- specialist は A2A service として Agent Card を返す
+- `.env` の A2A URL を deploy 先に差し替えられる
 - ADK Web Inspector で remote 呼び出しが確認できる
 - 予約の最終成功条件は運営ボードで確認する
 
-この状態までできれば、local multi-agent から distributed multi-agent への入口が見えます。
+### deploy しても WebMCP は本物を使う
+
+WebMCP を置き換える話ではありません。
+
+`seat_finder_agent` や `reservation_agent` が Web ページの tool を使う場合は、deploy 後も WebMCP の正式な検出・実行経路を使います。
+
+WebMCP 風 shim に置き換えない、という本編の方針は Extra でも同じです。
+
+この状態までできれば、A2A multi-agent から distributed multi-agent への入口が見えます。
 
 ## 復習用語集
 
@@ -4745,11 +4775,11 @@ preference_parser_agent:
 seat_finder_agent:
   WebMCP tool で候補を探す
 
-seat_ranker_agent:
+explanation_agent:
   候補を順位付けする
 
 reservation_agent:
-  WebMCP action で予約する
+  WebMCP form tool で予約する
 ```
 
 ### Tool
@@ -4786,7 +4816,7 @@ JavaScript から tool を登録する形です。
 
 フォームや action の意味を公開する形です。
 
-今回の予約 action は宣言型です。
+今回の予約 form tool は宣言型です。
 
 `reservation_agent` が指定席を1回だけ予約するために使います。
 
@@ -4796,7 +4826,7 @@ Agent の実行順を Python コードで固定する仕組みです。
 
 今回の `coordinator` は Workflow です。
 
-prompt に「この順番で進めて」とお願いするのではなく、node の中で parser、finder、ranker、reservation を順番に呼びます。
+prompt に「この順番で進めて」とお願いするのではなく、node の中で parser、finder、explanation、reservation を順番に呼びます。
 
 ### structured output
 
@@ -4824,7 +4854,7 @@ ADK Web の応答だけでは完成ではありません。
 
 Duration: 0:05:00
 
-このコードラボでは、既存の予約サイトに WebMCP を追加し、ADK のローカル multi-agent から座席を予約しました。
+このコードラボでは、既存の予約サイトに WebMCP を追加し、ADK のA2A multi-agent から座席を予約しました。
 
 ### 学んだこと
 
@@ -4832,8 +4862,8 @@ Duration: 0:05:00
 - API、MCP、WebMCP の違いを説明する方法
 - 既存の Web サイトに WebMCP の入口を追加する方法
 - 命令型 WebMCP tool で情報取得機能を公開する方法
-- 宣言型 WebMCP action で予約フォームを公開する方法
-- ADK の `Workflow` でローカル multi-agent の実行順をコードとして固定する方法
+- 宣言型 WebMCP form tool で予約フォームを公開する方法
+- ADK の `Workflow` でA2A multi-agent の実行順をコードとして固定する方法
 - 予約競合時に coordinator が再試行する流れを設計する方法
 
 ### 次のステップ
