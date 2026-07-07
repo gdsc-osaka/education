@@ -23,15 +23,3 @@
 	path = honojs-backend/repos/example
 	url = https://github.com/gdg-jp/honojs-backend-example.git
 	
-[submodule "webmcp-adk/webmcp-adk/repos/example"]
-	path = webmcp-adk/webmcp-adk/repos/example
-	url = https://github.com/tanahiro2010/webmcp-adk-example
-[submodule "webmcp-adk/webmcp-adk/repos/template"]
-	path = webmcp-adk/webmcp-adk/repos/template
-	url = https://github.com/tanahiro2010/webmcp-adk-template
-[submodule "webmcp-adk/repos/template"]
-	path = webmcp-adk/repos/template
-	url = https://github.com/gdg-jp/webmcp-adk-template
-[submodule "webmcp-adk/repos/example"]
-	path = webmcp-adk/repos/example
-	url = https://github.com/gdg-jp/webmcp-adk-example
