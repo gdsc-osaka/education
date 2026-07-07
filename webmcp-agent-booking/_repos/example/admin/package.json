@@ -1,0 +1,20 @@
+{
+  "name": "webmcp-agent-booking-admin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "運営用管理フロント（React）。パスワード入力で座席の一覧確認・全リセットができる。",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.0"
+  }
+}

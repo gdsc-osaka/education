@@ -1,0 +1,15 @@
+{
+  "name": "webmcp-agent-booking-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "運営用予約API（Hono）。60席のシード + 予約 + 管理者リセット。",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "hono": "^4.6.0"
+  }
+}

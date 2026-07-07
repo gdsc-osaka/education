@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-07-07T15:24:18+09:00",
+  "id": "webmcp-agent-booking",
+  "duration": 100,
+  "title": "WebMCP x ADK/A2A で作る座席予約マルチエージェント",
+  "summary": "WebMCP と Google ADK / A2A で作る座席予約マルチエージェント",
+  "source": "webmcp-agent-booking/claat.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "ai",
+    "web"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/gdsc-osaka/education/issues",
+  "url": "webmcp-agent-booking"
+}

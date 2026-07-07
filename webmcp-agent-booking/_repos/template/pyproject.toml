@@ -1,0 +1,26 @@
+[project]
+name = "webmcp-agent-booking-template"
+version = "1.0.0"
+description = "WebMCP x ADK/A2A 座席予約マルチエージェント（ハンズオン用テンプレート）"
+requires-python = ">=3.11"
+dependencies = [
+  "google-adk[a2a]>=2.1.0",
+  "a2a-sdk[http-server]>=0.3.0",
+  "mcp>=1.9.0",
+  "fastapi>=0.115.0",
+  "uvicorn>=0.30.0",
+  "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.15.0"]
+
+[tool.ruff]
+line-length = 100
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agents"]

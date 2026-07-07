@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Workflow 処理順序</title>
+  <desc id="desc">Sequence diagram showing coordinator workflow order.</desc>
+  <defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2l8 4-8 4z" fill="#3c4043"/></marker></defs>
+  <rect width="1280" height="720" fill="#fff"/>
+  <g font-family="Arial, sans-serif" font-size="22" fill="#202124" text-anchor="middle">
+    <rect x="55" y="290" width="160" height="95" rx="8" fill="#e8f0fe" stroke="#3c4043" stroke-width="2"/><text x="135" y="345">希望解析</text>
+    <rect x="265" y="290" width="160" height="95" rx="8" fill="#e8f0fe" stroke="#3c4043" stroke-width="2"/><text x="345" y="345">空席取得</text>
+    <rect x="475" y="290" width="180" height="95" rx="8" fill="#e8f0fe" stroke="#3c4043" stroke-width="2"/><text x="565" y="330">3軸並列</text><text x="565" y="360">評価</text>
+    <rect x="705" y="290" width="160" height="95" rx="8" fill="#e6f4ea" stroke="#3c4043" stroke-width="2"/><text x="785" y="345">ランキング</text>
+    <rect x="915" y="290" width="160" height="95" rx="8" fill="#fef7e0" stroke="#3c4043" stroke-width="2"/><text x="995" y="330">予約</text><text x="995" y="360">リトライ</text>
+    <rect x="1125" y="290" width="110" height="95" rx="8" fill="#e8f0fe" stroke="#3c4043" stroke-width="2"/><text x="1180" y="330">説明文</text><text x="1180" y="360">生成</text>
+  </g>
+  <g stroke="#3c4043" stroke-width="4" marker-end="url(#arrow)">
+    <path d="M215 337h50"/><path d="M425 337h50"/><path d="M655 337h50"/><path d="M865 337h50"/><path d="M1075 337h50"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#fff" text-anchor="middle">
+    <circle cx="240" cy="337" r="18" fill="#34a853"/><text x="240" y="344">1</text>
+    <circle cx="450" cy="337" r="18" fill="#34a853"/><text x="450" y="344">2</text>
+    <circle cx="680" cy="337" r="18" fill="#34a853"/><text x="680" y="344">3</text>
+    <circle cx="890" cy="337" r="18" fill="#34a853"/><text x="890" y="344">4</text>
+    <circle cx="1100" cy="337" r="18" fill="#34a853"/><text x="1100" y="344">5</text>
+  </g>
+</svg>

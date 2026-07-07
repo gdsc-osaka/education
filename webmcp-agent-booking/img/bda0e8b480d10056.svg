@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">DevTools listTools 確認のプレースホルダー</title>
+  <desc id="desc">Console output placeholder showing WebMCP tools.</desc>
+  <rect width="1280" height="720" fill="#fff"/>
+  <rect x="100" y="90" width="1080" height="540" rx="8" fill="#202124" stroke="#3c4043" stroke-width="3"/>
+  <rect x="100" y="90" width="1080" height="58" rx="8" fill="#303134"/>
+  <text x="145" y="130" font-family="Arial, sans-serif" font-size="24" fill="#e8eaed">Console</text>
+  <text x="145" y="210" font-family="Menlo, monospace" font-size="28" fill="#8ab4f8">&gt; await document.modelContext.listTools()</text>
+  <text x="170" y="280" font-family="Menlo, monospace" font-size="25" fill="#e8eaed">[</text>
+  <text x="210" y="330" font-family="Menlo, monospace" font-size="25" fill="#e8eaed">{ name: "list_available_seats" },</text>
+  <text x="210" y="380" font-family="Menlo, monospace" font-size="25" fill="#e8eaed">{ name: "get_seat_detail" },</text>
+  <text x="210" y="430" font-family="Menlo, monospace" font-size="25" fill="#e8eaed">{ name: "list_reservations" }</text>
+  <text x="170" y="480" font-family="Menlo, monospace" font-size="25" fill="#e8eaed">]</text>
+  <text x="640" y="680" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#5f6368">TODO: 実機スクリーンショットに差し替え</text>
+</svg>

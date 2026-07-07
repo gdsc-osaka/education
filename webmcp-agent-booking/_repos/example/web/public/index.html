@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>イベント座席予約</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="page-header">
+    <h1>Google I/O Extended 2026 @ Osaka — 座席予約</h1>
+    <p class="subtitle">座席を選んで予約してください。空席は緑、予約済みはグレーで表示されます。</p>
+  </header>
+
+  <main>
+    <section class="seat-board" aria-label="座席一覧">
+      <div class="legend">
+        <span class="legend-item"><span class="dot available"></span>空席</span>
+        <span class="legend-item"><span class="dot reserved"></span>予約済み</span>
+      </div>
+      <div id="seatGrid" class="seat-grid"></div>
+    </section>
+
+    <section class="reservation-panel" aria-label="予約フォーム">
+      <h2>予約する</h2>
+      <p id="selectedSeatLabel" class="selected-seat">座席を選択してください</p>
+
+      <!--
+        WebMCP 宣言型API:
+        toolname / tooldescription / toolautosubmit を <form> に付与し、
+        各 <input> には name + toolparamdescription を付与するだけで、
+        このフォーム自体がエージェントから呼び出し可能な「予約ツール」になる。
+      -->
+      <form
+        id="reservationForm"
+        toolname="reserve_seat"
+        tooldescription="指定した座席IDで1席予約する。同じ座席が既に予約済みの場合は失敗する。"
+        toolautosubmit
+      >
+        <input type="hidden" id="seatIdInput" name="seatId" toolparamdescription="予約する座席のID（例: C-3）" required />
+
+        <label for="displayNameInput">お名前</label>
+        <input
+          type="text"
+          id="displayNameInput"
+          name="displayName"
+          toolparamdescription="予約者として表示する名前"
+          placeholder="山田太郎"
+          required
+        />
+
+        <label for="noteInput">メモ（任意）</label>
+        <input
+          type="text"
+          id="noteInput"
+          name="note"
+          toolparamdescription="予約に関する任意のメモ"
+          placeholder="車椅子利用など"
+        />
+
+        <button type="submit" id="submitButton" disabled>この座席を予約する</button>
+      </form>
+
+      <p id="reservationStatus" class="reservation-status" role="status"></p>
+    </section>
+
+    <section class="reservation-list" aria-label="予約済み一覧">
+      <h2>予約済み一覧</h2>
+      <ul id="reservationList"></ul>
+    </section>
+  </main>
+
+  <!-- 0. 運営用予約API(booking-api)のURL設定 -->
+  <script src="config.js"></script>
+
+  <!-- 1. WebMCP 命令型APIのポリフィル/ランタイム（document.modelContext を有効化） -->
+  <script src="https://unpkg.com/@mcp-b/global@latest/dist/index.iife.js"></script>
+
+  <!-- 2. 通常のUIロジック + WebMCP命令型tool登録 -->
+  <script type="module" src="app.js"></script>
+
+  <!-- 3. ページに登録された全ツール(命令型/宣言型とも)を127.0.0.1:9333へリレーする -->
+  <script src="https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-local-relay@latest/dist/browser/embed.js"></script>
+</body>
+</html>

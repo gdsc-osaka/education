@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">エージェント全体構成図</title>
+  <desc id="desc">Architecture diagram for WebMCP, coordinator workflow, and A2A specialists.</desc>
+  <defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2l8 4-8 4z" fill="#3c4043"/></marker></defs>
+  <rect width="1280" height="720" fill="#fff"/>
+  <rect x="70" y="250" width="250" height="150" rx="8" fill="#e8f0fe" stroke="#3c4043" stroke-width="3"/>
+  <text x="195" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#202124">予約サイト</text>
+  <text x="195" y="352" text-anchor="middle" font-family="Menlo, monospace" font-size="22" fill="#202124">WebMCP</text>
+  <rect x="470" y="240" width="290" height="170" rx="8" fill="#e6f4ea" stroke="#3c4043" stroke-width="3"/>
+  <text x="615" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#202124">coordinator</text>
+  <text x="615" y="352" text-anchor="middle" font-family="Menlo, monospace" font-size="20" fill="#202124">Workflow</text>
+  <rect x="860" y="125" width="340" height="470" rx="8" fill="#fff" stroke="#3c4043" stroke-width="3" stroke-dasharray="10 8"/>
+  <text x="1030" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#202124">A2A specialists</text>
+  <g font-family="Menlo, monospace" font-size="19" fill="#202124">
+    <rect x="910" y="225" width="240" height="50" rx="8" fill="#fce8e6" stroke="#3c4043" stroke-width="2"/><text x="1030" y="258" text-anchor="middle">seat_finder</text>
+    <rect x="910" y="295" width="240" height="50" rx="8" fill="#fef7e0" stroke="#3c4043" stroke-width="2"/><text x="1030" y="328" text-anchor="middle">location</text>
+    <rect x="910" y="365" width="240" height="50" rx="8" fill="#e8f0fe" stroke="#3c4043" stroke-width="2"/><text x="1030" y="398" text-anchor="middle">price</text>
+    <rect x="910" y="435" width="240" height="50" rx="8" fill="#e6f4ea" stroke="#3c4043" stroke-width="2"/><text x="1030" y="468" text-anchor="middle">effect</text>
+    <rect x="910" y="505" width="240" height="50" rx="8" fill="#f3e8fd" stroke="#3c4043" stroke-width="2"/><text x="1030" y="538" text-anchor="middle">reservation</text>
+  </g>
+  <path d="M320 325h150" stroke="#3c4043" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M760 325h100" stroke="#3c4043" stroke-width="4" marker-end="url(#arrow)"/>
+</svg>

@@ -1,0 +1,10 @@
+{
+  "name": "webmcp-agent-booking-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "イベント座席予約サイト（素のHTML/CSS/JS + WebMCP 命令型/宣言型API）",
+  "scripts": {
+    "start": "node server.mjs"
+  }
+}
