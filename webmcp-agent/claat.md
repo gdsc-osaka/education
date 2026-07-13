@@ -1,5 +1,5 @@
 summary: WebMCP を使って席予約サイトを AI エージェントから呼び出すハンズオン
-id: webmcp-antigravity
+id: webmcp-agent
 categories: Web, AI
 environments: Web
 status: Published
