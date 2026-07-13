@@ -1,0 +1,1397 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>WebMCPを使ってAIエージェントから呼び出してみよう！</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="libs/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+<meta id="claat-local-ogp-og-title" property="og:title" content="WebMCPを使ってAIエージェントから呼び出してみよう！">
+<meta id="claat-local-ogp-twitter-title" name="twitter:title" content="WebMCPを使ってAIエージェントから呼び出してみよう！">
+<meta id="claat-local-ogp-og-description" property="og:description" content="WebMCP を使って席予約サイトを AI エージェントから呼び出すハンズオン">
+<meta id="claat-local-ogp-twitter-description" name="twitter:description" content="WebMCP を使って席予約サイトを AI エージェントから呼び出すハンズオン">
+<meta id="claat-local-ogp-twitter-card" name="twitter:card" content="summary_large_image">
+<meta id="claat-local-ogp-og-image" property="og:image" content="https://edu.gdgoc-osaka.jp/webmcp-antigravity/img/c2753fff162450fa.png">
+<meta id="claat-local-ogp-twitter-image" name="twitter:image" content="https://edu.gdgoc-osaka.jp/webmcp-antigravity/img/c2753fff162450fa.png">
+<link id="claat-local-favicon" rel="icon" type="image/png" href="../assets/favicon.png">
+<style id="claat-local-preprocessor-style">
+  google-codelab-step .instructions .claat-code-block {
+    position: relative;
+    margin: 16px 0;
+    background: #f1f3f4;
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  google-codelab-step .instructions .claat-code-filename {
+    display: inline-flex;
+    max-width: min(100%, 56ch);
+    min-height: 42px;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 10px 18px;
+    overflow: hidden;
+    color: #3c4043;
+    background: #e8eaed;
+    border-radius: 6px 6px 0 0;
+    font-family: "Roboto Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre {
+    margin: 0;
+    padding: 18px 88px 18px 18px;
+    color: #37474f;
+    background: #f1f3f4;
+    border-radius: 0;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre > code {
+    color: inherit;
+    background: transparent;
+    padding: 0;
+  }
+
+  google-codelab-step .instructions .claat-code-toolbar {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 1;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  google-codelab-step .instructions .claat-code-button {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 50%;
+    color: #202124;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  google-codelab-step .instructions .claat-code-button:hover,
+  google-codelab-step .instructions .claat-code-button:focus-visible {
+    background: rgba(60, 64, 67, 0.12);
+    outline: none;
+  }
+
+  google-codelab-step .instructions .claat-code-button .material-icons {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .pln,
+  google-codelab-step .instructions .claat-code-block pre .pun {
+    color: #37474f;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .kwd,
+  google-codelab-step .instructions .claat-code-block pre .typ,
+  google-codelab-step .instructions .claat-code-block pre .tag {
+    color: #9334e6;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .str,
+  google-codelab-step .instructions .claat-code-block pre .atv {
+    color: #188038;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .com {
+    color: #5f6368;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .atn,
+  google-codelab-step .instructions .claat-code-block pre .lit,
+  google-codelab-step .instructions .claat-code-block pre .dec {
+    color: #1967d2;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] {
+    background: #28323f;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-filename {
+    color: #f1f3f4;
+    background: #3c4658;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre {
+    color: #f8f9fa;
+    background: #28323f;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-button {
+    color: #f8f9fa;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-button:hover,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-button:focus-visible {
+    background: rgba(248, 249, 250, 0.16);
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .str,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .atv {
+    color: #34a853;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .kwd {
+    color: #f538a0;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .com {
+    color: #bdc1c6;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .typ,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .tag {
+    color: #24c1e0;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .lit,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .dec {
+    color: #4285f4;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .pln,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .pun {
+    color: #f8f9fa;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre > code.claat-diff-code {
+    display: block;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line {
+    display: block;
+    min-height: 1.4em;
+    margin: 0 -18px;
+    padding: 0 18px;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-marker {
+    display: inline-block;
+    width: 1ch;
+    font-weight: 600;
+    user-select: none;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-add {
+    background: #dff7e8;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-delete {
+    background: #fce8e6;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-hunk {
+    background: #e8f0fe;
+    color: #1967d2;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-add .claat-diff-marker {
+    color: #137333;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-delete .claat-diff-marker {
+    color: #d93025;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-diff-line-add {
+    background: rgba(52, 168, 83, 0.24);
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-diff-line-delete {
+    background: rgba(234, 67, 53, 0.28);
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-diff-line-hunk {
+    background: rgba(66, 133, 244, 0.25);
+    color: #8ab4f8;
+  }
+
+  google-codelab:not([theme="minimal"]) google-codelab-step .instructions aside.warning {
+    border: 1px solid #ea8600;
+    border-left-width: 4px;
+  }
+
+  google-codelab:not([theme="minimal"]) google-codelab-step .instructions aside.troubleshooting {
+    border: 1px solid #d93025;
+    border-left-width: 4px;
+    border-color: #d93025;
+    background: #fce8e6;
+    color: #212124;
+  }
+
+  google-codelab:not([theme="minimal"]) google-codelab-step .instructions aside.special,
+  google-codelab:not([theme="minimal"]) google-codelab-step .instructions aside.tip {
+    border: 1px solid #137333;
+    border-left-width: 4px;
+  }
+
+  google-codelab #drawer ol li a {
+    transition:
+      color 300ms ease-in-out,
+      background 300ms ease-in-out,
+      border-color 300ms ease-in-out,
+      box-shadow 300ms ease-in-out;
+  }
+
+  google-codelab #drawer ol li .step {
+    width: 100%;
+    min-width: 0;
+  }
+
+  google-codelab #drawer ol li .step > span {
+    min-width: 0;
+  }
+
+  google-codelab #drawer .claat-step-nav-content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  google-codelab #drawer .claat-step-nav-title {
+    overflow-wrap: anywhere;
+  }
+
+  google-codelab #drawer .claat-step-nav-outline {
+    display: block;
+    max-height: 0;
+    margin: 0 6px 0 44px;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      max-height 260ms ease,
+      margin-bottom 260ms ease,
+      opacity 180ms ease,
+      transform 220ms ease,
+      padding-bottom 260ms ease;
+  }
+
+  google-codelab #drawer ol li[selected] .claat-step-nav-outline {
+    max-height: 360px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  google-codelab #drawer .claat-step-nav-heading {
+    display: block;
+    color: #5f6368;
+    font-weight: 400;
+    line-height: 18px;
+    margin: 1px 0;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading:hover,
+  google-codelab #drawer .claat-step-nav-heading:focus-visible {
+    background: #f1f3f4;
+    color: #202124;
+    outline: none;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading.is-active {
+    background: #e8eaed;
+    color: #202124;
+    font-weight: 500;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading-level-3 {
+    margin-left: 0;
+    font-size: 12px;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading-level-4 {
+    margin-left: 14px;
+    font-size: 11px;
+  }
+
+  @media (max-width: 640px) {
+    google-codelab-step .instructions .claat-code-filename {
+      max-width: calc(100% - 72px);
+      min-height: 40px;
+      padding: 9px 14px;
+      font-size: 0.86rem;
+    }
+
+    google-codelab-step .instructions .claat-code-block pre {
+      padding: 56px 14px 16px;
+    }
+
+    google-codelab-step .instructions .claat-code-block .claat-diff-line {
+      margin: 0 -14px;
+      padding: 0 14px;
+    }
+  }
+</style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="webmcp-antigravity"
+                  title="WebMCPを使ってAIエージェントから呼び出してみよう！"
+                  environment="web"
+                  feedback-link="https://github.com/googlecodelabs/your-first-pwapp/issues">
+    
+      <google-codelab-step label="はじめに" duration="8">
+        <p class="image-container"><img alt="AI エージェント、Chrome、WebMCP、席予約サイトがつながる完成イメージ" src="img/c2753fff162450fa.png"></p>
+<p>このコードラボでは、席予約サイトに WebMCP の入口を追加し、Antigravity CLI の AI エージェントから席の状況確認や予約操作をできるようにします。</p>
+<p>完成すると、あなたは AI エージェントに「空いている席を見て、connpass ID <code>alice_123</code> で前の方の席を予約して」のように依頼できます。エージェントは Web ページに用意された tool を見つけ、席予約サイトの機能を呼び出して予約を進めます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">このコードラボで作るもの</h2>
+<p>このハンズオンでは、参加者用の席予約サイトに WebMCP を実装します。開始時点のサイトには、席一覧、予約、予約解除、共通 API への接続、リアルタイム更新の基本機能がすでに入っています。</p>
+<p>あなたが追加するのは、サイトの機能を AI エージェントから扱いやすくするための WebMCP の宣言です。通常のユーザーは画面上のフォームやボタンを使って予約しますが、WebMCP を追加すると、エージェントは「席一覧を取得する」「指定した席を予約する」「自分の予約を確認する」といった機能を tool として扱えるようになります。</p>
+<p>このハンズオンでは参加者全員が共通の API につながります。そのため、ほかの人が予約した席はあなたの画面でも埋まり、同じ席を同時に狙うと早い者勝ちの競合も起きます。AI エージェントに頼んだ予約がうまく通るか、別の人に先を越されるかまで含めて、リアルタイムな Web アプリと AI エージェントがつながる感覚を体験します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">このコードラボで学ぶこと</h2>
+<ul>
+<li>WebMCP が目指している、ブラウザ側の Agent に Web ページの機能を tool として見せる標準仕様の入口</li>
+<li>MCP と WebMCP の違い</li>
+<li>スクレイピングや画面操作だけではなく WebMCP を使う意味</li>
+<li><code>document.modelContext.registerTool()</code> を使った命令型 WebMCP の基本</li>
+<li>HTML フォームに metadata を付ける宣言型 WebMCP の考え方</li>
+<li>Antigravity CLI、MCP bridge、Chrome 拡張機能を組み合わせて WebMCP tool を確認する方法</li>
+</ul>
+<h2 is-upgraded data-claat-source-heading-level="3">必要なもの</h2>
+<ul>
+<li>Windows、macOS、または Linux の PC</li>
+<li>Google Chrome 最新版</li>
+<li>Visual Studio Code または同等のエディタ</li>
+<li>Node.js と npm</li>
+<li>Antigravity CLI</li>
+<li>Git、または zip ファイルを展開できる環境</li>
+<li>GitHub からファイルをダウンロードできるネットワーク</li>
+<li>connpass ID</li>
+</ul>
+<aside class="special"><p><strong>補足:</strong> PC やエディタ、ターミナル操作に慣れていなくても大丈夫です。詰まったら近くの TA に声をかけてください。このハンズオンでは、全員が同時に同じ速度で終わることよりも、実際に AI エージェントと Web がつながる体験を優先します。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">前提知識</h2>
+<ul>
+<li>HTML のタグを見たことがある</li>
+<li>JavaScript の関数やオブジェクトを少し見たことがある</li>
+<li>ブラウザで開発者向けの実験機能を有効にすることに抵抗がない</li>
+<li>ターミナルや PowerShell にコマンドを貼り付けて実行できる</li>
+<li>やる気がある</li>
+</ul>
+<h2 is-upgraded data-claat-source-heading-level="3">このコードラボで扱わないこと</h2>
+<ul>
+<li>席予約バックエンド API の実装</li>
+<li>本番運用向けの認証、監査、セキュリティ設計</li>
+<li>任意の AI エージェント / 任意のブラウザでの動作保証</li>
+</ul>
+<p>このハンズオンでは Antigravity CLI を使います。別の Agent で試すことは止めませんが、動かない場合は自己責任です。まずはハンズオンの手順どおり Antigravity CLI で進めてください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="WebMCP の概要" duration="18">
+        <p class="image-container"><img alt="Web アプリ、WebMCP tools、Browser / Extension、Antigravity CLI の関係図" src="img/dedc6fe9d07fdab6.svg"></p>
+<p>このステップでは、実装に入る前に WebMCP の考え方を確認します。WebMCP はまだ実験段階の仕様ですが、「Web ページの機能を、ブラウザ側の Agent が呼び出せる tool として扱う」という重要な方向性を持っています。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">WebMCP とは</h2>
+<p>WebMCP は、Web アプリケーションが自分の機能を JavaScript ベースの tool として提供するための仕様です。2026年7月時点では <a href="https://webmachinelearning.github.io/webmcp/" target="_blank">WebMCP Draft Community Group Report</a> として公開されており、W3C Standard でも W3C Standards Track でもありません。つまり、現時点では正式な Web 標準として安定しているものではなく、仕様策定と実装実験が進んでいる段階です。</p>
+<p>WebMCP の主な想定は、ブラウザが提供する Agent、またはブラウザにホストされた拡張機能やプラグイン経由の Agent が、表示中の Web ページから tool を見つけて呼び出すことです。Web ページは「このページでは席一覧を取得できる」「このフォームで予約できる」のような機能を、名前、説明、入力スキーマ、実行処理と一緒に公開します。</p>
+<p>今回のハンズオンでは、ブラウザ内蔵 Agent そのものではなく、Antigravity CLI、MCP bridge、Chrome 拡張機能を組み合わせて WebMCP を試します。これは公式仕様の最終形を完全に再現するものではありませんが、ページ側が tool を用意し、Agent 側がそれを見つけて呼び出す流れを体験するための構成です。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">今回扱う tool</h2>
+<p>今回の席予約サイトでは、次のような tool を扱います。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>tool</p>
+</td><td colspan="1" rowspan="1"><p>役割</p>
+</td><td colspan="1" rowspan="1"><p>種類</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>seat_summary</code></p>
+</td><td colspan="1" rowspan="1"><p>合計席数、空席数、予約済み数を取得する</p>
+</td><td colspan="1" rowspan="1"><p>命令型</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>seat_list</code></p>
+</td><td colspan="1" rowspan="1"><p>全席の状態を取得する</p>
+</td><td colspan="1" rowspan="1"><p>命令型</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>my_reservation</code></p>
+</td><td colspan="1" rowspan="1"><p>指定した参加者 ID の予約状態を取得する</p>
+</td><td colspan="1" rowspan="1"><p>命令型</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>cancel_reservation</code></p>
+</td><td colspan="1" rowspan="1"><p>指定した参加者 ID の予約を解除する</p>
+</td><td colspan="1" rowspan="1"><p>命令型</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>reserve_seat</code></p>
+</td><td colspan="1" rowspan="1"><p>HTML フォームを使って席を予約する</p>
+</td><td colspan="1" rowspan="1"><p>宣言型</p>
+</td></tr>
+</table>
+<p>エージェントにとって重要なのは、画面上のボタンの位置ではありません。重要なのは「どんな名前の機能があり、何を入力すると、どんな結果が返るか」です。WebMCP はその情報を Web ページ側から明示するための入口になります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">命令型 WebMCP</h2>
+<p>命令型 WebMCP では、JavaScript から <code>document.modelContext.registerTool()</code> を呼び出して tool を登録します。仕様では、Secure Context の <code>Document.modelContext</code> として <code>ModelContext</code> が追加され、<code>ModelContext</code> は <code>registerTool(tool, options)</code> と <code>ontoolchange</code> を持ちます。</p>
+<p><code>registerTool()</code> は、tool の名前、説明、入力スキーマ、実行関数を受け取り、Agent が呼び出せる tool として登録します。<code>ontoolchange</code> は tool の追加や変更をブラウザ側に知らせるためのイベントハンドラーです。<code>registerTool()</code> の <code>options</code> には、登録解除に使える <code>signal</code> と、tool を見せる origin を制御する <code>exposedTo</code> があります。</p>
+<p>また、WebMCP API へのアクセスは Permissions Policy の <code>tools</code> feature で制御され、仕様上の default allowlist は <code>'self'</code> です。細かい権限制御は今回の実装範囲外ですが、「ページが勝手にどこへでも tool を見せられる」ものではなく、ブラウザ側の権限モデルと一緒に設計されている点は押さえておきます。</p>
+<p><code>ModelContextTool</code> の主な項目は次のとおりです。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>項目</p>
+</td><td colspan="1" rowspan="1"><p>必須</p>
+</td><td colspan="1" rowspan="1"><p>説明</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>name</code></p>
+</td><td colspan="1" rowspan="1"><p>必須</p>
+</td><td colspan="1" rowspan="1"><p>tool の識別子。仕様上は 1〜128 文字で、英数字、<code>_</code>、<code>-</code>、<code>.</code> を使えます。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>title</code></p>
+</td><td colspan="1" rowspan="1"><p>任意</p>
+</td><td colspan="1" rowspan="1"><p>UI 表示向けの人間が読みやすいラベルです。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>description</code></p>
+</td><td colspan="1" rowspan="1"><p>必須</p>
+</td><td colspan="1" rowspan="1"><p>tool が何をするかを自然言語で説明します。Agent が使いどころを判断する材料になります。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>inputSchema</code></p>
+</td><td colspan="1" rowspan="1"><p>任意</p>
+</td><td colspan="1" rowspan="1"><p>tool に渡す入力を JSON Schema として表します。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>execute</code></p>
+</td><td colspan="1" rowspan="1"><p>必須</p>
+</td><td colspan="1" rowspan="1"><p>tool が呼び出されたときに実行される関数です。非同期処理もできます。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>annotations</code></p>
+</td><td colspan="1" rowspan="1"><p>任意</p>
+</td><td colspan="1" rowspan="1"><p><code>readOnlyHint</code> や <code>untrustedContentHint</code> など、tool の性質を伝える metadata です。</p>
+</td></tr>
+</table>
+<p><code>readOnlyHint: true</code> は、その tool が状態を変更せず、データを読むだけであることを示す hint です。今回なら、席一覧や予約状況の取得には付けます。一方、予約解除のように状態を変える tool には付けません。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">宣言型 WebMCP</h2>
+<p>宣言型 WebMCP は、HTML の <code>form</code> と form-associated elements を tool として扱う提案です。フォームに tool 名や説明、入力項目の説明を追加し、フォーム構造から JSON Schema を合成して、Agent が「このフォームはこの入力で呼び出せる」と理解できるようにします。</p>
+<p>ただし、2026年7月時点の仕様本文では、宣言型 WebMCP の章は TODO で、explainer draft を参照する状態です。explainer では、フォームから JSON Schema を作ること、フォーム送信後の応答を <code>SubmitEvent#respondWith()</code> などで返すことが提案されていますが、命令型 API ほど仕様本文にまとまっているわけではありません。</p>
+<p>このハンズオンでは、講師が用意した Chrome 拡張機能が読む属性として、次の metadata を使います。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>属性</p>
+</td><td colspan="1" rowspan="1"><p>付ける場所</p>
+</td><td colspan="1" rowspan="1"><p>説明</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>toolname</code></p>
+</td><td colspan="1" rowspan="1"><p><code>form</code></p>
+</td><td colspan="1" rowspan="1"><p>Agent に見せる tool 名です。例: <code>reserve_seat</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>tooldescription</code></p>
+</td><td colspan="1" rowspan="1"><p><code>form</code></p>
+</td><td colspan="1" rowspan="1"><p>そのフォームが何をする tool なのかを説明します。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>toolparamdescription</code></p>
+</td><td colspan="1" rowspan="1"><p><code>input</code> や <code>select</code></p>
+</td><td colspan="1" rowspan="1"><p>各入力項目が何を表すのかを説明します。</p>
+</td></tr>
+</table>
+<aside class="warning"><p><strong>Warning:</strong> ここで使う宣言型属性名は、確定済みの標準属性として扱うものではありません。このハンズオン用の拡張機能実装が読み取る属性として使います。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">MCP との違い</h2>
+<p>MCP は、AI エージェントが外部ツールやサービスとつながるためのプロトコルです。多くの場合、MCP server はローカルプロセス、社内サービス、クラウド上の API ラッパーとして動き、エージェントランタイムから呼び出されます。</p>
+<p>WebMCP は、Web ページ自身がブラウザ側の Agent に能力を見せる点が違います。Web アプリの画面、ログイン状態、既存の JavaScript ロジック、フォーム、ユーザー操作と同じ文脈で tool を提供できます。仕様でも、WebMCP を使うページは「バックエンドではなくクライアントサイド script で tool を実装する MCP server」のように考えられる、と説明されています。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>観点</p>
+</td><td colspan="1" rowspan="1"><p>MCP</p>
+</td><td colspan="1" rowspan="1"><p>WebMCP</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>tool の置き場所</p>
+</td><td colspan="1" rowspan="1"><p>外部の MCP server</p>
+</td><td colspan="1" rowspan="1"><p>Web ページ</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>主な呼び出し元</p>
+</td><td colspan="1" rowspan="1"><p>AI エージェントの runtime</p>
+</td><td colspan="1" rowspan="1"><p>ブラウザ内蔵 Agent やブラウザ経由の Agent</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Web UI との距離</p>
+</td><td colspan="1" rowspan="1"><p>Web ページとは別の場所にあることが多い</p>
+</td><td colspan="1" rowspan="1"><p>表示中のページの状態やロジックに近い</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>今回の使い方</p>
+</td><td colspan="1" rowspan="1"><p><code>webmcp-bridge-mcp</code> が Antigravity CLI と Chrome をつなぐ</p>
+</td><td colspan="1" rowspan="1"><p>席予約サイトが WebMCP tool を公開する</p>
+</td></tr>
+</table>
+<h2 is-upgraded data-claat-source-heading-level="3">スクレイピングではだめなのか</h2>
+<p>AI エージェントは画面を読み、クリックし、入力することもできます。ですが、スクレイピングや画面操作だけに頼ると、HTML 構造、ボタンの文言、画面サイズ、スクロール位置、非同期更新のタイミングが少し変わるだけで壊れやすくなります。</p>
+<p>WebMCP では、Web アプリ側が「この機能はこういう名前で、こういう入力を受け取り、こういう意味を持つ」と明示します。Agent はページを推測するのではなく、ページが公開した構造化された情報を見て操作できます。正式な仕様として採択され、ブラウザ実装が進めば、ブラウザ側の Agent はページが提供する tool をより自然に扱えるようになることが期待されます。</p>
+<p>今回の構成でも、この利点の一部を体験できます。Chrome 拡張機能が Web ページの WebMCP 情報を読み取り、MCP bridge が Antigravity CLI に渡すことで、エージェントは「どの CSS セレクタをクリックするか」ではなく「どの tool をどの引数で呼ぶか」を考えられます。席予約のようにリアルタイムで状態が変わる画面では、この違いが特に効いてきます。</p>
+<p>WebMCP は便利な一方で、tool の説明や出力が Agent の判断に影響するため、セキュリティやプライバシーの注意も必要です。仕様では、tool metadata への悪意ある指示、tool 出力による prompt injection、実際の挙動と説明の不一致などがリスクとして扱われています。このコードラボでは本番設計までは扱いませんが、WebMCP は「AI が触るための入口」でもあることを意識して進めます。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="今回作る席予約システム" duration="12">
+        <p class="image-container"><img alt="完成済み部分、これから編集する部分、共通 API の関係図" src="img/289c28358251b7ea.svg"></p>
+<p>このステップでは、今回使う席予約サイトの構成と、参加者が編集する場所を確認します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">開始時点で完成しているもの</h2>
+<p>配布される席予約サイトには、Web アプリとして動くための基本機能がすでに入っています。席を表示する UI、参加者 ID を入力して予約するフォーム、予約解除、共通 API との通信、ほかの参加者の操作を反映するリアルタイム更新は、最初から動く状態です。</p>
+<p>そのため、このハンズオンでゼロから予約サイトを作る必要はありません。あなたが担当するのは、既存のサイトに WebMCP の入口を追加し、AI エージェントからその機能を呼び出せるようにする部分です。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">参加者が編集するファイル</h2>
+<p>参加者が編集する主なファイルは、次の 2 つです。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>ファイル</p>
+</td><td colspan="1" rowspan="1"><p>何をするか</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>index.html</code></p>
+</td><td colspan="1" rowspan="1"><p>予約フォームに宣言型 WebMCP の metadata を追加します。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>webmcp.js</code></p>
+</td><td colspan="1" rowspan="1"><p>命令型 WebMCP tool を登録します。</p>
+</td></tr>
+</table>
+<p><code>index.html</code> では、予約用のフォームに <code>toolname</code>、<code>tooldescription</code>、<code>toolparamdescription</code> を追加します。これにより、Chrome 拡張機能が「このフォームは予約用 tool として使える」と読み取れるようになります。</p>
+<p><code>webmcp.js</code> は新しく作成するファイルです。ここでは <code>document.modelContext.registerTool()</code> を使って、席一覧、席サマリー、自分の予約確認、予約解除の tool を登録します。既存の予約ロジックや API 通信は <code>app.js</code> 側にあるため、<code>webmcp.js</code> ではそれらを呼び出す入口を作ります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">共通 API とリアルタイム更新</h2>
+<p>席予約サイトは、当日用に用意された共通 API に接続します。参加者全員が同じ席データを見ているため、誰かが予約すると、ほかの参加者の画面にも反映されます。</p>
+<p>この仕組みによって、AI エージェントに頼んだ予約が必ず成功するとは限りません。エージェントが席一覧を見た直後に別の人が同じ席を予約することもあります。その場合、API は予約の競合を返し、エージェントや画面はその結果を受け取ります。</p>
+<p>このコードラボでは、そうした「Web アプリの状態はリアルタイムに変わる」「AI エージェントもその中で判断する」という状況を体験します。WebMCP の tool は、固定されたデモデータではなく、実際に変化する Web アプリの入口になります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">完成後の流れ</h2>
+<p>完成後の流れは次のようになります。</p>
+<ol type="1">
+<li>Chrome で席予約サイトを開きます。</li>
+<li>席予約サイトが WebMCP tool を登録します。</li>
+<li>Chrome 拡張機能がページの WebMCP 情報を読み取ります。</li>
+<li><code>webmcp-bridge-mcp</code> が Antigravity CLI に tool を渡します。</li>
+<li>AI エージェントが席の状況を見て、必要なら予約フォームを使って予約します。</li>
+</ol>
+<p>リセットが入ったときは、講師が会場で案内します。案内があったら、ページを再読み込みし、必要に応じて Antigravity CLI を再起動してください。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="セットアップ" duration="25">
+        <p class="image-container"><img alt="VSCode、Node.js、Antigravity CLI、MCP bridge、Chrome flag、拡張機能、template repo のセットアップ順序" src="img/3de6356f45d497a6.svg"></p>
+<p>このステップでは、WebMCP tool を Antigravity CLI から使うための環境を準備します。順番が重要です。特に、Chrome 拡張機能を追加する前に Antigravity CLI を起動し、そのまま閉じないでください。</p>
+<aside class="warning"><p><strong>Warning:</strong> 拡張機能を追加する前後で Antigravity CLI を閉じないでください。今回使う拡張機能は Agent との接続に WebSocket を使います。CLI を閉じると WebSocket ホストも止まり、拡張機能側の接続処理が失敗することがあります。閉じてしまった場合は、もう一度 <code>agy</code> を実行して起動し直します。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">VSCode を用意する</h2>
+<p>コードを編集するために、Visual Studio Code などのエディタを使います。すでに使い慣れたエディタがある人はそれで構いません。</p>
+<p>まだエディタが入っていない場合は、<a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code の公式サイト</a> からインストールしてください。Windows、macOS、Linux のいずれでも使えます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">Node.js と npm を確認する</h2>
+<p>まず Node.js と npm が使えるか確認します。</p>
+<p>macOS や Linux の場合はターミナル、Windows の場合は PowerShell を開きます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">node -v
+npm -v
+</code></pre>
+</div>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">v20.x.x
+10.x.x
+</code></pre>
+</div>
+<p>バージョン番号が表示されれば成功です。<code>command not found</code> や <code>node は認識されていません</code> のような表示が出る場合は、Node.js をインストールします。</p>
+<p>Windows で <code>winget</code> が使える場合:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-powershell" class="language-powershell">winget install OpenJS.NodeJS.LTS
+</code></pre>
+</div>
+<p>macOS で Homebrew が使える場合:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">brew install node
+</code></pre>
+</div>
+<p>Ubuntu / Debian 系 Linux の場合:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+</code></pre>
+</div>
+<p>どれも使えない場合は、<a href="https://nodejs.org/" target="_blank">Node.js 公式サイト</a> から LTS 版をインストールしてください。インストール後、ターミナルまたは PowerShell を開き直して <code>node -v</code> をもう一度実行します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">Antigravity CLI をインストールする</h2>
+<p>Antigravity CLI をインストールします。OS に合わせて、次のどれかを実行してください。</p>
+<p>macOS / Linux:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">curl -fsSL https://antigravity.google/cli/install.sh | bash
+</code></pre>
+</div>
+<p>Windows PowerShell:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-powershell" class="language-powershell">irm https://antigravity.google/cli/install.ps1 | iex
+</code></pre>
+</div>
+<p>Windows CMD:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-cmd" class="language-cmd">curl -fsSL https://antigravity.google/cli/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd
+</code></pre>
+</div>
+<p>インストール後、ターミナルまたは PowerShell を開き直し、次のコマンドで起動確認をします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">agy --version
+</code></pre>
+</div>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">agy ...
+</code></pre>
+</div>
+<aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>agy</code> コマンドが見つからない場合は、インストール後にターミナルを開き直してください。それでも動かない場合は、インストールログや PATH の状態を確認します。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">WebMCP bridge MCP を設定する</h2>
+<p>Antigravity CLI から Chrome 側の WebMCP tool を使うために、MCP bridge を設定します。</p>
+<p>設定ファイルは <code>.gemini/config/mcp_config.json</code> です。なければ作成します。</p>
+<p>macOS / Linux:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">mkdir -p ~/.gemini/config
+code ~/.gemini/config/mcp_config.json
+</code></pre>
+</div>
+<p>Windows PowerShell:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-powershell" class="language-powershell">mkdir $env:USERPROFILE\.gemini\config -Force
+notepad $env:USERPROFILE\.gemini\config\mcp_config.json
+</code></pre>
+</div>
+<p>開いたファイルに、次の内容を貼り付けます。</p>
+<p><code>mcp_config.json</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-json" class="language-json">{
+  &#34;mcpServers&#34;: {
+    &#34;webmcp&#34;: {
+      &#34;command&#34;: &#34;npx&#34;,
+      &#34;args&#34;: [&#34;-y&#34;, &#34;webmcp-bridge-mcp&#34;]
+    }
+  }
+}
+</code></pre>
+</div>
+<p>この設定により、Antigravity CLI は <code>npx -y webmcp-bridge-mcp</code> を MCP server として起動できるようになります。</p>
+<aside class="special"><p><strong>補足:</strong> bridge のソースコードは <a href="https://github.com/tanahiro2010/webmcp-bridge-mcp" target="_blank">webmcp-bridge-mcp</a> にあります。このハンズオンでは中身を読む必要はありません。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">Antigravity CLI を起動する</h2>
+<p>Antigravity CLI を起動します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">agy
+</code></pre>
+</div>
+<p>起動できたら、次のように聞いて tool が認識されているか確認します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">webmcp に関するツールは接続されてる？
+</code></pre>
+</div>
+<p>この時点では、まだ席予約サイトを開いていないため、席予約用の tool は見えなくても構いません。<code>webmcp</code> bridge に関する tool や接続の説明が返ってくれば、まずは成功です。</p>
+<aside class="warning"><p><strong>Warning:</strong> ここから Chrome 拡張機能の追加が終わるまで、Antigravity CLI を閉じないでください。閉じてしまった場合は、もう一度 <code>agy</code> を実行して起動し直します。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">Chrome の WebMCP flag を有効にする</h2>
+<p>Chrome を最新版にアップデートします。その後、アドレスバーに次を入力します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">chrome://flags/#enable-webmcp-testing
+</code></pre>
+</div>
+<p>表示された <strong>WebMCP Testing</strong> の flag を <strong>Enabled</strong> に変更します。変更したら Chrome を再起動します。</p>
+<p><strong>期待される状態:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP Testing: Enabled
+</code></pre>
+</div>
+<p>flag が見つからない場合は、Chrome が古い可能性があります。Chrome を更新してからもう一度開いてください。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">Chrome 拡張機能を追加する</h2>
+<p>次に、Antigravity CLI と Chrome をつなぐ拡張機能を追加します。</p>
+<p>拡張機能は <a href="https://github.com/tanahiro2010/webmcp-bridge-extension" target="_blank">webmcp-bridge-extension</a> の Releases から入手します。当日は講師が使用する release を案内します。</p>
+<ol type="1">
+<li>Chrome で拡張機能の release ページを開きます。</li>
+<li>講師が指定したファイルをダウンロードします。</li>
+<li>Chrome の拡張機能管理画面を開きます。</li>
+<li>開発者モードを有効にします。</li>
+<li>ダウンロードした拡張機能を追加します。</li>
+</ol>
+<p>この作業中も Antigravity CLI は開いたままにしてください。もし閉じてしまった場合は、<code>agy</code> を実行して起動し直してから、拡張機能の接続状態を確認します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">Git を確認する</h2>
+<p>template repo を取得するために Git を使います。Git が入っているか確認します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">git --version
+</code></pre>
+</div>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">git version 2.x.x
+</code></pre>
+</div>
+<p>Git がない場合、OS に合わせてインストールします。</p>
+<p>Windows:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-powershell" class="language-powershell">winget install Git.Git
+</code></pre>
+</div>
+<p>macOS:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">xcode-select --install
+</code></pre>
+</div>
+<p>Ubuntu / Debian 系 Linux:</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">sudo apt-get update
+sudo apt-get install -y git
+</code></pre>
+</div>
+<p>Git を入れたくない、または時間がかかる場合は zip ダウンロードで進めます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">template repo を取得する</h2>
+<p>Git が使える場合は、作業しやすい場所で次を実行します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/tanahiro2010/ticket-booking-template.git
+cd ticket-booking-template
+</code></pre>
+</div>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">Cloning into &#39;ticket-booking-template&#39;...
+</code></pre>
+</div>
+<p>Git を使わない場合は、<a href="https://github.com/tanahiro2010/ticket-booking-template" target="_blank">ticket-booking-template</a> を開き、<strong>Code</strong> → <strong>Download ZIP</strong> から zip をダウンロードします。ダウンロードした zip を展開し、展開したフォルダをエディタで開きます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">フォルダをエディタで開く</h2>
+<p>Antigravity のエディタ画面、VSCode、または普段使っているエディタで <code>ticket-booking-template</code> フォルダを開きます。</p>
+<p>VSCode では、メニューから <strong>File</strong> → <strong>Open Folder...</strong> を選び、<code>ticket-booking-template</code> フォルダを選択します。ターミナルでフォルダに移動できている場合は、次のコマンドでも開けます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">code .
+</code></pre>
+</div>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> フォルダの場所がわからない場合は、近くの TA に声をかけてください。Windows では「ダウンロード」フォルダに zip が残っていることが多いです。macOS では Finder の「ダウンロード」から展開済みフォルダを探します。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">席予約サイトを起動する</h2>
+<p>template repo のフォルダで、Node.js の簡易 HTTP サーバーを起動します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">npx --yes serve . -l 8000
+</code></pre>
+</div>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">Accepting connections at http://localhost:8000
+</code></pre>
+</div>
+<p>ブラウザで次を開きます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p>席予約サイトが表示され、API の状態が接続中になれば成功です。参加者 ID には connpass ID を入力してください。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">ここまでの確認</h2>
+<p>この時点で、次の状態になっていればセットアップ完了です。</p>
+<ul>
+<li>Antigravity CLI が <code>agy</code> で起動している</li>
+<li><code>webmcp-bridge-mcp</code> が MCP server として設定されている</li>
+<li>Chrome の <code>chrome://flags/#enable-webmcp-testing</code> が有効になっている</li>
+<li>Chrome 拡張機能が追加されている</li>
+<li><code>ticket-booking-template</code> をエディタで開いている</li>
+<li><code>http://localhost:8000</code> で席予約サイトが表示される</li>
+</ul>
+<p>次のステップから、いよいよ <code>index.html</code> と <code>webmcp.js</code> を編集して WebMCP を実装します。</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="libs/native-shim.js"></script>
+  <script src="libs/custom-elements.min.js"></script>
+  <script src="libs/prettify.js"></script>
+  <script src="libs/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+<script id="claat-local-preprocessor-script">
+(function () {
+  function setTheme(block, theme) {
+    var isDark = theme === 'dark';
+    var toggle = block.querySelector('.claat-toggle-code-theme');
+    block.dataset.codeTheme = isDark ? 'dark' : 'light';
+    if (!toggle) return;
+    toggle.setAttribute('aria-label', isDark ? 'Use light code theme' : 'Use dark code theme');
+    toggle.setAttribute('title', isDark ? 'Use light code theme' : 'Use dark code theme');
+    var icon = toggle.querySelector('.material-icons');
+    if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.top = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return Promise.resolve();
+  }
+
+  function diffCopyText(source) {
+    return source.replace(/\n$/, '').split('\n').reduce(function (lines, line) {
+      if (/^@@/.test(line) || /^(\+\+\+|---)/.test(line)) return lines;
+      var marker = line.charAt(0);
+      if (marker === '-') return lines;
+      if (marker === '+' || marker === ' ') {
+        var body = line.slice(1);
+        if (marker === '+' && /^ [^\s]/.test(body)) body = body.slice(1);
+        lines.push(body);
+        return lines;
+      }
+      lines.push(line);
+      return lines;
+    }, []).join('\n');
+  }
+
+  function codeTextForCopy(code) {
+    if (!code) return '';
+    if (code.dataset && (code.dataset.claatDiff === 'true' || code.classList.contains('language-diff'))) {
+      return diffCopyText(code.dataset.claatDiffSource || code.textContent);
+    }
+    return code.innerText;
+  }
+
+  function escapeHtml(value) {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function prettyLine(value, language) {
+    var escaped = escapeHtml(value);
+    if (!language || typeof window.prettyPrintOne !== 'function') return escaped;
+    try {
+      return window.prettyPrintOne(escaped, language);
+    } catch (error) {
+      return escaped;
+    }
+  }
+
+  function diffLineHtml(line, language) {
+    if (/^@@/.test(line)) {
+      return '<span class="claat-diff-line claat-diff-line-hunk">' + escapeHtml(line) + '</span>';
+    }
+
+    var marker = line.charAt(0);
+    var isFileHeader = /^(\+\+\+|---)/.test(line);
+    var className = 'claat-diff-line';
+    if (!isFileHeader && marker === '+') className += ' claat-diff-line-add';
+    if (!isFileHeader && marker === '-') className += ' claat-diff-line-delete';
+    if (isFileHeader) className += ' claat-diff-line-hunk';
+
+    if (marker === '+' || marker === '-' || marker === ' ') {
+      return (
+        '<span class="' + className + '">' +
+        '<span class="claat-diff-marker">' + escapeHtml(marker) + '</span>' +
+        prettyLine(line.slice(1), language) +
+        '</span>'
+      );
+    }
+
+    return '<span class="' + className + '">' + prettyLine(line, language) + '</span>';
+  }
+
+  function enhanceDiffCodeBlocks() {
+    document.querySelectorAll('pre > code[data-claat-diff="true"], pre > code.language-diff').forEach(function (code) {
+      if (code.dataset.claatDiffEnhanced === 'true') return;
+      var language = code.dataset.claatDiffLanguage || '';
+      var source = code.textContent.replace(/\n$/, '');
+      code.dataset.claatDiffSource = source;
+      code.classList.add('claat-diff-code');
+      code.innerHTML = source.split('\n').map(function (line) {
+        return diffLineHtml(line, language);
+      }).join('');
+      code.dataset.claatDiffEnhanced = 'true';
+    });
+  }
+
+  function normalizeText(value) {
+    return (value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function headingOutlineForStep(step, stepIndex) {
+    var headings = Array.prototype.slice.call(
+      step.querySelectorAll('.instructions [data-claat-source-heading-level="3"], .instructions [data-claat-source-heading-level="4"]')
+    );
+
+    return headings.map(function (heading, index) {
+      var level = Number(heading.dataset.claatSourceHeadingLevel);
+      if (!heading.id) {
+        heading.id = 'claat-section-' + stepIndex + '-' + index;
+      }
+      return {
+        id: heading.id,
+        level: level,
+        text: normalizeText(heading.textContent)
+      };
+    }).filter(function (item) {
+      return item.text;
+    });
+  }
+
+  function prepareDrawerStepContent(item) {
+    var step = item.querySelector('.step');
+    if (!step) return null;
+
+    var content = step.querySelector('.claat-step-nav-content');
+    if (content) return content;
+
+    var titleSource = step.firstElementChild;
+    if (!titleSource) return null;
+
+    content = document.createElement('span');
+    content.className = 'claat-step-nav-content';
+
+    var title = document.createElement('span');
+    title.className = 'claat-step-nav-title';
+    while (titleSource.firstChild) {
+      title.appendChild(titleSource.firstChild);
+    }
+
+    content.appendChild(title);
+    step.replaceChild(content, titleSource);
+    return content;
+  }
+
+  function renderDrawerStepOutline(item, outline) {
+    prepareDrawerStepContent(item);
+
+    var outlineKey = JSON.stringify(outline);
+    if (item.dataset.claatStepNavOutline === outlineKey) return;
+    item.dataset.claatStepNavOutline = outlineKey;
+
+    var existing = item.querySelector('.claat-step-nav-outline');
+    if (existing) existing.remove();
+    if (!outline.length) return;
+
+    var container = document.createElement('span');
+    container.className = 'claat-step-nav-outline';
+
+    outline.forEach(function (heading) {
+      var row = document.createElement('span');
+      row.className = 'claat-step-nav-heading claat-step-nav-heading-level-' + heading.level;
+      row.dataset.claatSectionId = heading.id;
+      row.setAttribute('role', 'button');
+      row.setAttribute('tabindex', '0');
+      row.textContent = heading.text;
+      row.addEventListener('click', activateDrawerSection);
+      row.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        activateDrawerSection(event);
+      });
+      container.appendChild(row);
+    });
+
+    item.appendChild(container);
+  }
+
+  function selectedStepIndex(codelab) {
+    var selectedItem = codelab.querySelector('#drawer .steps ol li[selected]');
+    if (!selectedItem) return -1;
+    return Array.prototype.indexOf.call(selectedItem.parentNode.children, selectedItem);
+  }
+
+  function selectedStep(codelab) {
+    var index = selectedStepIndex(codelab);
+    var steps = codelab.querySelectorAll('google-codelab-step');
+    return index >= 0 ? steps[index] : null;
+  }
+
+  function scrollSelectedStepToSection(sectionId) {
+    var codelab = document.querySelector('google-codelab');
+    if (!codelab || !sectionId) return;
+
+    var step = selectedStep(codelab);
+    var heading = document.getElementById(sectionId);
+    if (step && heading && !step.contains(heading)) heading = null;
+    if (!step || !heading) return;
+
+    var stepRect = step.getBoundingClientRect();
+    var headingRect = heading.getBoundingClientRect();
+    var top = step.scrollTop + headingRect.top - stepRect.top - 20;
+    if (typeof step.scrollTo === 'function') {
+      step.scrollTo({ top: top, behavior: 'smooth' });
+    } else {
+      step.scrollTop = top;
+    }
+    updateActiveDrawerSection(codelab);
+  }
+
+  function updateActiveDrawerSection(root) {
+    var codelab = root || document.querySelector('google-codelab');
+    if (!codelab) return;
+
+    var step = selectedStep(codelab);
+    var selectedItem = codelab.querySelector('#drawer .steps ol li[selected]');
+    if (!step || !selectedItem) return;
+
+    var outlineRows = Array.prototype.slice.call(selectedItem.querySelectorAll('.claat-step-nav-heading'));
+    if (!outlineRows.length) return;
+
+    var headings = Array.prototype.slice.call(
+      step.querySelectorAll('.instructions [data-claat-source-heading-level="3"], .instructions [data-claat-source-heading-level="4"]')
+    ).filter(function (heading) {
+      return heading.id;
+    });
+    if (!headings.length) return;
+
+    var stepTop = step.getBoundingClientRect().top;
+    var activeHeading = headings[0];
+    headings.forEach(function (heading) {
+      if (heading.getBoundingClientRect().top - stepTop <= 72) activeHeading = heading;
+    });
+
+    outlineRows.forEach(function (row) {
+      row.classList.toggle('is-active', row.dataset.claatSectionId === activeHeading.id);
+    });
+  }
+
+  function attachStepScrollListeners(codelab) {
+    Array.prototype.slice.call(codelab.querySelectorAll('google-codelab-step')).forEach(function (step) {
+      if (step.dataset.claatSectionScrollObserver === 'true') return;
+      step.dataset.claatSectionScrollObserver = 'true';
+      step.addEventListener('scroll', function () {
+        window.requestAnimationFrame(function () {
+          updateActiveDrawerSection(codelab);
+        });
+      }, { passive: true });
+    });
+  }
+
+  function enhanceDrawerStepOutlines(root) {
+    var codelab = root || document.querySelector('google-codelab');
+    if (!codelab) return false;
+
+    var items = Array.prototype.slice.call(codelab.querySelectorAll('#drawer .steps ol li'));
+    var steps = Array.prototype.slice.call(codelab.querySelectorAll('google-codelab-step'));
+    if (!items.length || !steps.length) return false;
+
+    items.forEach(function (item, index) {
+      renderDrawerStepOutline(item, steps[index] ? headingOutlineForStep(steps[index], index) : []);
+    });
+    attachStepScrollListeners(codelab);
+    updateActiveDrawerSection(codelab);
+    return true;
+  }
+
+  function observeDrawerStepOutlines() {
+    var codelab = document.querySelector('google-codelab');
+    if (!codelab) return;
+
+    enhanceDrawerStepOutlines(codelab);
+
+    var drawer = codelab.querySelector('#drawer');
+    if (!drawer || drawer.dataset.claatHeadingObserver === 'true') return;
+    drawer.dataset.claatHeadingObserver = 'true';
+
+    var scheduled = false;
+    var observer = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        enhanceDrawerStepOutlines(codelab);
+      });
+    });
+    observer.observe(drawer, { attributes: true, attributeFilter: ['selected'], childList: true, subtree: true });
+  }
+
+  function startDrawerStepOutlineEnhancement() {
+    var attempts = 0;
+
+    function tryEnhance() {
+      attempts += 1;
+      observeDrawerStepOutlines();
+      if (attempts >= 12 || document.querySelector('google-codelab #drawer .steps ol li')) return;
+      window.setTimeout(tryEnhance, 200);
+    }
+
+    tryEnhance();
+  }
+
+  function activateDrawerSection(event) {
+    var section = event.currentTarget;
+    if (!section || !section.dataset) return;
+    event.preventDefault();
+    event.stopPropagation();
+    scrollSelectedStepToSection(section.dataset.claatSectionId);
+  }
+
+  document.addEventListener('click', function (event) {
+    var copyButton = event.target.closest('.claat-copy-code');
+    var themeButton = event.target.closest('.claat-toggle-code-theme');
+    if (!copyButton && !themeButton) return;
+
+    var block = event.target.closest('.claat-code-block');
+    if (!block) return;
+
+    if (copyButton) {
+      var code = block.querySelector('pre > code') || block.querySelector('pre');
+      if (!code) return;
+      copyText(codeTextForCopy(code)).then(function () {
+        var icon = copyButton.querySelector('.material-icons');
+        if (!icon) return;
+        icon.textContent = 'done';
+        window.setTimeout(function () {
+          icon.textContent = 'content_copy';
+        }, 1200);
+      });
+    }
+
+    if (themeButton) {
+      setTheme(block, block.dataset.codeTheme === 'dark' ? 'light' : 'dark');
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.claat-code-block').forEach(function (block) {
+      setTheme(block, block.dataset.codeTheme || 'light');
+    });
+    enhanceDiffCodeBlocks();
+    startDrawerStepOutlineEnhancement();
+  });
+}());
+</script>
+</body>
+</html>

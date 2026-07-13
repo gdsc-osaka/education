@@ -23,3 +23,15 @@
 	path = honojs-backend/repos/example
 	url = https://github.com/gdg-jp/honojs-backend-example.git
 	
+[submodule "webmcp-antigravity/repo/sample"]
+	path = webmcp-antigravity/repo/sample
+	url = https://github.com/gdg-jp/ticket-booking-sample
+[submodule "webmcp-antigravity/repo/template"]
+	path = webmcp-antigravity/repo/template
+	url = https://github.com/tanahiro2010/ticket-booking-template
+[submodule "webmcp-antigravity/repo/backend"]
+	path = webmcp-antigravity/repo/backend
+	url = https://github.com/gdg-jp/ticket-booking-backend
+[submodule "webmcp-antigravity/repo/monitor"]
+	path = webmcp-antigravity/repo/monitor
+	url = https://github.com/tanahiro2010/ticket-booking-monitor

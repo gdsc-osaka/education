@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Setup flow diagram</title>
+  <desc id="desc">Setup order for Node.js, Antigravity CLI, MCP bridge, Chrome WebMCP flag, extension, and template repository.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#3c4043"/>
+    </marker>
+    <style>
+      .bg{fill:#f8fafd}
+      .card{fill:#fff;stroke:#dadce0;stroke-width:2}
+      .blue{fill:#4285f4}
+      .green{fill:#34a853}
+      .yellow{fill:#fbbc04}
+      .red{fill:#ea4335}
+      .ink{fill:#202124;font-family:Arial,'Hiragino Sans','Yu Gothic',sans-serif}
+      .muted{fill:#5f6368;font-family:Arial,'Hiragino Sans','Yu Gothic',sans-serif}
+      .title{font-size:32px;font-weight:700}
+      .label{font-size:23px;font-weight:700}
+      .sub{font-size:17px}
+      .num{fill:#fff;font-family:Arial,sans-serif;font-size:20px;font-weight:700}
+      .arrow{stroke:#3c4043;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="720" rx="44"/>
+  <text class="ink title" x="72" y="80">セットアップは順番が大事</text>
+
+  <g transform="translate(80 150)">
+    <rect class="card" width="230" height="150" rx="24"/>
+    <circle class="blue" cx="42" cy="42" r="24"/><text class="num" x="36" y="49">1</text>
+    <text class="ink label" x="78" y="48">Node.js</text>
+    <text class="muted sub" x="28" y="98">npm / npx を使える</text>
+  </g>
+  <path class="arrow" d="M315 225H388"/>
+
+  <g transform="translate(400 150)">
+    <rect class="card" width="230" height="150" rx="24"/>
+    <circle class="blue" cx="42" cy="42" r="24"/><text class="num" x="36" y="49">2</text>
+    <text class="ink label" x="78" y="48">Antigravity CLI</text>
+    <text class="muted sub" x="28" y="98">このあと閉じない</text>
+  </g>
+  <path class="arrow" d="M635 225H708"/>
+
+  <g transform="translate(720 150)">
+    <rect class="card" width="230" height="150" rx="24"/>
+    <circle class="green" cx="42" cy="42" r="24"/><text class="num" x="36" y="49">3</text>
+    <text class="ink label" x="78" y="48">MCP bridge</text>
+    <text class="muted sub" x="28" y="98">webmcp-bridge-mcp</text>
+  </g>
+  <path class="arrow" d="M955 225H1028"/>
+
+  <g transform="translate(1040 150)">
+    <rect class="card" width="160" height="150" rx="24"/>
+    <circle class="yellow" cx="42" cy="42" r="24"/><text class="num" x="36" y="49">4</text>
+    <text class="ink label" x="28" y="92">Chrome flag</text>
+    <text class="muted sub" x="28" y="122">再起動</text>
+  </g>
+
+  <path class="arrow" d="M1120 305V390H970"/>
+
+  <g transform="translate(720 380)">
+    <rect class="card" width="250" height="150" rx="24"/>
+    <circle class="red" cx="42" cy="42" r="24"/><text class="num" x="36" y="49">5</text>
+    <text class="ink label" x="78" y="48">Extension</text>
+    <text class="muted sub" x="28" y="98">CLI を開いたまま追加</text>
+  </g>
+  <path class="arrow" d="M710 455H635"/>
+
+  <g transform="translate(400 380)">
+    <rect class="card" width="230" height="150" rx="24"/>
+    <circle class="green" cx="42" cy="42" r="24"/><text class="num" x="36" y="49">6</text>
+    <text class="ink label" x="78" y="48">Template repo</text>
+    <text class="muted sub" x="28" y="98">Git clone or zip</text>
+  </g>
+  <path class="arrow" d="M390 455H315"/>
+
+  <g transform="translate(80 380)">
+    <rect class="card" width="230" height="150" rx="24"/>
+    <circle class="blue" cx="42" cy="42" r="24"/><text class="num" x="36" y="49">7</text>
+    <text class="ink label" x="78" y="48">Tool check</text>
+    <text class="muted sub" x="28" y="98">Agent に確認する</text>
+  </g>
+
+  <rect x="320" y="585" width="640" height="62" rx="31" fill="#fce8e6"/>
+  <text class="ink label" x="372" y="625">重要: 拡張機能を入れるまで Antigravity CLI を閉じない</text>
+</svg>

@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-07-14T00:13:10+09:00",
+  "id": "webmcp-antigravity",
+  "duration": 63,
+  "title": "WebMCPを使ってAIエージェントから呼び出してみよう！",
+  "summary": "WebMCP を使って席予約サイトを AI エージェントから呼び出すハンズオン",
+  "source": "webmcp-antigravity/claat.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "web",
+    "ai"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/googlecodelabs/your-first-pwapp/issues",
+  "url": "webmcp-antigravity"
+}

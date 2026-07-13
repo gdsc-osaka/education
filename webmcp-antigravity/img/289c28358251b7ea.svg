@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Project structure diagram</title>
+  <desc id="desc">Participants edit index.html and webmcp.js. The existing booking UI, realtime updates, and shared API connection are already prepared.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#3c4043"/>
+    </marker>
+    <style>
+      .bg{fill:#f8fafd}
+      .panel{fill:#fff;stroke:#dadce0;stroke-width:2}
+      .done{fill:#e6f4ea;stroke:#34a853;stroke-width:2}
+      .edit{fill:#e8f0fe;stroke:#4285f4;stroke-width:2}
+      .api{fill:#fef7e0;stroke:#fbbc04;stroke-width:2}
+      .ink{fill:#202124;font-family:Arial,'Hiragino Sans','Yu Gothic',sans-serif}
+      .muted{fill:#5f6368;font-family:Arial,'Hiragino Sans','Yu Gothic',sans-serif}
+      .title{font-size:32px;font-weight:700}
+      .label{font-size:25px;font-weight:700}
+      .sub{font-size:18px}
+      .code{font-family:'SFMono-Regular',Consolas,monospace;font-size:18px;fill:#202124}
+      .arrow{stroke:#3c4043;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="720" rx="44"/>
+  <text class="ink title" x="72" y="78">触る場所は index.html と webmcp.js</text>
+
+  <rect class="panel" x="76" y="140" width="360" height="455" rx="28"/>
+  <text class="ink label" x="124" y="198">完成済みの席予約サイト</text>
+  <rect class="done" x="118" y="245" width="276" height="58" rx="16"/>
+  <text class="ink sub" x="148" y="282">席一覧 UI</text>
+  <rect class="done" x="118" y="323" width="276" height="58" rx="16"/>
+  <text class="ink sub" x="148" y="360">予約 / 解除</text>
+  <rect class="done" x="118" y="401" width="276" height="58" rx="16"/>
+  <text class="ink sub" x="148" y="438">リアルタイム更新</text>
+  <rect class="done" x="118" y="479" width="276" height="58" rx="16"/>
+  <text class="ink sub" x="148" y="516">API 接続</text>
+
+  <rect class="panel" x="486" y="116" width="330" height="504" rx="28"/>
+  <text class="ink label" x="548" y="174">これから追加する部分</text>
+  <rect class="edit" x="534" y="235" width="234" height="88" rx="18"/>
+  <text class="code" x="585" y="272">index.html</text>
+  <text class="muted sub" x="572" y="302">宣言型 metadata</text>
+  <rect class="edit" x="534" y="373" width="234" height="88" rx="18"/>
+  <text class="code" x="584" y="410">webmcp.js</text>
+  <text class="muted sub" x="570" y="440">命令型 tool 登録</text>
+  <rect class="api" x="534" y="510" width="234" height="62" rx="18"/>
+  <text class="muted sub" x="567" y="548">既存 app.js を呼び出す</text>
+
+  <rect class="panel" x="875" y="158" width="330" height="400" rx="28"/>
+  <text class="ink label" x="950" y="216">共通 API</text>
+  <text class="muted sub" x="922" y="255">参加者全員が同じ席データを見る</text>
+  <rect class="api" x="925" y="315" width="230" height="62" rx="18"/>
+  <text class="ink sub" x="958" y="353">早い者勝ち</text>
+  <rect class="api" x="925" y="403" width="230" height="62" rx="18"/>
+  <text class="ink sub" x="958" y="441">予約競合</text>
+
+  <path class="arrow" d="M436 370H474"/>
+  <path class="arrow" d="M816 370H863"/>
+  <text class="muted sub" x="492" y="664">WebMCP を足すだけで、既存の予約機能を Agent から呼び出せる</text>
+</svg>
