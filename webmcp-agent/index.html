@@ -377,9 +377,9 @@
 <p>このコードラボでは、席予約サイトに WebMCP の入口を追加し、Antigravity CLI の AI エージェントから席の状況確認や予約操作をできるようにします。</p>
 <p>完成すると、あなたは AI エージェントに「空いている席を見て、connpass ID <code>alice_123</code> で前の方の席を予約して」のように依頼できます。エージェントは Web ページに用意された tool を見つけ、席予約サイトの機能を呼び出して予約を進めます。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで作るもの</h2>
-<p>このハンズオンでは、参加者用の席予約サイトに WebMCP を実装します。開始時点のサイトには、席一覧、予約、予約解除、共通 API への接続、リアルタイム更新の基本機能がすでに入っています。</p>
+<p>このハンズオンでは、参加者用の席予約サイトに WebMCP を実装します。開始時点のサイトには、席一覧、予約フォーム、予約解除、共通 API への接続の基本機能がすでに入っています。</p>
 <p>あなたが追加するのは、サイトの機能を AI エージェントから扱いやすくするための WebMCP の宣言です。通常のユーザーは画面上のフォームやボタンを使って予約しますが、WebMCP を追加すると、エージェントは「席一覧を取得する」「指定した席を予約する」「自分の予約を確認する」といった機能を tool として扱えるようになります。</p>
-<p>このハンズオンでは参加者全員が共通の API につながります。そのため、ほかの人が予約した席はあなたの画面でも埋まり、同じ席を同時に狙うと早い者勝ちの競合も起きます。AI エージェントに頼んだ予約がうまく通るか、別の人に先を越されるかまで含めて、リアルタイムな Web アプリと AI エージェントがつながる感覚を体験します。</p>
+<p>このハンズオンでは参加者全員が共通の API につながります。そのため、同じ席を同時に狙うと早い者勝ちの競合も起きます。AI エージェントに頼んだ予約がうまく通るか、別の人に先を越されるかまで含めて、実際に変化する Web アプリのデータと AI エージェントがつながる感覚を体験します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで学ぶこと</h2>
 <ul>
 <li>WebMCP が目指している、ブラウザ側の Agent に Web ページの機能を tool として見せる標準仕様の入口</li>
@@ -543,7 +543,7 @@
 <h2 is-upgraded data-claat-source-heading-level="3">スクレイピングではだめなのか</h2>
 <p>AI エージェントは画面を読み、クリックし、入力することもできます。ですが、スクレイピングや画面操作だけに頼ると、HTML 構造、ボタンの文言、画面サイズ、スクロール位置、非同期更新のタイミングが少し変わるだけで壊れやすくなります。</p>
 <p>WebMCP では、Web アプリ側が「この機能はこういう名前で、こういう入力を受け取り、こういう意味を持つ」と明示します。Agent はページを推測するのではなく、ページが公開した構造化された情報を見て操作できます。正式な仕様として採択され、ブラウザ実装が進めば、ブラウザ側の Agent はページが提供する tool をより自然に扱えるようになることが期待されます。</p>
-<p>今回の構成でも、この利点の一部を体験できます。Chrome 拡張機能が Web ページの WebMCP 情報を読み取り、MCP bridge が Antigravity CLI に渡すことで、エージェントは「どの CSS セレクタをクリックするか」ではなく「どの tool をどの引数で呼ぶか」を考えられます。席予約のようにリアルタイムで状態が変わる画面では、この違いが特に効いてきます。</p>
+<p>今回の構成でも、この利点の一部を体験できます。Chrome 拡張機能が Web ページの WebMCP 情報を読み取り、MCP bridge が Antigravity CLI に渡すことで、エージェントは「どの CSS セレクタをクリックするか」ではなく「どの tool をどの引数で呼ぶか」を考えられます。席予約のように他の参加者と同じデータを扱う画面では、この違いが特に効いてきます。</p>
 <p>WebMCP は便利な一方で、tool の説明や出力が Agent の判断に影響するため、セキュリティやプライバシーの注意も必要です。仕様では、tool metadata への悪意ある指示、tool 出力による prompt injection、実際の挙動と説明の不一致などがリスクとして扱われています。このコードラボでは本番設計までは扱いませんが、WebMCP は「AI が触るための入口」でもあることを意識して進めます。</p>
 
 
@@ -553,7 +553,7 @@
         <p class="image-container"><img alt="完成済み部分、これから編集する部分、共通 API の関係図" src="img/289c28358251b7ea.svg"></p>
 <p>このステップでは、今回使う席予約サイトの構成と、参加者が編集する場所を確認します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">開始時点で完成しているもの</h2>
-<p>配布される席予約サイトには、Web アプリとして動くための基本機能がすでに入っています。席を表示する UI、参加者 ID を入力して予約するフォーム、予約解除、共通 API との通信、ほかの参加者の操作を反映するリアルタイム更新は、最初から動く状態です。</p>
+<p>配布される席予約サイトには、Web アプリとして動くための基本機能がすでに入っています。席を表示する UI、参加者 ID と席番号を入力して予約するフォーム、予約解除、共通 API との通信は、最初から動く状態です。</p>
 <p>そのため、このハンズオンでゼロから予約サイトを作る必要はありません。あなたが担当するのは、既存のサイトに WebMCP の入口を追加し、AI エージェントからその機能を呼び出せるようにする部分です。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">参加者が編集するファイル</h2>
 <p>参加者が編集する主なファイルは、次の 2 つです。</p>
@@ -570,10 +570,10 @@
 </table>
 <p><code>index.html</code> では、予約用のフォームに <code>toolname</code>、<code>tooldescription</code>、<code>toolparamdescription</code> を追加します。これにより、Chrome 拡張機能が「このフォームは予約用 tool として使える」と読み取れるようになります。</p>
 <p><code>webmcp.js</code> は新しく作成するファイルです。ここでは <code>document.modelContext.registerTool()</code> を使って、席一覧、席サマリー、自分の予約確認、予約解除の tool を登録します。既存の予約ロジックや API 通信は <code>app.js</code> 側にあるため、<code>webmcp.js</code> ではそれらを呼び出す入口を作ります。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">共通 API とリアルタイム更新</h2>
+<h2 is-upgraded data-claat-source-heading-level="3">共通 API と予約競合</h2>
 <p>席予約サイトは、当日用に用意された共通 API に接続します。参加者全員が同じ席データを見ているため、誰かが予約すると、ほかの参加者の画面にも反映されます。</p>
 <p>この仕組みによって、AI エージェントに頼んだ予約が必ず成功するとは限りません。エージェントが席一覧を見た直後に別の人が同じ席を予約することもあります。その場合、API は予約の競合を返し、エージェントや画面はその結果を受け取ります。</p>
-<p>このコードラボでは、そうした「Web アプリの状態はリアルタイムに変わる」「AI エージェントもその中で判断する」という状況を体験します。WebMCP の tool は、固定されたデモデータではなく、実際に変化する Web アプリの入口になります。</p>
+<p>このコードラボでは、そうした「Web アプリの状態は他の参加者の操作で変わる」「AI エージェントもその中で判断する」という状況を体験します。WebMCP の tool は、固定されたデモデータではなく、実際に変化する Web アプリの入口になります。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">完成後の流れ</h2>
 <p>完成後の流れは次のようになります。</p>
 <ol type="1">
@@ -1012,7 +1012,7 @@ cd ticket-booking-template
 <pre><code language="language-text" class="language-text">http://localhost:8000
 </code></pre>
 </div>
-<p>席予約サイトが表示され、API の状態が接続中になれば成功です。参加者 ID には connpass ID を入力してください。</p>
+<p>席予約サイトが表示され、席一覧が表示されれば成功です。参加者 ID には connpass ID を入力してください。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">ここまでの確認</h2>
 <p>この時点で、次の状態になっていればセットアップ完了です。</p>
 <ul>
@@ -1024,6 +1024,197 @@ cd ticket-booking-template
 <li><code>http://localhost:8000</code> で席予約サイトが表示される</li>
 </ul>
 <p>次のステップから、いよいよ <code>index.html</code> と <code>webmcp.js</code> を編集して WebMCP を実装します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="予約フォームに宣言型 WebMCP を実装する" duration="10">
+        <p class="image-container"><img alt="予約フォームに metadata を追加して reserve_seat tool として公開する図" src="img/edd705c5ea26800f.svg"></p>
+<p>このステップでは、予約用の HTML フォームに宣言型 WebMCP の metadata を追加します。これにより、AI エージェントは「参加者 ID と席番号を渡すと、席を予約できるフォームがある」と理解できるようになります。</p>
+<p>ここで触るファイルは <code>index.html</code> だけです。JavaScript はまだ書きません。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">宣言型 WebMCP で何をするか</h2>
+<p>開始時点の <code>index.html</code> には、参加者 ID と席番号を入力して予約するフォームがあります。人間はこのフォームを見て「ここから予約できる」と分かりますが、Agent にはフォームの意味をもう少し明示してあげる必要があります。</p>
+<p>通常のフォームには、送信先の <code>action</code>、送信方法の <code>method</code>、入力欄の <code>name</code> などがあります。宣言型 WebMCP では、そこに「このフォームはどんな tool なのか」「各入力欄は何を表すのか」という説明を足します。</p>
+<p>今回追加する属性は次の 3 種類です。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>属性</p>
+</td><td colspan="1" rowspan="1"><p>付ける場所</p>
+</td><td colspan="1" rowspan="1"><p>役割</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>toolname</code></p>
+</td><td colspan="1" rowspan="1"><p><code>form</code></p>
+</td><td colspan="1" rowspan="1"><p>Agent から見える tool の名前です。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>tooldescription</code></p>
+</td><td colspan="1" rowspan="1"><p><code>form</code></p>
+</td><td colspan="1" rowspan="1"><p>tool が何をするかを説明します。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>toolparamdescription</code></p>
+</td><td colspan="1" rowspan="1"><p><code>input</code></p>
+</td><td colspan="1" rowspan="1"><p>入力パラメータの意味を説明します。</p>
+</td></tr>
+</table>
+<aside class="warning"><p><strong>Warning:</strong> これらの属性名は、2026年7月時点で確定済みの標準属性として扱うものではありません。このハンズオンでは、講師が用意した Chrome 拡張機能が読み取る属性として使います。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3"><code>index.html</code> の予約フォームを探す</h2>
+<p>VSCode で <code>index.html</code> を開き、<code><h2>予約する</h2></code> を検索します。</p>
+<p>見つかるフォームは、ページ上部の「予約する」セクションにあります。次のような形です。</p>
+<p><code>index.html</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html">&lt;section&gt;
+  &lt;h2&gt;予約する&lt;/h2&gt;
+  &lt;form
+    action=&#34;http://localhost:8787/api/reservations&#34;
+    method=&#34;post&#34;
+  &gt;
+</code></pre>
+</div>
+<p>このフォームは画面にも表示されます。今回の編集では見た目を変えずに、Agent が読み取るための metadata だけを追加します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">フォームに tool の名前と説明を追加する</h2>
+<p>まず、<code>form</code> に <code>toolname</code> と <code>tooldescription</code> を追加します。</p>
+<p><code>index.html</code> の予約フォームを、次の diff のように編集します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">         &lt;form
+           action=&#34;http://localhost:8787/api/reservations&#34;
+           method=&#34;post&#34;
++          toolname=&#34;reserve_seat&#34;
++          tooldescription=&#34;参加者IDと席番号を指定して席を予約する。&#34;
+         &gt;
+</code></pre>
+</div>
+<p><code>toolname</code> は Agent から見える tool 名です。ここでは <code>reserve_seat</code> にします。</p>
+<p><code>tooldescription</code> は、Agent が「この tool はいつ使うものか」を判断するための説明です。短くてもよいですが、何を入力して何をする tool なのかが分かる文にします。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">参加者 ID の説明を追加する</h2>
+<p>次に、参加者 ID の <code>input</code> に <code>toolparamdescription</code> を追加します。</p>
+<p><code>participantId</code> は、予約する人を識別するための ID です。このハンズオンでは connpass ID を使います。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">        &lt;label&gt;
+          参加者ID
+          &lt;input
+            id=&#34;participant-id&#34;
+            name=&#34;participantId&#34;
+            required
+            pattern=&#34;[A-Za-z0-9_\-]{1,64}&#34;
++           toolparamdescription=&#34;予約する参加者のID。&#34;
+          /&gt;
+        &lt;/label&gt;
+</code></pre>
+</div>
+<p><code>name="participantId"</code> は、実際にフォーム送信されるパラメータ名です。<code>toolparamdescription</code> は、そのパラメータが何を意味するかを Agent に伝える説明です。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">席番号の説明を追加する</h2>
+<p>続けて、席番号の <code>input</code> にも <code>toolparamdescription</code> を追加します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">        &lt;label&gt;
+          席番号
+          &lt;input
+            name=&#34;seatId&#34;
+            required
+            pattern=&#34;[A-J]-([1-9]|10)&#34;
+            placeholder=&#34;A-5&#34;
++           toolparamdescription=&#34;予約する席のID。例: A-5。&#34;
+          /&gt;
+        &lt;/label&gt;
+</code></pre>
+</div>
+<p>席番号は <code>A-5</code> のような形式です。説明に例を入れておくと、Agent が入力形式を推測しやすくなります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">完成形を確認する</h2>
+<p>編集後のフォームは、次のようになります。</p>
+<p><code>index.html</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html">&lt;form
+  action=&#34;http://localhost:8787/api/reservations&#34;
+  method=&#34;post&#34;
+  toolname=&#34;reserve_seat&#34;
+  tooldescription=&#34;参加者IDと席番号を指定して席を予約する。&#34;
+&gt;
+  &lt;label&gt;
+    参加者ID
+    &lt;input
+      id=&#34;participant-id&#34;
+      name=&#34;participantId&#34;
+      required
+      pattern=&#34;[A-Za-z0-9_\-]{1,64}&#34;
+      toolparamdescription=&#34;予約する参加者のID。&#34;
+    /&gt;
+  &lt;/label&gt;
+  &lt;label&gt;
+    席番号
+    &lt;input
+      name=&#34;seatId&#34;
+      required
+      pattern=&#34;[A-J]-([1-9]|10)&#34;
+      placeholder=&#34;A-5&#34;
+      toolparamdescription=&#34;予約する席のID。例: A-5。&#34;
+    /&gt;
+  &lt;/label&gt;
+  &lt;input type=&#34;hidden&#34; name=&#34;source&#34; value=&#34;webmcp&#34; /&gt;
+  &lt;button type=&#34;submit&#34;&gt;予約する&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+</div>
+<p>ここまでで、予約フォームは <code>reserve_seat</code> tool として説明できる状態になりました。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">ブラウザで表示が壊れていないことを確認する</h2>
+<p>保存したら、ブラウザで席予約サイトを再読み込みします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p><strong>期待される状態:</strong></p>
+<ul>
+<li>画面の見た目は編集前と変わらない</li>
+<li>「予約する」フォームが表示される</li>
+<li>席一覧が表示される</li>
+</ul>
+<p>HTML に追加した metadata は画面には表示されません。見た目を変えずに、Agent が読み取るための意味だけを追加しました。</p>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> 画面が崩れた場合は、<code>form</code>、<code>input</code>、<code>label</code> の閉じタグが消えていないか確認してください。HTML の属性は、タグの <code>></code> より前に追加します。</p></aside>
+<p>次のステップでは、命令型 WebMCP 用の <code>webmcp.js</code> を作成し、JavaScript から tool を登録します。</p>
 
 
       </google-codelab-step>
