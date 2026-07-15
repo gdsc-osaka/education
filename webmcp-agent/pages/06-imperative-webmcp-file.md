@@ -1,4 +1,4 @@
-## 命令型 WebMCP を実装する `webmcp.js` を作成する
+## 命令型 WebMCP を実装する webmcp.js を作成する
 
 Duration: 0:10:00
 
