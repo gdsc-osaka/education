@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-07-15T23:59:27+09:00",
+  "id": "linux-shell-hands-on",
+  "duration": 75,
+  "title": "自作シェルで学ぶ OS の裏側",
+  "summary": "OSの裏側を理解して、自作シェルの cd コマンドを実装するハンズオン",
+  "source": "C:\\Users\\sakur\\prog\\GDGoC\\learn\\linux-shell-hands-on\\claat.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "linux"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/gdsc-osaka/education/issues",
+  "url": "linux-shell-hands-on"
+}

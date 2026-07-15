@@ -1,0 +1,1358 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>自作シェルで学ぶ OS の裏側</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="libs/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+<meta id="claat-local-ogp-og-title" property="og:title" content="自作シェルで学ぶ OS の裏側">
+<meta id="claat-local-ogp-twitter-title" name="twitter:title" content="自作シェルで学ぶ OS の裏側">
+<meta id="claat-local-ogp-og-description" property="og:description" content="OSの裏側を理解して、自作シェルの cd コマンドを実装するハンズオン">
+<meta id="claat-local-ogp-twitter-description" name="twitter:description" content="OSの裏側を理解して、自作シェルの cd コマンドを実装するハンズオン">
+<meta id="claat-local-ogp-twitter-card" name="twitter:card" content="summary_large_image">
+<link id="claat-local-favicon" rel="icon" type="image/png" href="../assets/favicon.png">
+<style id="claat-local-preprocessor-style">
+  google-codelab-step .instructions .claat-code-block {
+    position: relative;
+    margin: 16px 0;
+    background: #f1f3f4;
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  google-codelab-step .instructions .claat-code-filename {
+    display: inline-flex;
+    max-width: min(100%, 56ch);
+    min-height: 42px;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 10px 18px;
+    overflow: hidden;
+    color: #3c4043;
+    background: #e8eaed;
+    border-radius: 6px 6px 0 0;
+    font-family: "Roboto Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre {
+    margin: 0;
+    padding: 18px 88px 18px 18px;
+    color: #37474f;
+    background: #f1f3f4;
+    border-radius: 0;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre > code {
+    color: inherit;
+    background: transparent;
+    padding: 0;
+  }
+
+  google-codelab-step .instructions .claat-code-toolbar {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 1;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  google-codelab-step .instructions .claat-code-button {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 50%;
+    color: #202124;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  google-codelab-step .instructions .claat-code-button:hover,
+  google-codelab-step .instructions .claat-code-button:focus-visible {
+    background: rgba(60, 64, 67, 0.12);
+    outline: none;
+  }
+
+  google-codelab-step .instructions .claat-code-button .material-icons {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .pln,
+  google-codelab-step .instructions .claat-code-block pre .pun {
+    color: #37474f;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .kwd,
+  google-codelab-step .instructions .claat-code-block pre .typ,
+  google-codelab-step .instructions .claat-code-block pre .tag {
+    color: #9334e6;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .str,
+  google-codelab-step .instructions .claat-code-block pre .atv {
+    color: #188038;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .com {
+    color: #5f6368;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre .atn,
+  google-codelab-step .instructions .claat-code-block pre .lit,
+  google-codelab-step .instructions .claat-code-block pre .dec {
+    color: #1967d2;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] {
+    background: #28323f;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-filename {
+    color: #f1f3f4;
+    background: #3c4658;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre {
+    color: #f8f9fa;
+    background: #28323f;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-button {
+    color: #f8f9fa;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-button:hover,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-button:focus-visible {
+    background: rgba(248, 249, 250, 0.16);
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .str,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .atv {
+    color: #34a853;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .kwd {
+    color: #f538a0;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .com {
+    color: #bdc1c6;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .typ,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .tag {
+    color: #24c1e0;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .lit,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .dec {
+    color: #4285f4;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .pln,
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre .pun {
+    color: #f8f9fa;
+  }
+
+  google-codelab-step .instructions .claat-code-block pre > code.claat-diff-code {
+    display: block;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line {
+    display: block;
+    min-height: 1.4em;
+    margin: 0 -18px;
+    padding: 0 18px;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-marker {
+    display: inline-block;
+    width: 1ch;
+    font-weight: 600;
+    user-select: none;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-add {
+    background: #dff7e8;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-delete {
+    background: #fce8e6;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-hunk {
+    background: #e8f0fe;
+    color: #1967d2;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-add .claat-diff-marker {
+    color: #137333;
+  }
+
+  google-codelab-step .instructions .claat-code-block .claat-diff-line-delete .claat-diff-marker {
+    color: #d93025;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-diff-line-add {
+    background: rgba(52, 168, 83, 0.24);
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-diff-line-delete {
+    background: rgba(234, 67, 53, 0.28);
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-diff-line-hunk {
+    background: rgba(66, 133, 244, 0.25);
+    color: #8ab4f8;
+  }
+
+  google-codelab:not([theme="minimal"]) google-codelab-step .instructions aside.warning {
+    border: 1px solid #ea8600;
+    border-left-width: 4px;
+  }
+
+  google-codelab:not([theme="minimal"]) google-codelab-step .instructions aside.troubleshooting {
+    border: 1px solid #d93025;
+    border-left-width: 4px;
+    border-color: #d93025;
+    background: #fce8e6;
+    color: #212124;
+  }
+
+  google-codelab:not([theme="minimal"]) google-codelab-step .instructions aside.special,
+  google-codelab:not([theme="minimal"]) google-codelab-step .instructions aside.tip {
+    border: 1px solid #137333;
+    border-left-width: 4px;
+  }
+
+  google-codelab #drawer ol li a {
+    transition:
+      color 300ms ease-in-out,
+      background 300ms ease-in-out,
+      border-color 300ms ease-in-out,
+      box-shadow 300ms ease-in-out;
+  }
+
+  google-codelab #drawer ol li .step {
+    width: 100%;
+    min-width: 0;
+  }
+
+  google-codelab #drawer ol li .step > span {
+    min-width: 0;
+  }
+
+  google-codelab #drawer .claat-step-nav-content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  google-codelab #drawer .claat-step-nav-title {
+    overflow-wrap: anywhere;
+  }
+
+  google-codelab #drawer .claat-step-nav-outline {
+    display: block;
+    max-height: 0;
+    margin: 0 6px 0 44px;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      max-height 260ms ease,
+      margin-bottom 260ms ease,
+      opacity 180ms ease,
+      transform 220ms ease,
+      padding-bottom 260ms ease;
+  }
+
+  google-codelab #drawer ol li[selected] .claat-step-nav-outline {
+    max-height: 360px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  google-codelab #drawer .claat-step-nav-heading {
+    display: block;
+    color: #5f6368;
+    font-weight: 400;
+    line-height: 18px;
+    margin: 1px 0;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading:hover,
+  google-codelab #drawer .claat-step-nav-heading:focus-visible {
+    background: #f1f3f4;
+    color: #202124;
+    outline: none;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading.is-active {
+    background: #e8eaed;
+    color: #202124;
+    font-weight: 500;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading-level-3 {
+    margin-left: 0;
+    font-size: 12px;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading-level-4 {
+    margin-left: 14px;
+    font-size: 11px;
+  }
+
+  @media (max-width: 640px) {
+    google-codelab-step .instructions .claat-code-filename {
+      max-width: calc(100% - 72px);
+      min-height: 40px;
+      padding: 9px 14px;
+      font-size: 0.86rem;
+    }
+
+    google-codelab-step .instructions .claat-code-block pre {
+      padding: 56px 14px 16px;
+    }
+
+    google-codelab-step .instructions .claat-code-block .claat-diff-line {
+      margin: 0 -14px;
+      padding: 0 14px;
+    }
+  }
+</style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="linux-shell-hands-on"
+                  title="自作シェルで学ぶ OS の裏側"
+                  environment="web"
+                  feedback-link="https://github.com/gdsc-osaka/education/issues">
+    
+      <google-codelab-step label="はじめに" duration="5">
+        <p>普段何気なく打っている <code>ls</code> や <code>cd</code> というコマンド。その裏では、あなたのプログラムとハードウェアの間で、実はたくさんのやり取りが起きています。</p>
+<p>このコードラボでは、その <strong>OS の裏側</strong> をのぞきながら、最終的に <strong>自分だけのシェル(cd コマンド)</strong> を C 言語で作ります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">このコードラボで作るもの</h2>
+<ul>
+<li>コマンドを受け取って動く、小さな自作シェル</li>
+<li><strong>課題:</strong> その中に <code>cd</code> コマンドを自分の手で実装します</li>
+<li>「なぜ <code>cd</code> だけは特別な作りにしないといけないのか」を、手を動かして体験します</li>
+<li><strong>発展課題: </strong><code>ls</code> や <code>cat</code> などの外部コマンドを実行できるようにします</li>
+</ul>
+<h2 is-upgraded data-claat-source-heading-level="3">このコードラボで学ぶこと</h2>
+<ul>
+<li>カーネルとは何か、なぜユーザーのプログラムはハードウェアを直接触れないのか</li>
+<li>システムコールを使って、カーネルに仕事を「お願い」する仕組み</li>
+<li>シェルが、ユーザーとカーネルの間を取り持つ「代行者」であること</li>
+<li>プロセスとは何か、<code>fork</code> / <code>exec</code> / <code>wait</code> でコマンドが実行される流れ</li>
+<li><code>cd</code> を組み込みコマンドとして実装する方法</li>
+</ul>
+<h2 is-upgraded data-claat-source-heading-level="3">必要なもの</h2>
+<ul>
+<li>インターネットに接続された PC(Windows または Mac)</li>
+<li>C 言語を少し書いたことがある(<code>printf</code> や <code>for</code> 文が読めればOK。ポインタが少し不安でも大丈夫です)</li>
+<li>ターミナル操作の経験は不要です</li>
+</ul>
+<h2 is-upgraded data-claat-source-heading-level="3">前提知識</h2>
+<ul>
+<li>OS については「カーネル」という言葉を聞いたことがある、くらいで十分です</li>
+</ul>
+<h2 is-upgraded data-claat-source-heading-level="3">このコードラボで扱わないこと</h2>
+<p>このコードラボは「ユーザーの入力がハードウェアを動かすまで」の流れを理解することに集中します。そのため、次のトピックには踏み込みません。</p>
+<ul>
+<li>仮想メモリ / ページング</li>
+<li>ファイルシステムの内部構造</li>
+<li>パイプ・リダイレクト・ジョブ制御などのシェルの発展機能</li>
+</ul>
+<aside class="warning"><p><strong>Note:</strong> これらに興味が出たら、勉強会の最後に紹介する発展リソースを参照してください。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="環境構築(事前準備)" duration="15">
+        <p>ハンズオンでは C 言語でシェルを書きます。インストールに時間がかかることがあるので、<strong>勉強会の当日までに、この Step の環境構築を必ず済ませてきてください。</strong> 当日は「動作確認」から始めます。</p>
+<aside class="warning"><p><strong>Warning:</strong> 当日その場でのインストールは間に合わない可能性が高いです。特に Windows の方は、再起動やダウンロードで時間がかかります。必ず事前に済ませてきてください。</p></aside>
+<p>お使いの OS に合わせて、下のどちらかを進めてください。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">🍎 Mac の人 — ターミナルのままでOK</h2>
+<p>Mac は Unix 系なので、<strong>標準のターミナルでそのまま参加できます。</strong> WSL などの仮想環境は不要です。C コンパイラだけ入れましょう。</p>
+<ol type="1">
+<li><code>⌘ + Space</code> で Spotlight を開き、「ターミナル」と入力して起動します。</li>
+<li>次のコマンドを実行します。</li>
+</ol>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">xcode-select --install
+</code></pre>
+</div>
+<ol type="1" start="3">
+<li>ポップアップが表示されたら「インストール」をクリックします(数分〜十数分かかります)。</li>
+<li>完了したら、このページ下部の「動作確認」へ進みます。</li>
+</ol>
+<aside class="special"><p><strong>Tip:</strong> すでに <code>gcc --version</code> が動く人は、この手順はスキップして大丈夫です。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">🪟 Windows の人 — WSL2 + Ubuntu を入れる</h2>
+<p>Windows はそのままでは Linux のコマンドや C の環境が使えないので、<strong>WSL2</strong> という仕組みで Ubuntu(Linux)を入れます。</p>
+<p><strong>前提:</strong> Windows 10(バージョン 2004 以降)または Windows 11 / 管理者権限が使える PC</p>
+<ol type="1">
+<li>スタートメニューで「PowerShell」を検索し、<strong>右クリック →「管理者として実行」</strong> を選びます。</li>
+<li>次のコマンドを実行します。WSL2 と Ubuntu が自動でインストールされます。</li>
+</ol>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-powershell" class="language-powershell">wsl --install
+</code></pre>
+</div>
+<ol type="1" start="3">
+<li><strong>PC を再起動します。</strong>(ここが重要。再起動しないと完了しません)</li>
+<li>再起動後、Ubuntu のウィンドウが自動で立ち上がります。出てこない場合は、スタートメニューから「Ubuntu」を起動してください。</li>
+<li>初回だけ <strong>ユーザー名とパスワード</strong> を聞かれるので設定します。</li>
+</ol>
+<aside class="warning"><p><strong>Note:</strong> パスワードは入力しても画面に何も表示されませんが、ちゃんと打てています。忘れないものを設定してください。</p>
+<ol type="1" start="6">
+<li>Ubuntu のターミナルで、次のコマンドを順に実行し、C コンパイラなどを入れます。</li>
+</ol></aside>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">sudo apt update
+sudo apt install build-essential -y
+</code></pre>
+</div>
+<p>（<code>sudo</code> のパスワードは、手順 5 で設定したものです）</p>
+<aside class="warning"><p><strong>Note:</strong> これ以降、勉強会では <strong>この Ubuntu のターミナル</strong> を使います。Windows の黒い画面(コマンドプロンプト)ではないので注意してください。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">動作確認(Mac / Windows 共通)</h2>
+<p>ターミナル(Windows の人は Ubuntu)で、次のコマンドを 1 行ずつ実行してください。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">pwd
+ls
+gcc --version
+</code></pre>
+</div>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>/home/あなたの名前
+（ファイル一覧。何もなくてもOK）
+gcc (Ubuntu ...) 13.x.x
+</code></pre>
+</div>
+<ul>
+<li><code>pwd</code> → 今いる場所が表示される</li>
+<li><code>ls</code> → ファイル一覧が表示される(何もなくてもOK)</li>
+<li><code>gcc --version</code> → バージョンが表示される</li>
+</ul>
+<p>最後に、C が本当にコンパイルできるかを確認します。次を <strong>1 行のまま</strong> 貼り付けて実行してください。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">echo &#39;int main(){return 0;}&#39; &gt; test.c &amp;&amp; gcc test.c -o test &amp;&amp; ./test &amp;&amp; echo &#34;OK!&#34;
+</code></pre>
+</div>
+<p>最後に <strong><code>OK!</code></strong> と表示されれば、準備完了です 🎉</p>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> うまくいかないときは、次を確認してください。</p>
+<ul>
+<li><code>wsl --install</code> が「認識されません」と出る → Windows Update を最新にしてから再挑戦する</li>
+<li>再起動後に仮想化エラーが出る → BIOS で仮想化(Virtualization)を有効にする必要がある場合があります</li>
+<li>会社・学校の貸与 PC で管理者権限がない → インストールできないことがあります。事前に運営まで連絡してください</li>
+<li>どうしても入らない場合は、当日少し早めに来てください。一緒に対応します</li>
+</ul></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="骨組みのシェルを動かす" duration="10">
+        <p>まずは、今日の土台になる <strong>骨組みシェル</strong> を用意します。入力を受け取って解析するところまでは、こちらで用意済みです。あなたはこの上に <code>cd</code> や外部コマンドの実行を足していきます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">シェルがやること（おさらい）</h2>
+<p>シェルは、次の 3 つをひたすら繰り返すプログラムです。</p>
+<ol type="1">
+<li><strong>入力を受け付ける</strong> — あなたが打ち込んだコマンドを 1 行読む</li>
+<li><strong>解析する</strong> — 空白で区切って「コマンド名」と「引数」に分ける</li>
+<li><strong>実行する</strong> — コマンドを実際に動かす</li>
+</ol>
+<p>このうち <strong>1 と 2 は配布コードに用意済み</strong>です。今日あなたが書くのは、<strong>3 の「実行する」部分</strong>です。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">骨組みコードを用意する</h2>
+<p>作業用のフォルダを作り、その中に <code>myshell.c</code> を作ります。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">mkdir myshell
+cd myshell
+</code></pre>
+</div>
+<p>エディタ(<code>nano myshell.c</code> など、好きなもので構いません)で <code>myshell.c</code> を作り、次の内容をそのまま貼り付けて保存します。</p>
+<p><code>myshell.c</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;     /* chdir, getcwd, fork, execvp */
+#include &lt;sys/wait.h&gt;   /* wait */
+
+#define BUFLEN      1024   /* 入力バッファの大きさ */
+#define MAXARGNUM    256   /* 引数の最大数 */
+#define PATH_MAX_LEN 1024
+
+int  parse(char buffer[], char *args[]);
+void execute_command(char *args[]);
+
+int main(void)
+{
+    char command_buffer[BUFLEN];  /* 入力を読み込むバッファ */
+    char *args[MAXARGNUM];        /* 解析後の引数の配列 */
+    int  status;
+
+    for (;;) {
+        printf(&#34;myshell&gt; &#34;);
+
+        /* 1 行読み込む。Ctrl-D（入力の終わり）で終了 */
+        if (fgets(command_buffer, BUFLEN, stdin) == NULL) {
+            printf(&#34;\n&#34;);
+            break;
+        }
+
+        status = parse(command_buffer, args);
+
+        if (status == 2) {   /* &#34;exit&#34; が入力された */
+            printf(&#34;done.\n&#34;);
+            break;
+        }
+        if (status == 3) {   /* 空行だった */
+            continue;
+        }
+
+        execute_command(args);
+    }
+    return 0;
+}
+
+/*
+ * 入力を空白で区切り、args[] に格納する。
+ * 返り値: 0 = 通常コマンド / 2 = exit / 3 = 空行
+ * ※ この関数は今日は変更しません。中身を読まなくても大丈夫です。
+ */
+int parse(char buffer[], char *args[])
+{
+    int arg_index = 0;
+
+    buffer[strlen(buffer) - 1] = &#39;\0&#39;;   /* 末尾の改行を消す */
+
+    if (strcmp(buffer, &#34;exit&#34;) == 0) {
+        return 2;
+    }
+
+    while (*buffer != &#39;\0&#39;) {
+        while (*buffer == &#39; &#39; || *buffer == &#39;\t&#39;) {
+            *(buffer++) = &#39;\0&#39;;
+        }
+        if (*buffer == &#39;\0&#39;) {
+            break;
+        }
+        args[arg_index++] = buffer;
+        while (*buffer != &#39;\0&#39; &amp;&amp; *buffer != &#39; &#39; &amp;&amp; *buffer != &#39;\t&#39;) {
+            ++buffer;
+        }
+    }
+    args[arg_index] = NULL;   /* 配列の終わりを示す */
+
+    if (arg_index == 0) {
+        return 3;
+    }
+    return 0;
+}
+
+void execute_command(char *args[])
+{
+    /* === 課題: ここに cd の処理を書く === */
+
+    /* === 発展課題: ここで外部コマンドを実行する === */
+
+    printf(&#34;まだ実装されていません: %s\n&#34;, args[0]);
+}
+</code></pre>
+</div>
+<p><code>main</code> は「読む → 解析する → 実行する」を繰り返すだけの短いループです。<code>parse</code> は入力を引数の配列に分ける係で、今日は触りません。あなたが育てていくのは、いちばん下の <code>execute_command</code> です。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">コンパイルして実行する</h2>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">gcc myshell.c -o myshell
+./myshell
+</code></pre>
+</div>
+<p><code>myshell></code> というプロンプトが出たら成功です。試しに何か打ってみましょう。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>myshell&gt; ls
+まだ実装されていません: ls
+myshell&gt; exit
+done.
+</code></pre>
+</div>
+<p>まだ何も実行できませんが、これが出発点です。<code>exit</code> または <code>Ctrl-D</code> で終了できます。</p>
+<aside class="special"><p><strong>Tip:</strong> コードを書き換えたら、そのたびに <code>gcc myshell.c -o myshell</code> でコンパイルし直してから <code>./myshell</code> を実行します。この 2 つはこれから何度も繰り返します。</p></aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="【課題】cd コマンドを実装する" duration="20">
+        <p>いよいよ本題です。<code>cd</code> を自分の手で実装します。その前に、<strong>なぜ </strong></p>
+<p><strong><code>cd</code></strong></p>
+<p><strong> だけ特別な作りが必要なのか</strong>を確認しておきましょう。ここが今日いちばん大事なポイントです。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">なぜ cd は「組み込みコマンド」なのか</h2>
+<p>スライドで見たとおり、シェルは <code>ls</code> のような外部コマンドを <strong>子プロセスを作って(fork)</strong> その中で実行します。ここで効いてくるのが、<strong>プロセスはそれぞれ独立した「作業ディレクトリ」を持つ</strong>という性質です。</p>
+<p>もし <code>cd</code> を外部コマンドと同じように、子プロセスの中で実行したらどうなるでしょう?</p>
+<ul>
+<li>子プロセスの中で作業ディレクトリを変える</li>
+<li>→ 変わるのは <strong>子プロセスの</strong>ディレクトリだけ</li>
+<li>→ 子プロセスはコマンドが終わると消えてしまう</li>
+<li>→ <strong>親であるシェルのディレクトリは、まったく変わらない</strong></li>
+</ul>
+<p>つまり <code>cd</code> を外部コマンドと同じ作りにすると、<strong>まったく効きません。</strong> だから <code>cd</code> は fork せず、<strong>シェル自身のプロセスの中で直接ディレクトリを変える</strong>必要があります。このように、シェル本体が自分で処理するコマンドを <strong>組み込み(built-in)コマンド</strong> と呼びます。</p>
+<aside class="warning"><p><strong>Note: </strong><code>pwd</code> や <code>ls</code> は外部コマンド(別プログラム)ですが、<code>cd</code> はどんなシェルでも組み込みコマンドです。理由はいま説明したとおりです。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">cd 関数を書く</h2>
+<p>ディレクトリの変更には、<code>chdir()</code> というシステムコールのラッパー関数を使います。<code>execute_command</code> の <strong>すぐ上</strong>に、次の <code>cd</code> 関数を追加します。</p>
+<p><code>myshell.c</code>（<code>execute_command</code> の上に追加）</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">int cd(char *args[])
+{
+    int result;
+
+    if (args[1] == NULL) {
+        /* 引数なし（&#34;cd&#34; だけ）ならホームディレクトリへ */
+        result = chdir(getenv(&#34;HOME&#34;));
+    } else {
+        /* &#34;cd &lt;パス&gt;&#34; なら、そのパスへ移動 */
+        result = chdir(args[1]);
+    }
+
+    if (result != 0) {
+        perror(&#34;cd failed&#34;);        /* 移動できなかった理由を表示 */
+    } else {
+        char cwd[PATH_MAX_LEN];
+        getcwd(cwd, sizeof(cwd));    /* 今いる場所を取得して */
+        printf(&#34;Current directory: %s\n&#34;, cwd);  /* 表示する */
+    }
+    return result;
+}
+</code></pre>
+</div>
+<p><code>chdir()</code> がディレクトリを変える本体です。成功したら <code>getcwd()</code> で今いる場所を取り出して表示し、失敗したら <code>perror()</code> で理由を出します。</p>
+<h2 is-upgraded>execute_command から cd を呼ぶ</h2>
+<p>次に、コマンド名が <code>cd</code> だったときに、いま作った関数を呼ぶようにします。<code>execute_command</code> を次のように書き換えます。</p>
+<p><code>myshell.c</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">void execute_command(char *args[])
+{
+    if (strcmp(args[0], &#34;cd&#34;) == 0) {
+        cd(args);   /* fork せず、シェル自身のプロセスで実行する */
+        return;
+    }
+
+    /* === 発展課題: ここで外部コマンドを実行する === */
+
+    printf(&#34;まだ実装されていません: %s\n&#34;, args[0]);
+}
+</code></pre>
+</div>
+<p>ポイントは、<code>cd</code> のときは <strong>fork せずにそのまま </strong></p>
+<p><strong><code>cd(args)</code></strong></p>
+<p><strong> を呼んで </strong></p>
+<p><strong><code>return</code></strong></p>
+<p><strong> している</strong>ことです。これが「組み込みコマンド」の作りです。</p>
+<h2 is-upgraded>コンパイルして動かす</h2>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">gcc myshell.c -o myshell
+./myshell
+</code></pre>
+</div>
+<p>いくつか試してみましょう。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>myshell&gt; cd /tmp
+Current directory: /tmp
+myshell&gt; cd
+Current directory: /home/あなたの名前
+myshell&gt; cd /does/not/exist
+cd failed: No such file or directory
+</code></pre>
+</div>
+<ul>
+<li><code>cd /tmp</code> → 指定した場所に移動できる</li>
+<li><code>cd</code>(引数なし)→ ホームディレクトリに戻る</li>
+<li>存在しないパス → <code>cd failed</code> とエラー理由が出る</li>
+</ul>
+<p>ここまでできれば、<strong>課題は達成です！</strong> おめでとうございます 🎉</p>
+<aside class="special"><p><strong>Tip:</strong> 現状ではまだ <code>pwd</code> や <code>ls</code> は動きません(「まだ実装されていません」と出ます)。それらを動かすのが、次の発展課題です。</p></aside>
+<h2 is-upgraded>（任意）<code>~</code> をホームディレクトリに展開する</h2>
+<p><code>cd ~/Downloads</code> のような <code>~</code> 付きのパスにも対応させたい人は、<code>cd</code> 関数の分岐を増やしてみましょう。<code>args[1][0]</code> が <code>'~'</code> のときだけ、<code>getenv("HOME")</code> と残りの文字列をつなげて <code>chdir()</code> すればOKです。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="【発展課題】外部コマンドを実行できるようにする" duration="20">
+        <p><code>cd</code> は動くようになりましたが、<code>ls</code> や <code>cat</code> はまだ「まだ実装されていません」と出るだけです。ここでは、それらの <strong>外部コマンド</strong> を実行できるようにして、本物のシェルに近づけます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">外部コマンドとは</h2>
+<p><code>ls</code> や <code>cat</code> は、シェルの一部ではなく <strong>それぞれ独立したプログラム</strong>(<code>/usr/bin/ls</code> などの実行ファイル)です。シェルはこれらを、スライドで見た <strong>fork → exec → wait</strong> の 3 ステップで実行します。</p>
+<ol type="1">
+<li><strong>fork</strong> — 自分の分身(子プロセス)を作る</li>
+<li><strong>exec</strong> — 分身の中身を、目的のプログラム(<code>ls</code> など)に置き換える</li>
+<li><strong>wait</strong> — 分身が終わるのを待つ</li>
+</ol>
+<h2 is-upgraded data-claat-source-heading-level="3">fork・execvp・wait で実行する</h2>
+<p><code>execute_command</code> の最後にある「まだ実装されていません」の行を、次のコードに置き換えます。</p>
+<p><code>myshell.c</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">void execute_command(char *args[])
+{
+    if (strcmp(args[0], &#34;cd&#34;) == 0) {
+        cd(args);
+        return;
+    }
+
+    int pid = fork();               /* ① 子プロセスを作る */
+    if (pid == -1) {
+        perror(&#34;fork failed&#34;);
+        return;
+    }
+
+    if (pid == 0) {
+        /* ② ここは子プロセス。中身を別のプログラムに置き換える */
+        execvp(args[0], args);
+        /* execvp が成功すると、この先は実行されない。
+           ここに来たということは失敗したということ */
+        perror(&#34;execvp failed&#34;);
+        exit(1);
+    }
+
+    /* ③ ここは親プロセス（シェル）。子の終了を待つ */
+    int status;
+    wait(&amp;status);
+}
+</code></pre>
+</div>
+<p><code>fork()</code> の返り値で「自分が親か子か」を見分けているのがポイントです。返り値が <code>0</code> なら子プロセス、そうでなければ親プロセスです。子は <code>execvp()</code> で <code>ls</code> などに変身し、親は <code>wait()</code> でその終了を待ちます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">コンパイルして動かす</h2>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">gcc myshell.c -o myshell
+./myshell
+</code></pre>
+</div>
+<p>今度は外部コマンドが動きます。<code>cd</code> と組み合わせても試してみましょう。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>myshell&gt; ls
+myshell.c  myshell
+myshell&gt; cd /tmp
+Current directory: /tmp
+myshell&gt; ls
+（/tmp の中のファイル一覧）
+</code></pre>
+</div>
+<p><code>cd</code> で移動した先で <code>ls</code> の結果が変わっていれば、<strong>あなたの </strong></p>
+<p><strong><code>cd</code></strong></p>
+<p><strong>(組み込み)と </strong></p>
+<p><strong><code>ls</code></strong></p>
+<p><strong>(外部コマンド)が、きちんと連携して動いている</strong>証拠です。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">確かめてみよう: もし cd も fork していたら?</h2>
+<p>「なぜ <code>cd</code> は組み込みなのか」を、実際に壊して確かめてみましょう。<code>execute_command</code> の先頭にある <code>cd</code> の分岐を、<strong>一時的にコメントアウト</strong>します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">    /* if (strcmp(args[0], &#34;cd&#34;) == 0) {
+        cd(args);
+        return;
+    } */
+</code></pre>
+</div>
+<p>こうすると <code>cd</code> も外部コマンドと同じ道(fork → execvp)を通ります。保存して再コンパイルし、<code>cd /tmp</code> を実行してみてください。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>myshell&gt; cd /tmp
+execvp failed: No such file or directory
+</code></pre>
+</div>
+<p><code>cd</code> という名前の実行ファイルは存在しないので <code>execvp</code> が失敗します。仮に存在して成功したとしても、ディレクトリが変わるのは子プロセスの中だけで、<strong>親シェルには反映されません。</strong> これが「<code>cd</code> は組み込みでなければならない」理由です。</p>
+<p>確認できたら、<strong>コメントアウトを元に戻して</strong>再コンパイルしておきましょう。</p>
+<aside class="warning"><p><strong>Warning:</strong> 戻し忘れると <code>cd</code> が動かない状態のままになります。<code>/* */</code> を消して、必ず元に戻してください。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">さらに挑戦したい人へ</h2>
+<p>余力があれば、本物のシェルに近づける機能を足してみましょう。</p>
+<ul>
+<li><code>cd ~/Downloads</code> のように <code>~</code> をホームディレクトリに展開する</li>
+<li><code>pushd</code> / <code>popd</code> / <code>dirs</code> でディレクトリの移動履歴を扱う</li>
+<li>コマンド末尾の <code>&</code> で、<code>wait</code> せずに戻る(バックグラウンド実行)</li>
+<li>プロンプト(<code>myshell></code> )に、現在のディレクトリを表示する</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="おめでとうございます！" duration="5">
+        <p>自作シェルに <code>cd</code> を実装し(発展課題では外部コマンドの実行まで)、コマンドが動く裏側を手を動かして体験しました。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">学んだこと</h2>
+<ul>
+<li>プロセスはそれぞれ独立した状態(作業ディレクトリ)を持つこと</li>
+<li>外部コマンドは <strong>fork → execvp → wait</strong> で実行されること</li>
+<li><code>cd</code> が <strong>組み込みコマンド</strong> でなければならない理由</li>
+<li><code>chdir()</code> を使った <code>cd</code> の実装</li>
+</ul>
+<h2 is-upgraded data-claat-source-heading-level="3">次のステップ</h2>
+<ul>
+<li>「さらに挑戦したい人へ」の機能を追加して、シェルを育てる</li>
+<li><code>strace ./myshell</code> で、自作シェルが呼ぶシステムコールを覗いてみる</li>
+<li>関連するシステムコールのマニュアルを読む: <ul>
+<li><a href="https://man7.org/linux/man-pages/man2/fork.2.html" target="_blank">https://man7.org/linux/man-pages/man2/fork.2.html</a></li>
+<li><a href="https://man7.org/linux/man-pages/man3/execvp.3.html" target="_blank">https://man7.org/linux/man-pages/man3/execvp.3.html</a></li>
+<li><a href="https://man7.org/linux/man-pages/man2/chdir.2.html" target="_blank">https://man7.org/linux/man-pages/man2/chdir.2.html</a></li>
+</ul>
+</li>
+</ul>
+<p>普段何気なく打っている <code>cd</code> や <code>ls</code> の裏側が、少し見えるようになっていれば大成功です。お疲れさまでした!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="libs/native-shim.js"></script>
+  <script src="libs/custom-elements.min.js"></script>
+  <script src="libs/prettify.js"></script>
+  <script src="libs/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+<script id="claat-local-preprocessor-script">
+(function () {
+  function setTheme(block, theme) {
+    var isDark = theme === 'dark';
+    var toggle = block.querySelector('.claat-toggle-code-theme');
+    block.dataset.codeTheme = isDark ? 'dark' : 'light';
+    if (!toggle) return;
+    toggle.setAttribute('aria-label', isDark ? 'Use light code theme' : 'Use dark code theme');
+    toggle.setAttribute('title', isDark ? 'Use light code theme' : 'Use dark code theme');
+    var icon = toggle.querySelector('.material-icons');
+    if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.top = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return Promise.resolve();
+  }
+
+  function diffCopyText(source) {
+    return source.replace(/\n$/, '').split('\n').reduce(function (lines, line) {
+      if (/^@@/.test(line) || /^(\+\+\+|---)/.test(line)) return lines;
+      var marker = line.charAt(0);
+      if (marker === '-') return lines;
+      if (marker === '+' || marker === ' ') {
+        var body = line.slice(1);
+        if (marker === '+' && /^ [^\s]/.test(body)) body = body.slice(1);
+        lines.push(body);
+        return lines;
+      }
+      lines.push(line);
+      return lines;
+    }, []).join('\n');
+  }
+
+  function codeTextForCopy(code) {
+    if (!code) return '';
+    if (code.dataset && (code.dataset.claatDiff === 'true' || code.classList.contains('language-diff'))) {
+      return diffCopyText(code.dataset.claatDiffSource || code.textContent);
+    }
+    return code.innerText;
+  }
+
+  function escapeHtml(value) {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function prettyLine(value, language) {
+    var escaped = escapeHtml(value);
+    if (!language || typeof window.prettyPrintOne !== 'function') return escaped;
+    try {
+      return window.prettyPrintOne(escaped, language);
+    } catch (error) {
+      return escaped;
+    }
+  }
+
+  function diffLineHtml(line, language) {
+    if (/^@@/.test(line)) {
+      return '<span class="claat-diff-line claat-diff-line-hunk">' + escapeHtml(line) + '</span>';
+    }
+
+    var marker = line.charAt(0);
+    var isFileHeader = /^(\+\+\+|---)/.test(line);
+    var className = 'claat-diff-line';
+    if (!isFileHeader && marker === '+') className += ' claat-diff-line-add';
+    if (!isFileHeader && marker === '-') className += ' claat-diff-line-delete';
+    if (isFileHeader) className += ' claat-diff-line-hunk';
+
+    if (marker === '+' || marker === '-' || marker === ' ') {
+      return (
+        '<span class="' + className + '">' +
+        '<span class="claat-diff-marker">' + escapeHtml(marker) + '</span>' +
+        prettyLine(line.slice(1), language) +
+        '</span>'
+      );
+    }
+
+    return '<span class="' + className + '">' + prettyLine(line, language) + '</span>';
+  }
+
+  function enhanceDiffCodeBlocks() {
+    document.querySelectorAll('pre > code[data-claat-diff="true"], pre > code.language-diff').forEach(function (code) {
+      if (code.dataset.claatDiffEnhanced === 'true') return;
+      var language = code.dataset.claatDiffLanguage || '';
+      var source = code.textContent.replace(/\n$/, '');
+      code.dataset.claatDiffSource = source;
+      code.classList.add('claat-diff-code');
+      code.innerHTML = source.split('\n').map(function (line) {
+        return diffLineHtml(line, language);
+      }).join('');
+      code.dataset.claatDiffEnhanced = 'true';
+    });
+  }
+
+  function normalizeText(value) {
+    return (value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function headingOutlineForStep(step, stepIndex) {
+    var headings = Array.prototype.slice.call(
+      step.querySelectorAll('.instructions [data-claat-source-heading-level="3"], .instructions [data-claat-source-heading-level="4"]')
+    );
+
+    return headings.map(function (heading, index) {
+      var level = Number(heading.dataset.claatSourceHeadingLevel);
+      if (!heading.id) {
+        heading.id = 'claat-section-' + stepIndex + '-' + index;
+      }
+      return {
+        id: heading.id,
+        level: level,
+        text: normalizeText(heading.textContent)
+      };
+    }).filter(function (item) {
+      return item.text;
+    });
+  }
+
+  function prepareDrawerStepContent(item) {
+    var step = item.querySelector('.step');
+    if (!step) return null;
+
+    var content = step.querySelector('.claat-step-nav-content');
+    if (content) return content;
+
+    var titleSource = step.firstElementChild;
+    if (!titleSource) return null;
+
+    content = document.createElement('span');
+    content.className = 'claat-step-nav-content';
+
+    var title = document.createElement('span');
+    title.className = 'claat-step-nav-title';
+    while (titleSource.firstChild) {
+      title.appendChild(titleSource.firstChild);
+    }
+
+    content.appendChild(title);
+    step.replaceChild(content, titleSource);
+    return content;
+  }
+
+  function renderDrawerStepOutline(item, outline) {
+    prepareDrawerStepContent(item);
+
+    var outlineKey = JSON.stringify(outline);
+    if (item.dataset.claatStepNavOutline === outlineKey) return;
+    item.dataset.claatStepNavOutline = outlineKey;
+
+    var existing = item.querySelector('.claat-step-nav-outline');
+    if (existing) existing.remove();
+    if (!outline.length) return;
+
+    var container = document.createElement('span');
+    container.className = 'claat-step-nav-outline';
+
+    outline.forEach(function (heading) {
+      var row = document.createElement('span');
+      row.className = 'claat-step-nav-heading claat-step-nav-heading-level-' + heading.level;
+      row.dataset.claatSectionId = heading.id;
+      row.setAttribute('role', 'button');
+      row.setAttribute('tabindex', '0');
+      row.textContent = heading.text;
+      row.addEventListener('click', activateDrawerSection);
+      row.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        activateDrawerSection(event);
+      });
+      container.appendChild(row);
+    });
+
+    item.appendChild(container);
+  }
+
+  function selectedStepIndex(codelab) {
+    var selectedItem = codelab.querySelector('#drawer .steps ol li[selected]');
+    if (!selectedItem) return -1;
+    return Array.prototype.indexOf.call(selectedItem.parentNode.children, selectedItem);
+  }
+
+  function selectedStep(codelab) {
+    var index = selectedStepIndex(codelab);
+    var steps = codelab.querySelectorAll('google-codelab-step');
+    return index >= 0 ? steps[index] : null;
+  }
+
+  function scrollSelectedStepToSection(sectionId) {
+    var codelab = document.querySelector('google-codelab');
+    if (!codelab || !sectionId) return;
+
+    var step = selectedStep(codelab);
+    var heading = document.getElementById(sectionId);
+    if (step && heading && !step.contains(heading)) heading = null;
+    if (!step || !heading) return;
+
+    var stepRect = step.getBoundingClientRect();
+    var headingRect = heading.getBoundingClientRect();
+    var top = step.scrollTop + headingRect.top - stepRect.top - 20;
+    if (typeof step.scrollTo === 'function') {
+      step.scrollTo({ top: top, behavior: 'smooth' });
+    } else {
+      step.scrollTop = top;
+    }
+    updateActiveDrawerSection(codelab);
+  }
+
+  function updateActiveDrawerSection(root) {
+    var codelab = root || document.querySelector('google-codelab');
+    if (!codelab) return;
+
+    var step = selectedStep(codelab);
+    var selectedItem = codelab.querySelector('#drawer .steps ol li[selected]');
+    if (!step || !selectedItem) return;
+
+    var outlineRows = Array.prototype.slice.call(selectedItem.querySelectorAll('.claat-step-nav-heading'));
+    if (!outlineRows.length) return;
+
+    var headings = Array.prototype.slice.call(
+      step.querySelectorAll('.instructions [data-claat-source-heading-level="3"], .instructions [data-claat-source-heading-level="4"]')
+    ).filter(function (heading) {
+      return heading.id;
+    });
+    if (!headings.length) return;
+
+    var stepTop = step.getBoundingClientRect().top;
+    var activeHeading = headings[0];
+    headings.forEach(function (heading) {
+      if (heading.getBoundingClientRect().top - stepTop <= 72) activeHeading = heading;
+    });
+
+    outlineRows.forEach(function (row) {
+      row.classList.toggle('is-active', row.dataset.claatSectionId === activeHeading.id);
+    });
+  }
+
+  function attachStepScrollListeners(codelab) {
+    Array.prototype.slice.call(codelab.querySelectorAll('google-codelab-step')).forEach(function (step) {
+      if (step.dataset.claatSectionScrollObserver === 'true') return;
+      step.dataset.claatSectionScrollObserver = 'true';
+      step.addEventListener('scroll', function () {
+        window.requestAnimationFrame(function () {
+          updateActiveDrawerSection(codelab);
+        });
+      }, { passive: true });
+    });
+  }
+
+  function enhanceDrawerStepOutlines(root) {
+    var codelab = root || document.querySelector('google-codelab');
+    if (!codelab) return false;
+
+    var items = Array.prototype.slice.call(codelab.querySelectorAll('#drawer .steps ol li'));
+    var steps = Array.prototype.slice.call(codelab.querySelectorAll('google-codelab-step'));
+    if (!items.length || !steps.length) return false;
+
+    items.forEach(function (item, index) {
+      renderDrawerStepOutline(item, steps[index] ? headingOutlineForStep(steps[index], index) : []);
+    });
+    attachStepScrollListeners(codelab);
+    updateActiveDrawerSection(codelab);
+    return true;
+  }
+
+  function observeDrawerStepOutlines() {
+    var codelab = document.querySelector('google-codelab');
+    if (!codelab) return;
+
+    enhanceDrawerStepOutlines(codelab);
+
+    var drawer = codelab.querySelector('#drawer');
+    if (!drawer || drawer.dataset.claatHeadingObserver === 'true') return;
+    drawer.dataset.claatHeadingObserver = 'true';
+
+    var scheduled = false;
+    var observer = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        enhanceDrawerStepOutlines(codelab);
+      });
+    });
+    observer.observe(drawer, { attributes: true, attributeFilter: ['selected'], childList: true, subtree: true });
+  }
+
+  function startDrawerStepOutlineEnhancement() {
+    var attempts = 0;
+
+    function tryEnhance() {
+      attempts += 1;
+      observeDrawerStepOutlines();
+      if (attempts >= 12 || document.querySelector('google-codelab #drawer .steps ol li')) return;
+      window.setTimeout(tryEnhance, 200);
+    }
+
+    tryEnhance();
+  }
+
+  function activateDrawerSection(event) {
+    var section = event.currentTarget;
+    if (!section || !section.dataset) return;
+    event.preventDefault();
+    event.stopPropagation();
+    scrollSelectedStepToSection(section.dataset.claatSectionId);
+  }
+
+  document.addEventListener('click', function (event) {
+    var copyButton = event.target.closest('.claat-copy-code');
+    var themeButton = event.target.closest('.claat-toggle-code-theme');
+    if (!copyButton && !themeButton) return;
+
+    var block = event.target.closest('.claat-code-block');
+    if (!block) return;
+
+    if (copyButton) {
+      var code = block.querySelector('pre > code') || block.querySelector('pre');
+      if (!code) return;
+      copyText(codeTextForCopy(code)).then(function () {
+        var icon = copyButton.querySelector('.material-icons');
+        if (!icon) return;
+        icon.textContent = 'done';
+        window.setTimeout(function () {
+          icon.textContent = 'content_copy';
+        }, 1200);
+      });
+    }
+
+    if (themeButton) {
+      setTheme(block, block.dataset.codeTheme === 'dark' ? 'light' : 'dark');
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.claat-code-block').forEach(function (block) {
+      setTheme(block, block.dataset.codeTheme || 'light');
+    });
+    enhanceDiffCodeBlocks();
+    startDrawerStepOutlineEnhancement();
+  });
+}());
+</script>
+</body>
+</html>
