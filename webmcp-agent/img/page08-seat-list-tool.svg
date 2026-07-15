@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Seat list WebMCP tool diagram</title>
+  <desc id="desc">The seat_list tool returns seat-by-seat status data so the agent can choose available seat candidates.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#3c4043"/>
+    </marker>
+    <style>
+      .bg{fill:#f8fafd}
+      .panel{fill:#fff;stroke:#dadce0;stroke-width:2}
+      .agent{fill:#e8f0fe;stroke:#4285f4;stroke-width:2}
+      .tool{fill:#fef7e0;stroke:#fbbc04;stroke-width:2}
+      .code{fill:#e6f4ea;stroke:#34a853;stroke-width:2}
+      .list{fill:#f3e8fd;stroke:#a142f4;stroke-width:2}
+      .ok{fill:#e6f4ea;stroke:#34a853;stroke-width:2}
+      .busy{fill:#fce8e6;stroke:#ea4335;stroke-width:2}
+      .ink{fill:#202124;font-family:Arial,'Hiragino Sans','Yu Gothic',sans-serif}
+      .muted{fill:#5f6368;font-family:Arial,'Hiragino Sans','Yu Gothic',sans-serif}
+      .title{font-size:34px;font-weight:700}
+      .label{font-size:24px;font-weight:700}
+      .sub{font-size:18px}
+      .mono{font-family:'SFMono-Regular',Consolas,monospace;font-size:18px;fill:#202124}
+      .smallmono{font-family:'SFMono-Regular',Consolas,monospace;font-size:15px;fill:#202124}
+      .arrow{stroke:#3c4043;stroke-width:4;fill:none;marker-end:url(#arrow)}
+      .thin{stroke:#dadce0;stroke-width:2;fill:none}
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="720" rx="44"/>
+  <text class="ink title" x="72" y="82">命令型 WebMCP で席一覧を取得する</text>
+  <text class="muted sub" x="74" y="116">seat_list は席ごとの状態を返し、Agent が具体的な空席候補を選べるようにする</text>
+
+  <rect class="panel" x="70" y="166" width="230" height="238" rx="26"/>
+  <rect class="agent" x="104" y="216" width="162" height="64" rx="18"/>
+  <text class="ink label" x="140" y="256">Agent</text>
+  <text class="muted sub" x="108" y="326">A列の空席を</text>
+  <text class="muted sub" x="108" y="352">探したい</text>
+
+  <path class="arrow" d="M312 286H424"/>
+
+  <rect class="panel" x="436" y="146" width="260" height="278" rx="26"/>
+  <text class="ink label" x="492" y="204">WebMCP tool</text>
+  <rect class="tool" x="482" y="248" width="168" height="64" rx="18"/>
+  <text class="mono" x="520" y="288">seat_list</text>
+  <text class="muted sub" x="490" y="356">readOnlyHint: true</text>
+  <text class="muted sub" x="490" y="384">getSeats() で取得</text>
+
+  <path class="arrow" d="M708 286H820"/>
+
+  <rect class="list" x="832" y="134" width="372" height="342" rx="28"/>
+  <text class="ink label" x="886" y="192">返ってくる seats</text>
+  <line class="thin" x1="884" y1="212" x2="1150" y2="212"/>
+
+  <rect class="ok" x="878" y="240" width="280" height="48" rx="14"/>
+  <text class="smallmono" x="900" y="270">{ id:"A-1", status:"available" }</text>
+  <rect class="busy" x="878" y="304" width="280" height="48" rx="14"/>
+  <text class="smallmono" x="900" y="334">{ id:"A-2", status:"reserved" }</text>
+  <rect class="ok" x="878" y="368" width="280" height="48" rx="14"/>
+  <text class="smallmono" x="900" y="398">{ id:"A-3", status:"available" }</text>
+
+  <path class="arrow" d="M1018 490C858 596 566 608 352 494"/>
+
+  <rect class="panel" x="162" y="486" width="344" height="132" rx="26"/>
+  <text class="ink label" x="210" y="536">Agent の判断</text>
+  <text class="muted sub" x="210" y="574">status が available の席を候補にする</text>
+  <text class="mono" x="210" y="604">A-1, A-3, ...</text>
+
+  <rect class="tool" x="650" y="536" width="414" height="72" rx="24"/>
+  <text class="ink label" x="706" y="582">席ごとの状態から候補を選ぶ</text>
+</svg>

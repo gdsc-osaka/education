@@ -377,9 +377,9 @@
 <p>このコードラボでは、席予約サイトに WebMCP の入口を追加し、Antigravity CLI の AI エージェントから席の状況確認や予約操作をできるようにします。</p>
 <p>完成すると、あなたは AI エージェントに「空いている席を見て、connpass ID <code>alice_123</code> で前の方の席を予約して」のように依頼できます。エージェントは Web ページに用意された tool を見つけ、席予約サイトの機能を呼び出して予約を進めます。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで作るもの</h2>
-<p>このハンズオンでは、参加者用の席予約サイトに WebMCP を実装します。開始時点のサイトには、席一覧、予約、予約解除、共通 API への接続、リアルタイム更新の基本機能がすでに入っています。</p>
+<p>このハンズオンでは、参加者用の席予約サイトに WebMCP を実装します。開始時点のサイトには、席一覧、予約フォーム、予約解除、共通 API への接続の基本機能がすでに入っています。</p>
 <p>あなたが追加するのは、サイトの機能を AI エージェントから扱いやすくするための WebMCP の宣言です。通常のユーザーは画面上のフォームやボタンを使って予約しますが、WebMCP を追加すると、エージェントは「席一覧を取得する」「指定した席を予約する」「自分の予約を確認する」といった機能を tool として扱えるようになります。</p>
-<p>このハンズオンでは参加者全員が共通の API につながります。そのため、ほかの人が予約した席はあなたの画面でも埋まり、同じ席を同時に狙うと早い者勝ちの競合も起きます。AI エージェントに頼んだ予約がうまく通るか、別の人に先を越されるかまで含めて、リアルタイムな Web アプリと AI エージェントがつながる感覚を体験します。</p>
+<p>このハンズオンでは参加者全員が共通の API につながります。そのため、同じ席を同時に狙うと早い者勝ちの競合も起きます。AI エージェントに頼んだ予約がうまく通るか、別の人に先を越されるかまで含めて、実際に変化する Web アプリのデータと AI エージェントがつながる感覚を体験します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで学ぶこと</h2>
 <ul>
 <li>WebMCP が目指している、ブラウザ側の Agent に Web ページの機能を tool として見せる標準仕様の入口</li>
@@ -509,6 +509,10 @@
 </td><td colspan="1" rowspan="1"><p><code>form</code></p>
 </td><td colspan="1" rowspan="1"><p>そのフォームが何をする tool なのかを説明します。</p>
 </td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>toolautosubmit</code></p>
+</td><td colspan="1" rowspan="1"><p><code>form</code></p>
+</td><td colspan="1" rowspan="1"><p>Agent が値を埋めたあと、このフォームを自動送信することを示します。</p>
+</td></tr>
 <tr><td colspan="1" rowspan="1"><p><code>toolparamdescription</code></p>
 </td><td colspan="1" rowspan="1"><p><code>input</code> や <code>select</code></p>
 </td><td colspan="1" rowspan="1"><p>各入力項目が何を表すのかを説明します。</p>
@@ -543,7 +547,7 @@
 <h2 is-upgraded data-claat-source-heading-level="3">スクレイピングではだめなのか</h2>
 <p>AI エージェントは画面を読み、クリックし、入力することもできます。ですが、スクレイピングや画面操作だけに頼ると、HTML 構造、ボタンの文言、画面サイズ、スクロール位置、非同期更新のタイミングが少し変わるだけで壊れやすくなります。</p>
 <p>WebMCP では、Web アプリ側が「この機能はこういう名前で、こういう入力を受け取り、こういう意味を持つ」と明示します。Agent はページを推測するのではなく、ページが公開した構造化された情報を見て操作できます。正式な仕様として採択され、ブラウザ実装が進めば、ブラウザ側の Agent はページが提供する tool をより自然に扱えるようになることが期待されます。</p>
-<p>今回の構成でも、この利点の一部を体験できます。Chrome 拡張機能が Web ページの WebMCP 情報を読み取り、MCP bridge が Antigravity CLI に渡すことで、エージェントは「どの CSS セレクタをクリックするか」ではなく「どの tool をどの引数で呼ぶか」を考えられます。席予約のようにリアルタイムで状態が変わる画面では、この違いが特に効いてきます。</p>
+<p>今回の構成でも、この利点の一部を体験できます。Chrome 拡張機能が Web ページの WebMCP 情報を読み取り、MCP bridge が Antigravity CLI に渡すことで、エージェントは「どの CSS セレクタをクリックするか」ではなく「どの tool をどの引数で呼ぶか」を考えられます。席予約のように他の参加者と同じデータを扱う画面では、この違いが特に効いてきます。</p>
 <p>WebMCP は便利な一方で、tool の説明や出力が Agent の判断に影響するため、セキュリティやプライバシーの注意も必要です。仕様では、tool metadata への悪意ある指示、tool 出力による prompt injection、実際の挙動と説明の不一致などがリスクとして扱われています。このコードラボでは本番設計までは扱いませんが、WebMCP は「AI が触るための入口」でもあることを意識して進めます。</p>
 
 
@@ -553,7 +557,7 @@
         <p class="image-container"><img alt="完成済み部分、これから編集する部分、共通 API の関係図" src="img/289c28358251b7ea.svg"></p>
 <p>このステップでは、今回使う席予約サイトの構成と、参加者が編集する場所を確認します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">開始時点で完成しているもの</h2>
-<p>配布される席予約サイトには、Web アプリとして動くための基本機能がすでに入っています。席を表示する UI、参加者 ID を入力して予約するフォーム、予約解除、共通 API との通信、ほかの参加者の操作を反映するリアルタイム更新は、最初から動く状態です。</p>
+<p>配布される席予約サイトには、Web アプリとして動くための基本機能がすでに入っています。席を表示する UI、参加者 ID と席番号を入力して予約するフォーム、予約解除、共通 API との通信は、最初から動く状態です。</p>
 <p>そのため、このハンズオンでゼロから予約サイトを作る必要はありません。あなたが担当するのは、既存のサイトに WebMCP の入口を追加し、AI エージェントからその機能を呼び出せるようにする部分です。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">参加者が編集するファイル</h2>
 <p>参加者が編集する主なファイルは、次の 2 つです。</p>
@@ -568,12 +572,12 @@
 </td><td colspan="1" rowspan="1"><p>命令型 WebMCP tool を登録します。</p>
 </td></tr>
 </table>
-<p><code>index.html</code> では、予約用のフォームに <code>toolname</code>、<code>tooldescription</code>、<code>toolparamdescription</code> を追加します。これにより、Chrome 拡張機能が「このフォームは予約用 tool として使える」と読み取れるようになります。</p>
+<p><code>index.html</code> では、予約用のフォームに <code>toolname</code>、<code>tooldescription</code>、<code>toolautosubmit</code>、<code>toolparamdescription</code> を追加します。これにより、Chrome 拡張機能が「このフォームは予約用 tool として使える」と読み取れるようになります。</p>
 <p><code>webmcp.js</code> は新しく作成するファイルです。ここでは <code>document.modelContext.registerTool()</code> を使って、席一覧、席サマリー、自分の予約確認、予約解除の tool を登録します。既存の予約ロジックや API 通信は <code>app.js</code> 側にあるため、<code>webmcp.js</code> ではそれらを呼び出す入口を作ります。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">共通 API とリアルタイム更新</h2>
+<h2 is-upgraded data-claat-source-heading-level="3">共通 API と予約競合</h2>
 <p>席予約サイトは、当日用に用意された共通 API に接続します。参加者全員が同じ席データを見ているため、誰かが予約すると、ほかの参加者の画面にも反映されます。</p>
 <p>この仕組みによって、AI エージェントに頼んだ予約が必ず成功するとは限りません。エージェントが席一覧を見た直後に別の人が同じ席を予約することもあります。その場合、API は予約の競合を返し、エージェントや画面はその結果を受け取ります。</p>
-<p>このコードラボでは、そうした「Web アプリの状態はリアルタイムに変わる」「AI エージェントもその中で判断する」という状況を体験します。WebMCP の tool は、固定されたデモデータではなく、実際に変化する Web アプリの入口になります。</p>
+<p>このコードラボでは、そうした「Web アプリの状態は他の参加者の操作で変わる」「AI エージェントもその中で判断する」という状況を体験します。WebMCP の tool は、固定されたデモデータではなく、実際に変化する Web アプリの入口になります。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">完成後の流れ</h2>
 <p>完成後の流れは次のようになります。</p>
 <ol type="1">
@@ -1012,7 +1016,7 @@ cd ticket-booking-template
 <pre><code language="language-text" class="language-text">http://localhost:8000
 </code></pre>
 </div>
-<p>席予約サイトが表示され、API の状態が接続中になれば成功です。参加者 ID には connpass ID を入力してください。</p>
+<p>席予約サイトが表示され、席一覧が表示されれば成功です。参加者 ID には connpass ID を入力してください。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">ここまでの確認</h2>
 <p>この時点で、次の状態になっていればセットアップ完了です。</p>
 <ul>
@@ -1024,6 +1028,1611 @@ cd ticket-booking-template
 <li><code>http://localhost:8000</code> で席予約サイトが表示される</li>
 </ul>
 <p>次のステップから、いよいよ <code>index.html</code> と <code>webmcp.js</code> を編集して WebMCP を実装します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="予約フォームに宣言型 WebMCP を実装する" duration="10">
+        <p class="image-container"><img alt="予約フォームに metadata を追加して reserve_seat tool として公開する図" src="img/3232bab98a516a6b.svg"></p>
+<p>このステップでは、予約用の HTML フォームに宣言型 WebMCP の metadata を追加します。これにより、AI エージェントは「参加者 ID と席番号を渡すと、席を予約できるフォームがある」と理解できるようになります。</p>
+<p>ここで触るファイルは <code>index.html</code> だけです。JavaScript はまだ書きません。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">宣言型 WebMCP で何をするか</h2>
+<p>開始時点の <code>index.html</code> には、参加者 ID と席番号を入力して予約するフォームがあります。人間はこのフォームを見て「ここから予約できる」と分かりますが、Agent にはフォームの意味をもう少し明示してあげる必要があります。</p>
+<p>通常のフォームには、送信先の <code>action</code>、送信方法の <code>method</code>、入力欄の <code>name</code> などがあります。宣言型 WebMCP では、そこに「このフォームはどんな tool なのか」「各入力欄は何を表すのか」という説明を足します。</p>
+<p>今回追加する属性は次の 4 種類です。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>属性</p>
+</td><td colspan="1" rowspan="1"><p>付ける場所</p>
+</td><td colspan="1" rowspan="1"><p>役割</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>toolname</code></p>
+</td><td colspan="1" rowspan="1"><p><code>form</code></p>
+</td><td colspan="1" rowspan="1"><p>Agent から見える tool の名前です。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>tooldescription</code></p>
+</td><td colspan="1" rowspan="1"><p><code>form</code></p>
+</td><td colspan="1" rowspan="1"><p>tool が何をするかを説明します。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>toolautosubmit</code></p>
+</td><td colspan="1" rowspan="1"><p><code>form</code></p>
+</td><td colspan="1" rowspan="1"><p>Agent が値を埋めたあと、このフォームを自動送信することを示します。</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>toolparamdescription</code></p>
+</td><td colspan="1" rowspan="1"><p><code>input</code></p>
+</td><td colspan="1" rowspan="1"><p>入力パラメータの意味を説明します。</p>
+</td></tr>
+</table>
+<aside class="warning"><p><strong>Warning:</strong> これらの属性名は、2026年7月時点で確定済みの標準属性として扱うものではありません。このハンズオンでは、講師が用意した Chrome 拡張機能が読み取る属性として使います。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3"><code>index.html</code> の予約フォームを探す</h2>
+<p>VSCode で <code>index.html</code> を開き、<code><h2>予約する</h2></code> を検索します。</p>
+<p>見つかるフォームは、ページ上部の「予約する」セクションにあります。次のような形です。</p>
+<p><code>index.html</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html">&lt;section&gt;
+  &lt;h2&gt;予約する&lt;/h2&gt;
+  &lt;form
+    action=&#34;http://localhost:8787/api/reservations&#34;
+    method=&#34;post&#34;
+  &gt;
+</code></pre>
+</div>
+<p>このフォームは画面にも表示されます。席の状況には、クリックできる座席マップも用意されていますが、今回の編集では見た目やクリック操作は変えません。Agent が読み取るための metadata だけを追加します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">フォームに tool の名前・説明・自動送信を追加する</h2>
+<p>まず、<code>form</code> に <code>toolname</code>、<code>tooldescription</code>、<code>toolautosubmit</code> を追加します。</p>
+<p><code>index.html</code> の予約フォームを、次の diff のように編集します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">         &lt;form
+           action=&#34;http://localhost:8787/api/reservations&#34;
+           method=&#34;post&#34;
++          toolname=&#34;reserve_seat&#34;
++          tooldescription=&#34;参加者IDと席番号を指定して席を予約する。&#34;
++          toolautosubmit
+         &gt;
+</code></pre>
+</div>
+<p><code>toolname</code> は Agent から見える tool 名です。ここでは <code>reserve_seat</code> にします。</p>
+<p><code>tooldescription</code> は、Agent が「この tool はいつ使うものか」を判断するための説明です。短くてもよいですが、何を入力して何をする tool なのかが分かる文にします。</p>
+<p><code>toolautosubmit</code> は、Agent がフォームの入力値を埋めたあとに、そのフォームを自動で送信するための属性です。今回の予約フォームでは、参加者 ID と席番号が入ったら、そのまま予約 API に送信してよいものとして扱います。</p>
+<aside class="warning"><p><strong>Warning: </strong><code>toolautosubmit</code> は、人間の確認を挟まずにフォーム送信まで進めるための属性です。今回のようなハンズオン用の席予約では便利ですが、購入確定、送金、削除などの重要操作では、Agent の判断ミスがそのまま実行につながる可能性があります。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">参加者 ID の説明を追加する</h2>
+<p>次に、参加者 ID の <code>input</code> に <code>toolparamdescription</code> を追加します。</p>
+<p><code>participantId</code> は、予約する人を識別するための ID です。このハンズオンでは connpass ID を使います。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">        &lt;label&gt;
+          参加者ID
+          &lt;input
+            id=&#34;participant-id&#34;
+            name=&#34;participantId&#34;
+            required
+            pattern=&#34;[A-Za-z0-9_\-]{1,64}&#34;
++           toolparamdescription=&#34;予約する参加者のID。&#34;
+          /&gt;
+        &lt;/label&gt;
+</code></pre>
+</div>
+<p><code>name="participantId"</code> は、実際にフォーム送信されるパラメータ名です。<code>toolparamdescription</code> は、そのパラメータが何を意味するかを Agent に伝える説明です。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">席番号の説明を追加する</h2>
+<p>続けて、席番号の <code>input</code> にも <code>toolparamdescription</code> を追加します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">        &lt;label&gt;
+          席番号
+          &lt;input
+            name=&#34;seatId&#34;
+            required
+            pattern=&#34;[A-J]-([1-9]|10)&#34;
+            placeholder=&#34;A-5&#34;
++           toolparamdescription=&#34;予約する席のID。例: A-5。&#34;
+          /&gt;
+        &lt;/label&gt;
+</code></pre>
+</div>
+<p>席番号は <code>A-5</code> のような形式です。説明に例を入れておくと、Agent が入力形式を推測しやすくなります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">完成形を確認する</h2>
+<p>編集後のフォームは、次のようになります。</p>
+<p><code>index.html</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html">&lt;form
+  action=&#34;http://localhost:8787/api/reservations&#34;
+  method=&#34;post&#34;
+  toolname=&#34;reserve_seat&#34;
+  tooldescription=&#34;参加者IDと席番号を指定して席を予約する。&#34;
+  toolautosubmit
+&gt;
+  &lt;label&gt;
+    参加者ID
+    &lt;input
+      id=&#34;participant-id&#34;
+      name=&#34;participantId&#34;
+      required
+      pattern=&#34;[A-Za-z0-9_\-]{1,64}&#34;
+      toolparamdescription=&#34;予約する参加者のID。&#34;
+    /&gt;
+  &lt;/label&gt;
+  &lt;label&gt;
+    席番号
+    &lt;input
+      name=&#34;seatId&#34;
+      required
+      pattern=&#34;[A-J]-([1-9]|10)&#34;
+      placeholder=&#34;A-5&#34;
+      toolparamdescription=&#34;予約する席のID。例: A-5。&#34;
+    /&gt;
+  &lt;/label&gt;
+  &lt;input type=&#34;hidden&#34; name=&#34;source&#34; value=&#34;webmcp&#34; /&gt;
+  &lt;button type=&#34;submit&#34;&gt;予約する&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+</div>
+<p>ここまでで、予約フォームは <code>reserve_seat</code> tool として説明できる状態になりました。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">自動送信と手動送信の違いを知る</h2>
+<p>このハンズオンで使う拡張機能では、<code>toolautosubmit</code> が付いた宣言型フォームを <code>webmcp_call_tool</code> で呼び出すと、入力値を埋めたあとにフォームが自動送信されます。つまり、Agent が <code>participantId</code> と <code>seatId</code> を渡すだけで、予約処理まで進みます。</p>
+<p>一方、<code>toolautosubmit</code> が付いていないフォームでは、値を埋めたあとに送信を確定する必要があります。今回の拡張機能と bridge には、そのための <code>webmcp_submit_tool</code> という MCP tool も用意されています。</p>
+<p>ただし、<code>webmcp_submit_tool</code> はこのハンズオン用拡張機能の polyfill 実装に対する機能です。ブラウザに WebMCP がネイティブ実装された場合、宣言型フォームの実行は人間のクリックや確認で止まることがあり、その場合は <code>webmcp_submit_tool</code> の出番自体がありません。</p>
+<aside class="warning"><p><strong>Warning: </strong><code>webmcp_submit_tool</code> は、本来人間の確認を要求するフォーム送信を Agent が明示的に進めるための経路です。便利な一方で、安全機構を迂回できる経路でもあります。このコードラボでは <code>toolautosubmit</code> を使うため、同じフォームに対して <code>webmcp_submit_tool</code> を追加で呼び出す必要はありません。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">ブラウザで表示が壊れていないことを確認する</h2>
+<p>保存したら、ブラウザで席予約サイトを再読み込みします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p><strong>期待される状態:</strong></p>
+<ul>
+<li>画面の見た目は編集前と変わらない</li>
+<li>「予約する」フォームが表示される</li>
+<li>座席マップと席一覧が表示される</li>
+<li>座席マップの空席をクリックすると、フォームの席番号に <code>A-1</code> のような席 ID が入力される</li>
+</ul>
+<p>HTML に追加した metadata は画面には表示されません。見た目を変えずに、Agent が読み取るための意味だけを追加しました。</p>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> 画面が崩れた場合は、<code>form</code>、<code>input</code>、<code>label</code> の閉じタグが消えていないか確認してください。HTML の属性は、タグの <code>></code> より前に追加します。</p></aside>
+<p>次のステップでは、命令型 WebMCP 用の <code>webmcp.js</code> を作成し、JavaScript から tool を登録します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="命令型 WebMCP を実装する webmcp.js を作成する" duration="10">
+        <p class="image-container"><img alt="webmcp.js から registerTool を呼び出して ping tool を登録する図" src="img/882823c35c72b8b6.svg"></p>
+<p>このステップでは、命令型 WebMCP を書くための <code>webmcp.js</code> を作成します。まずは席予約の処理には触れず、動作確認用の小さな <code>ping</code> tool を登録します。</p>
+<p><code>ping</code> tool が Agent から見えれば、<code>webmcp.js</code> が読み込まれ、<code>document.modelContext.registerTool()</code> が呼び出せていることを確認できます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">命令型 WebMCP で何をするか</h2>
+<p>前のステップでは、HTML フォームに metadata を追加して、宣言型 WebMCP の <code>reserve_seat</code> tool を用意しました。</p>
+<p>ここからは JavaScript で tool を登録する命令型 WebMCP を使います。命令型 WebMCP では、<code>document.modelContext.registerTool()</code> に tool の名前、説明、入力 schema、実行する関数を渡します。</p>
+<p>このステップでは、次のことをします。</p>
+<ul>
+<li><code>webmcp.js</code> を新規作成する</li>
+<li><code>index.html</code> から <code>webmcp.js</code> を読み込む</li>
+<li>WebMCP が使えるか確認する</li>
+<li><code>ping</code> tool を登録する</li>
+<li>Antigravity から <code>ping</code> を呼び出して動作確認する</li>
+</ul>
+<h2 is-upgraded data-claat-source-heading-level="3"><code>webmcp.js</code> を作成する</h2>
+<p><code>index.html</code> や <code>app.js</code> と同じフォルダに、<code>webmcp.js</code> というファイルを新しく作成します。</p>
+<p>まずは次の内容を書きます。</p>
+<p><code>webmcp.js</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-js" class="language-js">// WebMCP 命令型 tool
+
+async function registerImperativeTools() {
+  if (!document.modelContext?.registerTool) {
+    console.warn(&#34;[webmcp] document.modelContext.registerTool が見つかりません。&#34;);
+    return;
+  }
+
+  console.info(&#34;[webmcp] register imperative tools&#34;);
+}
+
+registerImperativeTools();
+</code></pre>
+</div>
+<p><code>document.modelContext?.registerTool</code> が存在するか確認してから処理を進めます。WebMCP が使えない環境では、エラーで画面を止めずに <code>console.warn</code> を出して終了します。</p>
+<aside class="special"><p><strong>補足: </strong><code>?.</code> は optional chaining です。左側が <code>null</code> や <code>undefined</code> のときにエラーにせず、結果を <code>undefined</code> にします。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3"><code>index.html</code> から <code>webmcp.js</code> を読み込む</h2>
+<p>作成しただけでは、ブラウザは <code>webmcp.js</code> を読み込みません。<code>index.html</code> の最後で <code>app.js</code> の後に読み込みます。</p>
+<p><code>index.html</code> の下のほうを、次の diff のように編集します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">     &lt;script src=&#34;./app.js&#34;&gt;&lt;/script&gt;
++    &lt;script src=&#34;./webmcp.js&#34;&gt;&lt;/script&gt;
+   &lt;/body&gt;
+ &lt;/html&gt;
+</code></pre>
+</div>
+<p><code>webmcp.js</code> は <code>app.js</code> の後に読み込みます。後のステップで、<code>webmcp.js</code> から <code>app.js</code> に定義されている <code>getSeats()</code> や <code>cancelReservation()</code> を呼び出すためです。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">ブラウザで読み込みを確認する</h2>
+<p>ブラウザで席予約サイトを再読み込みします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p>Chrome DevTools の Console を開きます。Console に次のような表示が出ていれば、<code>webmcp.js</code> は読み込まれています。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">[webmcp] register imperative tools
+</code></pre>
+</div>
+<p>もし次のような warning が出た場合は、Chrome の WebMCP flag、拡張機能、ページの開き直しを確認します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">[webmcp] document.modelContext.registerTool が見つかりません。
+</code></pre>
+</div>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> Console に何も出ない場合は、<code>index.html</code> に追加した <code><script src="./webmcp.js"></script></code> のファイル名を確認してください。<code>webmcp.js</code> と <code>webmcp.Js</code> のように大文字小文字が違うと、環境によって読み込めません。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3"><code>ping</code> tool を登録する</h2>
+<p>次に、動作確認用の <code>ping</code> tool を登録します。</p>
+<p><code>webmcp.js</code> を次のように更新します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-js" class="language-js claat-diff-code" data-claat-diff="true" data-claat-diff-language="js"> // WebMCP 命令型 tool
+ 
+ async function registerImperativeTools() {
+   if (!document.modelContext?.registerTool) {
+     console.warn(&#34;[webmcp] document.modelContext.registerTool が見つかりません。&#34;);
+     return;
+   }
+ 
+-  console.info(&#34;[webmcp] register imperative tools&#34;);
++  await document.modelContext.registerTool({
++    name: &#34;ping&#34;,
++    title: &#34;Ping&#34;,
++    description: &#34;WebMCP の命令型 tool が登録できているか確認する。&#34;,
++    inputSchema: {
++      type: &#34;object&#34;,
++      properties: {},
++      additionalProperties: false,
++    },
++    annotations: {
++      readOnlyHint: true,
++    },
++    execute: async () =&gt; {
++      return {
++        ok: true,
++        message: &#34;pong&#34;,
++        pageTitle: document.title,
++      };
++    },
++  });
++
++  console.info(&#34;[webmcp] ping tool registered&#34;);
+ }
+ 
+ registerImperativeTools();
+</code></pre>
+</div>
+<p><code>ping</code> はデータを読むだけで、予約や解除のような状態変更をしません。そのため <code>annotations.readOnlyHint</code> を <code>true</code> にしています。</p>
+<p><code>inputSchema</code> は空の object です。つまり、この tool は引数なしで呼び出せます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">Antigravity で <code>ping</code> を確認する</h2>
+<p>ブラウザを再読み込みし、Antigravity CLI が起動していることを確認します。</p>
+<p>Antigravity に次のように聞きます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の ping tool は見えていますか？見えていたら呼び出してください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>ping</code> tool が見つかる</li>
+<li>tool の実行結果として <code>ok: true</code> や <code>message: "pong"</code> が返る</li>
+<li><code>pageTitle</code> に席予約サイトのタイトルが入る</li>
+</ul>
+<p>この確認が通れば、命令型 WebMCP の登録経路は動いています。次のステップから、<code>ping</code> と同じ形で実際の席予約サイトの関数を tool として登録していきます。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="命令型 WebMCP で席サマリーを取得する" duration="10">
+        <p class="image-container"><img alt="seat_summary tool が getSeats を呼び出して summary だけを返す図" src="img/fa9f9c1447e527d0.svg"></p>
+<p>このステップでは、命令型 WebMCP の最初の実用的な tool として <code>seat_summary</code> を追加します。</p>
+<p>前のステップで作った <code>ping</code> は、WebMCP の登録経路を確認するための tool でした。ここからは、席予約サイトの実際のデータを読み取る tool を作っていきます。</p>
+<h2 is-upgraded><code>seat_summary</code> tool の役割</h2>
+<p><code>seat_summary</code> は、会場全体の席の状況をまとめて返す tool です。全席の細かい情報ではなく、合計席数、空席数、予約済み数、使用禁止席数だけを返します。</p>
+<p>たとえば、Agent から見ると次のような結果が返ります。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-json" class="language-json">{
+  &#34;eventName&#34;: &#34;WebMCP × Antigravity Hands-on&#34;,
+  &#34;summary&#34;: {
+    &#34;total&#34;: 100,
+    &#34;available&#34;: 98,
+    &#34;reserved&#34;: 2,
+    &#34;disabled&#34;: 0
+  }
+}
+</code></pre>
+</div>
+<p>Agent はこの情報を見ることで、「まだ空席がある」「かなり埋まってきた」「具体的な席を探すために席一覧も見た方がよい」といった判断をしやすくなります。</p>
+<p>この tool は席を予約したり解除したりしません。現在の状態を読むだけの tool です。</p>
+<h2 is-upgraded><code>webmcp.js</code> に <code>seat_summary</code> を追加する</h2>
+<p><code>webmcp.js</code> を開きます。前のステップで作った <code>ping</code> tool と、今回追加する <code>seat_summary</code> tool をまとめて登録する形に変更します。</p>
+<p>複数の tool を登録するときは、完成例と同じように <code>Promise.allSettled([...])</code> を使います。これにより、複数の <code>registerTool()</code> を並べて書けるようになります。</p>
+<p><code>webmcp.js</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-js" class="language-js claat-diff-code" data-claat-diff="true" data-claat-diff-language="js"> // WebMCP 命令型 tool
+ 
+ async function registerImperativeTools() {
+   if (!document.modelContext?.registerTool) {
+     console.warn(&#34;[webmcp] document.modelContext.registerTool が見つかりません。&#34;);
+     return;
+   }
+ 
+-  await document.modelContext.registerTool({
+-    name: &#34;ping&#34;,
+-    title: &#34;Ping&#34;,
+-    description: &#34;WebMCP の命令型 tool が登録できているか確認する。&#34;,
+-    inputSchema: {
+-      type: &#34;object&#34;,
+-      properties: {},
+-      additionalProperties: false,
+-    },
+-    annotations: {
+-      readOnlyHint: true,
+-    },
+-    execute: async () =&gt; {
+-      return {
+-        ok: true,
+-        message: &#34;pong&#34;,
+-        pageTitle: document.title,
+-      };
+-    },
+-  });
++  await Promise.allSettled([
++    document.modelContext.registerTool({
++      name: &#34;ping&#34;,
++      title: &#34;Ping&#34;,
++      description: &#34;WebMCP の命令型 tool が登録できているか確認する。&#34;,
++      inputSchema: {
++        type: &#34;object&#34;,
++        properties: {},
++        additionalProperties: false,
++      },
++      annotations: {
++        readOnlyHint: true,
++      },
++      execute: async () =&gt; {
++        return {
++          ok: true,
++          message: &#34;pong&#34;,
++          pageTitle: document.title,
++        };
++      },
++    }),
+ 
+-  console.info(&#34;[webmcp] ping tool registered&#34;);
++    document.modelContext.registerTool({
++      name: &#34;seat_summary&#34;,
++      title: &#34;Seat Summary&#34;,
++      description: &#34;会場全体の席サマリーを取得する。&#34;,
++      inputSchema: {
++        type: &#34;object&#34;,
++        properties: {},
++        additionalProperties: false,
++      },
++      annotations: {
++        readOnlyHint: true,
++      },
++      execute: async () =&gt; {
++        const data = await getSeats();
++        return {
++          eventName: data.eventName,
++          summary: data.summary,
++        };
++      },
++    }),
++  ]);
++
++  console.info(&#34;[webmcp] ping and seat_summary tools registered&#34;);
+ }
+ 
+ registerImperativeTools();
+</code></pre>
+</div>
+<p><code>seat_summary</code> の <code>execute</code> の中で <code>getSeats()</code> を呼び出しています。<code>getSeats()</code> は <code>app.js</code> に定義済みの関数です。<code>index.html</code> では <code>app.js</code> の後に <code>webmcp.js</code> を読み込んでいるため、<code>webmcp.js</code> から <code>getSeats()</code> を呼び出せます。</p>
+<p><code>Promise.allSettled([...])</code> の中には、これから作る tool も同じ形で追加していきます。次のステップで <code>seat_list</code> を追加するときも、この配列の中に <code>document.modelContext.registerTool({...})</code> を増やします。</p>
+<h2 is-upgraded><code>readOnlyHint</code> を付ける</h2>
+<p><code>seat_summary</code> には、<code>annotations.readOnlyHint: true</code> を付けています。</p>
+<p>これは「この tool は状態を変更しない」というヒントです。今回の <code>seat_summary</code> は、席の状態を読むだけで、予約や解除は行いません。そのため読み取り専用の tool として扱えます。</p>
+<p>反対に、後のステップで作る予約解除 tool のように状態を変更する tool には、<code>readOnlyHint: true</code> を付けません。</p>
+<aside class="special"><p><strong>補足: </strong><code>readOnlyHint</code> は、tool の説明文を置き換えるものではありません。Agent が tool を選びやすくなるように、<code>description</code> と合わせて使います。</p></aside>
+<h2 is-upgraded>ブラウザで登録ログを確認する</h2>
+<p>保存したら、ブラウザで席予約サイトを再読み込みします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p>Chrome DevTools の Console に、次のような表示が出れば <code>webmcp.js</code> は読み込まれています。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">[webmcp] ping and seat_summary tools registered
+</code></pre>
+</div>
+<p>もし <code>document.modelContext.registerTool が見つかりません。</code> と表示される場合は、WebMCP flag、拡張機能、Antigravity CLI の起動状態を確認してください。</p>
+<h2 is-upgraded>Antigravity で <code>seat_summary</code> を確認する</h2>
+<p>Antigravity に次のように聞きます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の seat_summary tool を呼び出して、現在の席のサマリーを教えてください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>seat_summary</code> tool が呼び出される</li>
+<li><code>eventName</code> が返る</li>
+<li><code>summary.total</code>、<code>summary.available</code>、<code>summary.reserved</code>、<code>summary.disabled</code> が返る</li>
+<li>予約や解除は行われない</li>
+</ul>
+<p>返ってくる数値は、その時点の予約状況によって変わります。他の参加者が予約している場合は、空席数や予約済み数も変わります。</p>
+<aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>getSeats is not defined</code> と出た場合は、<code>index.html</code> で <code>webmcp.js</code> を <code>app.js</code> より後に読み込んでいるか確認してください。<code><script src="./app.js"></script></code> の下に <code><script src="./webmcp.js"></script></code> がある状態にします。</p></aside>
+<p>ここまでで、Agent は席予約サイトの全体状況を tool として取得できるようになりました。次のステップでは、全席の状態を返す <code>seat_list</code> tool を追加し、Agent が具体的な空席を探せるようにします。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="命令型 WebMCP で席一覧を取得する" duration="10">
+        <p class="image-container"><img alt="seat_list tool が席ごとの状態を返し Agent が空席候補を選ぶ図" src="img/28431469ab890f62.svg"></p>
+<p>このステップでは、全席の状態を返す <code>seat_list</code> tool を追加します。</p>
+<p>前のステップで作った <code>seat_summary</code> は、空席数や予約済み数などの全体状況を返す tool でした。<code>seat_list</code> は、<code>A-1</code>、<code>A-2</code>、<code>B-1</code> のような席ごとの状態を返します。</p>
+<h2 is-upgraded><code>seat_list</code> tool の役割</h2>
+<p>Agent が実際に予約する席を選ぶには、全体の空席数だけでは足りません。どの席が空いているのか、どの席が予約済みなのかを知る必要があります。</p>
+<p><code>seat_list</code> は、次のような席ごとの一覧を返します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-json" class="language-json">{
+  &#34;seats&#34;: [
+    { &#34;id&#34;: &#34;A-1&#34;, &#34;row&#34;: &#34;A&#34;, &#34;number&#34;: 1, &#34;status&#34;: &#34;available&#34; },
+    { &#34;id&#34;: &#34;A-2&#34;, &#34;row&#34;: &#34;A&#34;, &#34;number&#34;: 2, &#34;status&#34;: &#34;reserved&#34; },
+    { &#34;id&#34;: &#34;A-3&#34;, &#34;row&#34;: &#34;A&#34;, &#34;number&#34;: 3, &#34;status&#34;: &#34;available&#34; }
+  ]
+}
+</code></pre>
+</div>
+<p>Agent はこの一覧を見て、「A 列の空席を探す」「前の方の空席を選ぶ」「予約済みではない席だけを候補にする」といった判断ができます。</p>
+<aside class="special"><p><strong>補足:</strong> このハンズオンでは、参加者を特定できる予約者情報は返しません。Agent が席を選ぶために必要な <code>id</code>、<code>row</code>、<code>number</code>、<code>status</code> を中心に扱います。</p></aside>
+<h2 is-upgraded><code>webmcp.js</code> に <code>seat_list</code> を追加する</h2>
+<p><code>webmcp.js</code> を開きます。前のステップで作った <code>Promise.allSettled([...])</code> の配列の中に、<code>seat_list</code> tool を追加します。</p>
+<p><code>seat_summary</code> の <code>registerTool({...})</code> の後ろに、次の diff のように追加します。</p>
+<p><code>webmcp.js</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-js" class="language-js claat-diff-code" data-claat-diff="true" data-claat-diff-language="js">   await Promise.allSettled([
+     document.modelContext.registerTool({
+       name: &#34;ping&#34;,
+       title: &#34;Ping&#34;,
+       description: &#34;WebMCP の命令型 tool が登録できているか確認する。&#34;,
+       inputSchema: {
+         type: &#34;object&#34;,
+         properties: {},
+         additionalProperties: false,
+       },
+       annotations: {
+         readOnlyHint: true,
+       },
+       execute: async () =&gt; {
+         return {
+           ok: true,
+           message: &#34;pong&#34;,
+           pageTitle: document.title,
+         };
+       },
+     }),
+ 
+     document.modelContext.registerTool({
+       name: &#34;seat_summary&#34;,
+       title: &#34;Seat Summary&#34;,
+       description: &#34;会場全体の席サマリーを取得する。&#34;,
+       inputSchema: {
+         type: &#34;object&#34;,
+         properties: {},
+         additionalProperties: false,
+       },
+       annotations: {
+         readOnlyHint: true,
+       },
+       execute: async () =&gt; {
+         const data = await getSeats();
+         return {
+           eventName: data.eventName,
+           summary: data.summary,
+         };
+       },
+     }),
++    document.modelContext.registerTool({
++      name: &#34;seat_list&#34;,
++      title: &#34;Seat List&#34;,
++      description: &#34;全席の状態一覧を取得する。&#34;,
++      inputSchema: {
++        type: &#34;object&#34;,
++        properties: {},
++        additionalProperties: false,
++      },
++      annotations: {
++        readOnlyHint: true,
++      },
++      execute: async () =&gt; {
++        const data = await getSeats();
++        return {
++          seats: data.seats,
++        };
++      },
++    }),
+   ]);
+ 
+-  console.info(&#34;[webmcp] ping and seat_summary tools registered&#34;);
++  console.info(&#34;[webmcp] ping, seat_summary and seat_list tools registered&#34;);
+ }
+</code></pre>
+</div>
+<p><code>seat_list</code> も <code>getSeats()</code> を呼び出します。ただし、<code>seat_summary</code> が <code>data.summary</code> だけを返したのに対して、<code>seat_list</code> は <code>data.seats</code> を返します。</p>
+<h2 is-upgraded>返ってくる席データを見る</h2>
+<p><code>data.seats</code> には、席ごとの情報が配列で入っています。</p>
+<p>主に使うのは次の項目です。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>項目</p>
+</td><td colspan="1" rowspan="1"><p>意味</p>
+</td><td colspan="1" rowspan="1"><p>例</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>id</code></p>
+</td><td colspan="1" rowspan="1"><p>席 ID</p>
+</td><td colspan="1" rowspan="1"><p><code>A-1</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>row</code></p>
+</td><td colspan="1" rowspan="1"><p>列</p>
+</td><td colspan="1" rowspan="1"><p><code>A</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>number</code></p>
+</td><td colspan="1" rowspan="1"><p>列の中の番号</p>
+</td><td colspan="1" rowspan="1"><p><code>1</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>status</code></p>
+</td><td colspan="1" rowspan="1"><p>席の状態</p>
+</td><td colspan="1" rowspan="1"><p><code>available</code> / <code>reserved</code> / <code>disabled</code></p>
+</td></tr>
+</table>
+<p><code>status</code> が <code>available</code> の席は空席です。Agent はこの値を見て、予約できそうな席を候補にできます。</p>
+<h2 is-upgraded><code>readOnlyHint</code> を付ける</h2>
+<p><code>seat_list</code> も、席を予約したり解除したりしません。現在の席一覧を読むだけです。</p>
+<p>そのため、<code>seat_summary</code> と同じように <code>annotations.readOnlyHint: true</code> を付けます。</p>
+<p>読み取り専用 tool が増えてくると、Agent はまず <code>seat_summary</code> で全体を見て、必要に応じて <code>seat_list</code> で具体的な席を探す、という流れを作りやすくなります。</p>
+<h2 is-upgraded>ブラウザで登録ログを確認する</h2>
+<p>保存したら、ブラウザで席予約サイトを再読み込みします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p>Chrome DevTools の Console に、次のような表示が出れば <code>seat_list</code> まで登録されています。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">[webmcp] ping, seat_summary and seat_list tools registered
+</code></pre>
+</div>
+<p>もし以前のログのまま変わらない場合は、<code>webmcp.js</code> を保存できているか確認し、ブラウザを再読み込みしてください。</p>
+<h2 is-upgraded>Antigravity で <code>seat_list</code> を確認する</h2>
+<p>Antigravity に次のように聞きます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の seat_list tool を呼び出して、空席を5つ教えてください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>seat_list</code> tool が呼び出される</li>
+<li>席ごとの一覧が取得される</li>
+<li><code>status</code> が <code>available</code> の席が候補として返る</li>
+<li>予約や解除は行われない</li>
+</ul>
+<p>次のような確認もできます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の seat_list tool を使って、A列の空席を探してください。
+</code></pre>
+</div>
+<p>Agent が <code>row: "A"</code> と <code>status: "available"</code> を見て、A 列の空席を探せれば成功です。</p>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> tool は見えているのに席が返らない場合は、席予約サイトが API に接続できているか確認してください。画面の「席の状況」に座席マップと席一覧が表示されていれば、<code>getSeats()</code> は動いています。</p></aside>
+<p>ここまでで、Agent は会場全体のサマリーだけでなく、具体的な席候補も探せるようになりました。次のステップでは、参加者 ID を使って自分の予約状態を確認する tool を追加します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="命令型 WebMCP で自分の予約を確認する" duration="10">
+        <p class="image-container"><img alt="my_reservation tool が参加者 ID から現在の予約を確認する図" src="img/c406b622e0d1f23a.svg"></p>
+<p>このステップでは、参加者 ID を指定して現在の予約を確認する <code>my_reservation</code> tool を追加します。</p>
+<p>ここまでに作った <code>seat_summary</code> と <code>seat_list</code> は、会場全体や席一覧を見るための tool でした。<code>my_reservation</code> は、特定の参加者がすでに席を予約しているかを確認する tool です。</p>
+<h2 is-upgraded><code>my_reservation</code> tool の役割</h2>
+<p>Agent が席を予約するとき、いきなり新しい予約を作る前に「この参加者はすでに予約しているか」を確認できると便利です。</p>
+<p><code>my_reservation</code> は、参加者 ID を受け取り、その参加者の予約状況を返します。</p>
+<p>予約がある場合は、次のような結果が返ります。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-json" class="language-json">{
+  &#34;reservation&#34;: {
+    &#34;seatId&#34;: &#34;A-1&#34;
+  }
+}
+</code></pre>
+</div>
+<p>予約がない場合は、次のように <code>reservation</code> が <code>null</code> になります。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-json" class="language-json">{
+  &#34;reservation&#34;: null
+}
+</code></pre>
+</div>
+<p>この tool があると、Agent は「すでに予約があるなら新しく予約しない」「予約解除の前に今の予約を確認する」といった判断をしやすくなります。</p>
+<h2 is-upgraded>初めての引数あり tool</h2>
+<p>これまでに作った <code>ping</code>、<code>seat_summary</code>、<code>seat_list</code> は、引数なしで呼び出せる tool でした。</p>
+<p><code>my_reservation</code> は「誰の予約を見るのか」を知る必要があるため、<code>participantId</code> を入力として受け取ります。</p>
+<p><code>inputSchema</code> は次のような形になります。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-js" class="language-js">inputSchema: {
+  type: &#34;object&#34;,
+  properties: {
+    participantId: {
+      type: &#34;string&#34;,
+      description: &#34;予約状況を確認する参加者ID。&#34;,
+    },
+  },
+  required: [&#34;participantId&#34;],
+  additionalProperties: false,
+}
+</code></pre>
+</div>
+<p><code>required: ["participantId"]</code> があるため、Agent はこの tool を呼び出すときに <code>participantId</code> を渡す必要があります。</p>
+<h2 is-upgraded><code>webmcp.js</code> に <code>my_reservation</code> を追加する</h2>
+<p><code>webmcp.js</code> を開きます。<code>Promise.allSettled([...])</code> の配列の中で、<code>seat_list</code> の後ろに <code>my_reservation</code> tool を追加します。</p>
+<p><code>webmcp.js</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-js" class="language-js claat-diff-code" data-claat-diff="true" data-claat-diff-language="js">     document.modelContext.registerTool({
+       name: &#34;seat_list&#34;,
+       title: &#34;Seat List&#34;,
+       description: &#34;全席の状態一覧を取得する。&#34;,
+       inputSchema: {
+         type: &#34;object&#34;,
+         properties: {},
+         additionalProperties: false,
+       },
+       annotations: {
+         readOnlyHint: true,
+       },
+       execute: async () =&gt; {
+         const data = await getSeats();
+         return {
+           seats: data.seats,
+         };
+       },
+     }),
++    document.modelContext.registerTool({
++      name: &#34;my_reservation&#34;,
++      title: &#34;My Reservation&#34;,
++      description: &#34;参加者IDを指定して、その参加者の現在の予約を確認する。&#34;,
++      inputSchema: {
++        type: &#34;object&#34;,
++        properties: {
++          participantId: {
++            type: &#34;string&#34;,
++            description: &#34;予約状況を確認する参加者ID。&#34;,
++          },
++        },
++        required: [&#34;participantId&#34;],
++        additionalProperties: false,
++      },
++      annotations: {
++        readOnlyHint: true,
++      },
++      execute: async ({ participantId }) =&gt; {
++        const input = document.querySelector(&#34;#participant-id&#34;);
++        input.value = participantId;
++        const data = await getMyReservation();
++        await renderMyReservation();
++        return data;
++      },
++    }),
+   ]);
+ 
+-  console.info(&#34;[webmcp] ping, seat_summary and seat_list tools registered&#34;);
++  console.info(&#34;[webmcp] ping, seat_summary, seat_list and my_reservation tools registered&#34;);
+ }
+</code></pre>
+</div>
+<p><code>getMyReservation()</code> は、画面の参加者 ID 入力欄に入っている値を使って API を呼び出します。そのため、tool の中で <code>#participant-id</code> に <code>participantId</code> を入れてから <code>getMyReservation()</code> を呼び出します。</p>
+<p>その後で <code>renderMyReservation()</code> を呼び出し、画面の「自分の予約」表示も更新します。</p>
+<h2 is-upgraded>読み取り専用だが画面は更新する</h2>
+<p><code>my_reservation</code> には <code>annotations.readOnlyHint: true</code> を付けます。</p>
+<p>この tool は予約を作ったり解除したりせず、予約状態を読むだけです。一方で、ページ上の参加者 ID 入力欄と「自分の予約」表示は更新します。</p>
+<p>つまり、サーバー上の予約データは変更しませんが、Web ページの表示状態は変わります。この違いを意識しておくと、後の状態変更 tool との区別がしやすくなります。</p>
+<h2 is-upgraded>ブラウザで登録ログを確認する</h2>
+<p>保存したら、ブラウザで席予約サイトを再読み込みします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p>Chrome DevTools の Console に、次のような表示が出れば <code>my_reservation</code> まで登録されています。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">[webmcp] ping, seat_summary, seat_list and my_reservation tools registered
+</code></pre>
+</div>
+<p>もし以前のログのまま変わらない場合は、<code>webmcp.js</code> を保存できているか確認し、ブラウザを再読み込みしてください。</p>
+<h2 is-upgraded>Antigravity で <code>my_reservation</code> を確認する</h2>
+<p>Antigravity に次のように聞きます。<code>your-connpass-id</code> は、自分の connpass ID に置き換えてください。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の my_reservation tool を使って、参加者ID your-connpass-id の予約状況を確認してください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>my_reservation</code> tool が呼び出される</li>
+<li>予約があれば <code>reservation.seatId</code> が返る</li>
+<li>予約がなければ <code>reservation: null</code> が返る</li>
+<li>ページ上の「自分の予約」表示も更新される</li>
+</ul>
+<p>まだ予約していない場合は <code>reservation: null</code> が返ります。その場合は、予約フォームから手動で予約するか、宣言型 WebMCP の <code>reserve_seat</code> tool で予約してからもう一度確認します。</p>
+<aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>getMyReservation is not defined</code> と出た場合は、<code>index.html</code> で <code>webmcp.js</code> を <code>app.js</code> より後に読み込んでいるか確認してください。<code>getMyReservation()</code> は <code>app.js</code> に定義されています。</p></aside>
+<p>ここまでで、Agent は参加者 ID から現在の予約状況を確認できるようになりました。次のステップでは、参加者 ID を指定して予約を解除する <code>cancel_reservation</code> tool を追加します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="命令型 WebMCP で予約を解除する" duration="10">
+        <p class="image-container"><img alt="cancel_reservation tool が参加者 ID から予約を解除する図" src="img/34529434b0ab436e.svg"></p>
+<p>このステップでは、参加者 ID を指定して現在の予約を解除する <code>cancel_reservation</code> tool を追加します。</p>
+<p>ここまでに作った <code>seat_summary</code>、<code>seat_list</code>、<code>my_reservation</code> は、予約データを読むための tool でした。<code>cancel_reservation</code> は、予約を解除してサーバー上の状態を変える tool です。</p>
+<h2 is-upgraded><code>cancel_reservation</code> tool の役割</h2>
+<p>席を取り直したいときや、間違えて予約したときには、現在の予約を解除する必要があります。</p>
+<p><code>cancel_reservation</code> は、参加者 ID を受け取り、その参加者の予約を解除します。解除に成功すると、解除された席の情報などが返ります。</p>
+<p>この tool は、前のステップで作った <code>my_reservation</code> と組み合わせると自然に使えます。</p>
+<ol type="1">
+<li><code>my_reservation</code> で現在の予約を確認する</li>
+<li>必要であれば <code>cancel_reservation</code> で解除する</li>
+<li>解除後にもう一度 <code>my_reservation</code> で <code>reservation: null</code> を確認する</li>
+</ol>
+<h2 is-upgraded>状態変更 tool と <code>readOnlyHint</code></h2>
+<p><code>cancel_reservation</code> は予約を解除します。つまり、サーバー上の予約状態を変更します。</p>
+<p>そのため、<code>annotations.readOnlyHint: true</code> は付けません。このコードラボでは、状態を変える tool であることが分かるように、明示的に <code>readOnlyHint: false</code> を指定します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-js" class="language-js">annotations: {
+  readOnlyHint: false,
+}
+</code></pre>
+</div>
+<p><code>seat_summary</code>、<code>seat_list</code>、<code>my_reservation</code> は読むだけの tool でした。<code>cancel_reservation</code> は状態を変える tool なので、Agent にもその違いが伝わるようにします。</p>
+<aside class="warning"><p><strong>Warning:</strong> 状態を変更する tool は、読み取り専用 tool よりも慎重に扱います。今回の予約解除はハンズオン用の操作ですが、実サービスでは削除、購入、送金などの tool に同じ考え方が必要です。</p></aside>
+<h2 is-upgraded><code>webmcp.js</code> に <code>cancel_reservation</code> を追加する</h2>
+<p><code>webmcp.js</code> を開きます。<code>Promise.allSettled([...])</code> の配列の中で、<code>my_reservation</code> の後ろに <code>cancel_reservation</code> tool を追加します。</p>
+<p><code>webmcp.js</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-js" class="language-js claat-diff-code" data-claat-diff="true" data-claat-diff-language="js">     document.modelContext.registerTool({
+       name: &#34;my_reservation&#34;,
+       title: &#34;My Reservation&#34;,
+       description: &#34;参加者IDを指定して、その参加者の現在の予約を確認する。&#34;,
+       inputSchema: {
+         type: &#34;object&#34;,
+         properties: {
+           participantId: {
+             type: &#34;string&#34;,
+             description: &#34;予約状況を確認する参加者ID。&#34;,
+           },
+         },
+         required: [&#34;participantId&#34;],
+         additionalProperties: false,
+       },
+       annotations: {
+         readOnlyHint: true,
+       },
+       execute: async ({ participantId }) =&gt; {
+         const input = document.querySelector(&#34;#participant-id&#34;);
+         input.value = participantId;
+         const data = await getMyReservation();
+         await renderMyReservation();
+         return data;
+       },
+     }),
++    document.modelContext.registerTool({
++      name: &#34;cancel_reservation&#34;,
++      title: &#34;Cancel Reservation&#34;,
++      description: &#34;参加者IDを指定して、その参加者の予約を解除する。&#34;,
++      inputSchema: {
++        type: &#34;object&#34;,
++        properties: {
++          participantId: {
++            type: &#34;string&#34;,
++            description: &#34;予約時に使用した参加者ID。&#34;,
++          },
++        },
++        required: [&#34;participantId&#34;],
++        additionalProperties: false,
++      },
++      annotations: {
++        readOnlyHint: false,
++      },
++      execute: async ({ participantId }) =&gt; {
++        const input = document.querySelector(&#34;#participant-id&#34;);
++        input.value = participantId;
++        const result = await cancelReservation();
++        await render();
++        await renderMyReservation();
++        return result;
++      },
++    }),
+   ]);
+ 
+-  console.info(&#34;[webmcp] ping, seat_summary, seat_list and my_reservation tools registered&#34;);
++  console.info(&#34;[webmcp] all imperative tools registered&#34;);
+ }
+</code></pre>
+</div>
+<p><code>cancelReservation()</code> は、画面の参加者 ID 入力欄に入っている値を使って API を呼び出します。そのため、<code>my_reservation</code> と同じように、tool の中で <code>#participant-id</code> に <code>participantId</code> を入れてから呼び出します。</p>
+<p>解除後は <code>render()</code> と <code>renderMyReservation()</code> を呼び出します。これにより、席一覧、座席マップ、自分の予約表示が更新されます。</p>
+<h2 is-upgraded>返ってくる結果を確認する</h2>
+<p><code>cancelReservation()</code> は、API の結果をそのまま返します。</p>
+<p>予約が解除できた場合は、解除された席に関する情報が返ります。予約がない場合や参加者 ID が違う場合は、API からエラーが返ることがあります。</p>
+<p>このステップでは、成功時に「予約が解除されたこと」、失敗時に「どの参加者 ID で試したか」を確認できれば十分です。</p>
+<h2 is-upgraded>ブラウザで登録ログを確認する</h2>
+<p>保存したら、ブラウザで席予約サイトを再読み込みします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p>Chrome DevTools の Console に、次のような表示が出れば <code>cancel_reservation</code> まで登録されています。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">[webmcp] all imperative tools registered
+</code></pre>
+</div>
+<p>もし以前のログのまま変わらない場合は、<code>webmcp.js</code> を保存できているか確認し、ブラウザを再読み込みしてください。</p>
+<h2 is-upgraded>Antigravity で <code>cancel_reservation</code> を確認する</h2>
+<p>まず、予約がある参加者 ID を用意します。まだ予約していない場合は、予約フォームまたは宣言型 WebMCP の <code>reserve_seat</code> tool で先に予約します。</p>
+<p>次に Antigravity に次のように聞きます。<code>your-connpass-id</code> は、自分の connpass ID に置き換えてください。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の cancel_reservation tool を使って、参加者ID your-connpass-id の予約を解除してください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>cancel_reservation</code> tool が呼び出される</li>
+<li>その参加者 ID の予約が解除される</li>
+<li>座席マップと席一覧が更新される</li>
+<li>「自分の予約」表示が「予約はありません。」になる</li>
+</ul>
+<p>解除後に、次のように確認します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の my_reservation tool を使って、参加者ID your-connpass-id の予約状況を確認してください。
+</code></pre>
+</div>
+<p><code>reservation: null</code> が返れば、予約解除は成功です。</p>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> 予約がない状態で <code>cancel_reservation</code> を呼び出すと、API からエラーが返る場合があります。先に <code>my_reservation</code> で予約があるか確認してから解除すると、原因を切り分けやすくなります。</p></aside>
+<p>ここまでで、命令型 WebMCP から席サマリー、席一覧、自分の予約確認、予約解除を扱えるようになりました。次のステップでは、Antigravity からそれぞれの tool を個別にテストし、宣言型の <code>reserve_seat</code> と組み合わせて動作を確認します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Antigravity で WebMCP tool をテストする" duration="12">
+        <p class="image-container"><img alt="Antigravity から WebMCP tools を順番に確認するチェックリスト図" src="img/742e1ebd4633d1a2.svg"></p>
+<p>このステップでは、ここまで実装した WebMCP tool を Antigravity から個別に呼び出して確認します。</p>
+<p>いきなり「いい感じの席を予約して」と大きく依頼するのではなく、まずは tool ごとに小さくテストします。小さく確認しておくと、うまく動かないときにどこで詰まっているか切り分けやすくなります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">テスト前に確認する</h2>
+<p>次の状態になっていることを確認します。</p>
+<ul>
+<li>席予約サイトをブラウザで開いている</li>
+<li>Chrome の WebMCP flag が有効になっている</li>
+<li>WebMCP bridge 拡張機能が有効になっている</li>
+<li>Antigravity CLI を <code>agy</code> で起動している</li>
+<li>席予約サイトのページを再読み込みしている</li>
+</ul>
+<p>席予約サイトは次の URL で開いている想定です。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p>Chrome DevTools の Console に次のログが出ていれば、命令型 WebMCP の <code>webmcp.js</code> は読み込まれています。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">[webmcp] all imperative tools registered
+</code></pre>
+</div>
+<aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>document.modelContext.registerTool が見つかりません。</code> と表示される場合は、Chrome flag、拡張機能、Antigravity CLI の起動状態を確認してください。確認後、席予約サイトのページを再読み込みします。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">接続確認として <code>ping</code> を呼び出す</h2>
+<p>まず、命令型 WebMCP の登録経路が動いているかを確認します。</p>
+<p>Antigravity に次のように聞きます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の ping tool を呼び出してください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>ping</code> tool が呼び出される</li>
+<li><code>message: "pong"</code> が返る</li>
+<li><code>pageTitle</code> に席予約サイトのタイトルが入る</li>
+</ul>
+<p><code>ping</code> が動けば、Antigravity からブラウザ内の WebMCP tool を呼び出す経路は動いています。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">読み取り tool を確認する</h2>
+<p>次に、予約データを読む tool を確認します。</p>
+<p>まず <code>seat_summary</code> を呼び出します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の seat_summary tool を呼び出して、現在の席のサマリーを教えてください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>total</code></li>
+<li><code>available</code></li>
+<li><code>reserved</code></li>
+<li><code>disabled</code></li>
+</ul>
+<p>のような集計値が返ります。</p>
+<p>続けて <code>seat_list</code> を呼び出します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の seat_list tool を呼び出して、空席を5つ教えてください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li>席ごとの一覧が取得される</li>
+<li><code>status: "available"</code> の席が候補として返る</li>
+<li>予約や解除は行われない</li>
+</ul>
+<p>さらに、参加者 ID を指定して <code>my_reservation</code> を呼び出します。<code>your-connpass-id</code> は自分の connpass ID に置き換えてください。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の my_reservation tool を使って、参加者ID your-connpass-id の予約状況を確認してください。
+</code></pre>
+</div>
+<p>予約があれば <code>reservation.seatId</code> が返り、予約がなければ <code>reservation: null</code> が返ります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">宣言型 tool で予約する</h2>
+<p>ここで、宣言型 WebMCP として実装した <code>reserve_seat</code> を確認します。</p>
+<p>まず <code>seat_list</code> の結果から、空いている席を 1 つ選びます。たとえば <code>A-1</code> が空いている場合、Antigravity に次のように聞きます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の reserve_seat tool を使って、参加者ID your-connpass-id で A-1 を予約してください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>reserve_seat</code> tool が呼び出される</li>
+<li>予約フォームに参加者 ID と席番号が入る</li>
+<li><code>toolautosubmit</code> により、フォームが自動送信される</li>
+<li>予約後、座席マップと席一覧の状態が変わる</li>
+</ul>
+<p>予約できたか確認するには、もう一度 <code>my_reservation</code> を呼び出します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の my_reservation tool を使って、参加者ID your-connpass-id の予約状況を確認してください。
+</code></pre>
+</div>
+<p><code>reservation.seatId</code> に予約した席が入っていれば成功です。</p>
+<aside class="warning"><p><strong>Warning:</strong> すでに予約済みの席を指定すると、予約は失敗します。その場合は <code>seat_list</code> で空席を探し直してください。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">状態変更 tool で解除する</h2>
+<p>最後に、命令型の状態変更 tool である <code>cancel_reservation</code> を確認します。</p>
+<p>予約がある参加者 ID で、次のように聞きます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の cancel_reservation tool を使って、参加者ID your-connpass-id の予約を解除してください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>cancel_reservation</code> tool が呼び出される</li>
+<li>予約が解除される</li>
+<li>座席マップと席一覧が更新される</li>
+<li>「自分の予約」表示が「予約はありません。」になる</li>
+</ul>
+<p>解除後、もう一度 <code>my_reservation</code> で確認します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の my_reservation tool を使って、参加者ID your-connpass-id の予約状況を確認してください。
+</code></pre>
+</div>
+<p><code>reservation: null</code> が返れば、解除は成功です。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">うまく動かないとき</h2>
+<p>tool が見えない、または呼び出せない場合は、次の順番で確認します。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>症状</p>
+</td><td colspan="1" rowspan="1"><p>確認すること</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>WebMCP tool が見えない</p>
+</td><td colspan="1" rowspan="1"><p><code>agy</code> が起動しているか、拡張機能が有効か、ページを再読み込みしたか</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>document.modelContext</code> がない</p>
+</td><td colspan="1" rowspan="1"><p>Chrome flag が有効か、Chrome を再起動したか</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>getSeats is not defined</code></p>
+</td><td colspan="1" rowspan="1"><p><code>webmcp.js</code> が <code>app.js</code> より後に読み込まれているか</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>予約が失敗する</p>
+</td><td colspan="1" rowspan="1"><p>指定した席が空席か、参加者 ID が正しいか</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>解除が失敗する</p>
+</td><td colspan="1" rowspan="1"><p>その参加者 ID に予約があるか</p>
+</td></tr>
+</table>
+<p>それでも動かない場合は、TA に画面を見てもらってください。特に拡張機能、Chrome flag、Antigravity CLI の接続まわりは、見た目だけでは原因が分かりにくいことがあります。</p>
+<p>ここまで確認できれば、WebMCP tool の個別テストは完了です。次のステップでは、全員で同時に Agent に予約を依頼し、リアルタイムに席が埋まっていく様子を体験します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="みんなで同時に席を予約する" duration="10">
+        <p class="image-container"><img alt="複数の参加者の Agent が共通 API に同時予約する図" src="img/40564a511f2eb2a1.svg"></p>
+<p>このステップでは、参加者全員で同じ席データに対して Agent から予約を依頼します。</p>
+<p>ここまでのステップでは、自分の環境で tool を 1 つずつ確認してきました。最後は、同じ会場にいる他の参加者も同時に予約する状態で、席が埋まっていく様子や、予約の競合が起きる様子を体験します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">講師の合図を待つ</h2>
+<p>まず、講師の合図を待ちます。</p>
+<p>このステップでは、全員が同じ予約データを見ながら操作します。講師が予約情報をリセットしてから一斉に始めることで、空席が多い状態からリアルタイムに席が埋まっていく様子を確認できます。</p>
+<p>合図があるまでは、Agent に予約を依頼しないでください。席一覧を読むだけなら問題ありませんが、予約や解除は合図後に行います。</p>
+<aside class="warning"><p><strong>Warning:</strong> フライングで予約すると、他の参加者と同じ状態から始められなくなります。講師の「開始」の合図があるまで、予約操作は待ちます。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">ページと Agent を準備する</h2>
+<p>講師のリセット合図があったら、席予約サイトのページを再読み込みします。</p>
+<p>席予約サイトを開いているブラウザで、次の URL を表示している想定です。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">http://localhost:8000
+</code></pre>
+</div>
+<p>再読み込み後、Antigravity CLI が動いていることを確認します。止めてしまった場合は、ターミナルで次のコマンドをもう一度実行します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">agy
+</code></pre>
+</div>
+<p>次に、Antigravity に読み取り tool を呼び出してもらい、接続が生きていることを確認します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の seat_summary tool を呼び出して、現在の席のサマリーを教えてください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>seat_summary</code> tool が呼び出される</li>
+<li>現在の <code>available</code> と <code>reserved</code> が分かる</li>
+<li>予約や解除は行われない</li>
+</ul>
+<p>この確認ができたら、同時予約の準備は完了です。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">Agent に席の希望を伝える</h2>
+<p>自分の connpass ID を使って、Agent に席の希望を伝えます。<code>your-connpass-id</code> は、自分の connpass ID に置き換えてください。</p>
+<p>たとえば、前の方の席を取りたい場合は、次のように依頼します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">参加者IDは your-connpass-id です。
+前の方で空いている席を探して、予約してください。
+予約できたら、どの席を予約したか教えてください。
+</code></pre>
+</div>
+<p>通路側や特定の列を優先したい場合は、希望を少し変えてみます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">参加者IDは your-connpass-id です。
+空いている席の中から、なるべくB列に近い席を探して予約してください。
+予約に失敗した場合は、別の空席を探して再挑戦してください。
+</code></pre>
+</div>
+<p>Agent は、必要に応じて <code>seat_list</code> で空席を調べ、宣言型 WebMCP の <code>reserve_seat</code> tool で予約を試みます。<code>toolautosubmit</code> を付けたフォームなので、tool 呼び出し後にフォームが自動送信されます。</p>
+<aside class="special"><p><strong>補足:</strong> ここでは、プロンプトの言い方によって Agent の動きが少し変わります。席の希望を具体的に書くほど、Agent が候補を選びやすくなります。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">競合が起きたら</h2>
+<p>同時に予約すると、Agent が「空いている」と判断した席を、別の参加者が先に取ることがあります。</p>
+<p>これは失敗ではありません。共通の予約データを使っているため、早い者勝ちの競合が自然に起きています。</p>
+<p>予約に失敗した場合は、Agent に理由を確認させ、別の席を探してもらいます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">今の予約が失敗した理由を確認して、まだ空いている別の席を探して予約してください。
+参加者IDは your-connpass-id です。
+</code></pre>
+</div>
+<p>希望条件が厳しすぎる場合は、条件を少しゆるめます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">前方の席が取れない場合は、空いている席の中から見やすそうな席を選んで予約してください。
+参加者IDは your-connpass-id です。
+</code></pre>
+</div>
+<p>Agent が同じ席に何度も失敗する場合は、<code>seat_list</code> で最新の空席を取り直すように依頼します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">予約結果を確認する</h2>
+<p>予約できたら、<code>my_reservation</code> tool で結果を確認します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-text" class="language-text">WebMCP の my_reservation tool を使って、参加者ID your-connpass-id の予約状況を確認してください。
+</code></pre>
+</div>
+<p><strong>期待される結果:</strong></p>
+<ul>
+<li><code>reservation</code> が <code>null</code> ではない</li>
+<li><code>reservation.seatId</code> に予約した席 ID が入っている</li>
+<li>画面上の座席マップでも、その席が予約済みになっている</li>
+</ul>
+<p>もし違う席を取り直したい場合は、<code>cancel_reservation</code> で一度解除してから、もう一度予約します。ただし、解除した席は他の参加者が取れる状態になります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">観察するポイント</h2>
+<p>最後に、実行中の Agent の動きを観察します。</p>
+<ul>
+<li>最初にどの tool を呼び出したか</li>
+<li>希望条件から、どのように席を選んだか</li>
+<li>予約競合が起きたとき、別の席を探し直したか</li>
+<li>画面の座席マップと Agent の返答が一致しているか</li>
+<li>あいまいな依頼をしたとき、どのように解釈したか</li>
+</ul>
+<p>このステップの目的は、きれいに 1 回で予約することだけではありません。WebMCP tool を通して、Agent が Web ページの機能を構造化された操作として使い、リアルタイムに変わる状態へ対応する様子を見ることが大切です。</p>
+<p>次のステップでは、このコードラボ全体を振り返り、宣言型 WebMCP と命令型 WebMCP で何を作ったのかを整理します。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめと次のステップ" duration="6">
+        <p class="image-container"><img alt="宣言型 WebMCP、命令型 WebMCP、Antigravity、席予約体験を振り返る図" src="img/ad2cf016d29b8896.svg"></p>
+<p>このコードラボでは、席予約サイトに WebMCP の入口を追加し、Antigravity CLI から Web ページの機能を tool として呼び出しました。</p>
+<p>最後に、今日作ったものと、次に試せることを整理します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">作ったものを振り返る</h2>
+<p>このハンズオンでは、既存の席予約サイトに対して、次の WebMCP tool を追加しました。</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>tool</p>
+</td><td colspan="1" rowspan="1"><p>種類</p>
+</td><td colspan="1" rowspan="1"><p>役割</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>reserve_seat</code></p>
+</td><td colspan="1" rowspan="1"><p>宣言型</p>
+</td><td colspan="1" rowspan="1"><p>予約フォームを tool として公開し、参加者 ID と席 ID で予約する</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>ping</code></p>
+</td><td colspan="1" rowspan="1"><p>命令型</p>
+</td><td colspan="1" rowspan="1"><p>命令型 WebMCP の登録経路が動いているか確認する</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>seat_summary</code></p>
+</td><td colspan="1" rowspan="1"><p>命令型</p>
+</td><td colspan="1" rowspan="1"><p>合計席数、空席数、予約済み数などを取得する</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>seat_list</code></p>
+</td><td colspan="1" rowspan="1"><p>命令型</p>
+</td><td colspan="1" rowspan="1"><p>全席の状態を取得し、Agent が候補を探せるようにする</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>my_reservation</code></p>
+</td><td colspan="1" rowspan="1"><p>命令型</p>
+</td><td colspan="1" rowspan="1"><p>指定した参加者 ID の予約状態を確認する</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>cancel_reservation</code></p>
+</td><td colspan="1" rowspan="1"><p>命令型</p>
+</td><td colspan="1" rowspan="1"><p>指定した参加者 ID の予約を解除する</p>
+</td></tr>
+</table>
+<p>これらの tool により、Agent は画面上のボタンや入力欄を手探りで操作するのではなく、「席一覧を取得する」「空席を選ぶ」「予約する」「予約を確認する」といった意味のある単位で Web ページを扱えるようになりました。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">宣言型 WebMCP と命令型 WebMCP</h2>
+<p>宣言型 WebMCP では、HTML フォームに metadata を追加しました。</p>
+<p><code>reserve_seat</code> は、もともと存在していた予約フォームを tool として見せる形でした。参加者 ID と席 ID を入力して送信する、というフォームの構造がそのまま tool の入力になります。今回の拡張機能では <code>toolautosubmit</code> を使い、Agent が値を埋めたあとにフォームを自動送信できるようにしました。</p>
+<p>命令型 WebMCP では、<code>webmcp.js</code> から <code>document.modelContext.registerTool()</code> を呼び出しました。</p>
+<p><code>seat_summary</code> や <code>seat_list</code> のように既存の JavaScript 関数を呼び出して結果を整える処理、<code>my_reservation</code> のように画面状態と API 呼び出しを組み合わせる処理、<code>cancel_reservation</code> のように状態を変更する処理は、JavaScript で tool を登録する命令型の方が書きやすくなります。</p>
+<p>読み取り専用の tool には <code>readOnlyHint: true</code> を付けました。予約解除のように状態を変える tool では、読み取り専用ではないことが分かるようにしました。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">今回の構成をもう一度見る</h2>
+<p>WebMCP の主な想定は、ブラウザ側の Agent が、表示中の Web ページから tool を見つけて呼び出すことです。</p>
+<p>今回のハンズオンでは、ブラウザ内蔵 Agent そのものではなく、次のような構成で WebMCP tool を体験しました。</p>
+<ol type="1">
+<li>席予約サイトが WebMCP tool を公開する</li>
+<li>Chrome 拡張機能がページ上の WebMCP 情報を読み取る</li>
+<li>MCP bridge が Chrome と Antigravity CLI をつなぐ</li>
+<li>Antigravity CLI の Agent が tool を呼び出す</li>
+</ol>
+<p>この構成により、WebMCP の本来の方向性に近い体験を、今日の環境で試しました。Web ページ側が tool を用意し、Agent 側がそれを使って予約状況を読み取り、必要な操作を実行しました。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">次に試すこと</h2>
+<p>時間があれば、次のような改善を試せます。</p>
+<ul>
+<li>tool の <code>description</code> を変えて、Agent の使い方がどう変わるか確認する</li>
+<li><code>inputSchema</code> の説明をより具体的にして、入力ミスを減らす</li>
+<li>返す JSON の形を変えて、Agent が判断しやすい出力を考える</li>
+<li>読み取り専用 tool と状態変更 tool の境界を見直す</li>
+<li>別のフォームや別の Web アプリにも WebMCP の入口を追加する</li>
+<li><a href="https://webmachinelearning.github.io/webmcp/" target="_blank">WebMCP Draft Community Group Report</a> を読んで、今回使った API と仕様上の位置づけを確認する</li>
+</ul>
+<p>特に、tool の名前、説明、入力 schema、返すデータは Agent の判断に強く影響します。同じ処理でも、metadata の書き方が変わると Agent の選び方や説明の仕方が変わります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">お疲れさまでした</h2>
+<p>これで、WebMCP を使って席予約サイトを AI エージェントから呼び出すハンズオンは完了です。</p>
+<p>今日のポイントは、Web ページの機能を Agent に推測させるのではなく、ページ側から構造化された tool として見せることでした。</p>
+<p>WebMCP はまだ実験段階の仕様ですが、Web アプリと AI Agent がより自然につながるための重要な入口です。今日作った小さな席予約 tool を出発点に、別の Web アプリではどんな機能を tool として見せられるか考えてみてください。</p>
 
 
       </google-codelab-step>

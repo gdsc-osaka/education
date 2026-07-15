@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Seat summary WebMCP tool diagram</title>
+  <desc id="desc">The Antigravity Agent calls the seat_summary tool, webmcp.js calls getSeats, and only the event name and summary are returned.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#3c4043"/>
+    </marker>
+    <style>
+      .bg{fill:#f8fafd}
+      .panel{fill:#fff;stroke:#dadce0;stroke-width:2}
+      .agent{fill:#e8f0fe;stroke:#4285f4;stroke-width:2}
+      .tool{fill:#fef7e0;stroke:#fbbc04;stroke-width:2}
+      .code{fill:#e6f4ea;stroke:#34a853;stroke-width:2}
+      .api{fill:#fce8e6;stroke:#ea4335;stroke-width:2}
+      .result{fill:#f3e8fd;stroke:#a142f4;stroke-width:2}
+      .ink{fill:#202124;font-family:Arial,'Hiragino Sans','Yu Gothic',sans-serif}
+      .muted{fill:#5f6368;font-family:Arial,'Hiragino Sans','Yu Gothic',sans-serif}
+      .title{font-size:34px;font-weight:700}
+      .label{font-size:24px;font-weight:700}
+      .sub{font-size:18px}
+      .mono{font-family:'SFMono-Regular',Consolas,monospace;font-size:18px;fill:#202124}
+      .smallmono{font-family:'SFMono-Regular',Consolas,monospace;font-size:15px;fill:#202124}
+      .arrow{stroke:#3c4043;stroke-width:4;fill:none;marker-end:url(#arrow)}
+      .thin{stroke:#dadce0;stroke-width:2;fill:none}
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="720" rx="44"/>
+  <text class="ink title" x="72" y="82">命令型 WebMCP で席サマリーを取得する</text>
+  <text class="muted sub" x="74" y="116">seat_summary は席予約サイトの全体状況だけを返す読み取り専用 tool</text>
+
+  <rect class="panel" x="64" y="172" width="204" height="210" rx="26"/>
+  <rect class="agent" x="94" y="220" width="144" height="64" rx="18"/>
+  <text class="ink label" x="122" y="260">Agent</text>
+  <text class="muted sub" x="102" y="324">席の全体状況を</text>
+  <text class="muted sub" x="102" y="350">知りたい</text>
+
+  <path class="arrow" d="M276 276H386"/>
+
+  <rect class="panel" x="396" y="146" width="244" height="264" rx="26"/>
+  <text class="ink label" x="450" y="204">WebMCP tool</text>
+  <rect class="tool" x="436" y="248" width="164" height="64" rx="18"/>
+  <text class="mono" x="454" y="288">seat_summary</text>
+  <text class="muted sub" x="438" y="354">readOnlyHint: true</text>
+
+  <path class="arrow" d="M650 276H760"/>
+
+  <rect class="panel" x="770" y="146" width="212" height="264" rx="26"/>
+  <text class="ink label" x="822" y="204">webmcp.js</text>
+  <rect class="code" x="808" y="248" width="136" height="64" rx="18"/>
+  <text class="mono" x="834" y="288">getSeats()</text>
+  <text class="muted sub" x="812" y="354">app.js の関数を呼ぶ</text>
+
+  <path class="arrow" d="M992 276H1102"/>
+
+  <rect class="panel" x="1112" y="172" width="126" height="210" rx="26"/>
+  <rect class="api" x="1134" y="220" width="82" height="64" rx="18"/>
+  <text class="ink label" x="1152" y="260">API</text>
+  <text class="muted sub" x="1140" y="324">席データ</text>
+
+  <path class="arrow" d="M1110 430C920 548 640 558 430 462"/>
+
+  <rect class="result" x="144" y="462" width="440" height="184" rx="28"/>
+  <text class="ink label" x="184" y="512">Agent に返す値</text>
+  <line class="thin" x1="184" y1="532" x2="544" y2="532"/>
+  <text class="smallmono" x="184" y="568">{ eventName, summary }</text>
+  <text class="smallmono" x="184" y="600">summary.total</text>
+  <text class="smallmono" x="374" y="600">summary.available</text>
+  <text class="smallmono" x="184" y="628">summary.reserved</text>
+  <text class="smallmono" x="374" y="628">summary.disabled</text>
+
+  <rect class="tool" x="648" y="494" width="442" height="88" rx="26"/>
+  <text class="ink label" x="700" y="546">席を変えずに、今の状況だけを読む</text>
+</svg>
