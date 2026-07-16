@@ -135,40 +135,301 @@ echo 'int main(){return 0;}' > test.c && gcc test.c -o test && ./test && echo "O
 > - 会社・学校の貸与 PC で管理者権限がない → インストールできないことがあります。事前に運営まで連絡してください
 > - どうしても入らない場合は、当日少し早めに来てください。一緒に対応します
 
-## 骨組みのシェルを動かす
-Duration: 0:10:00
+## 標準入力と標準出力にふれる
+Duration: 0:12:00
 
-まずは、今日の土台になる **骨組みシェル** を用意します。入力を受け取って解析するところまでは、こちらで用意済みです。あなたはこの上に `cd` や外部コマンドの実行を足していきます。
+シェルは、結局のところ「**キーボードから文字を受け取り、画面に文字を出す**」プログラムです。まずはその 2 つを担当する関数、`printf` と `fgets` に慣れるところから始めます。
 
-### シェルがやること（おさらい）
+### printf と fgets — 画面とキーボードをつなぐ関数
 
-シェルは、次の 3 つをひたすら繰り返すプログラムです。
+プログラムには、外とやり取りするための 2 つの「窓口」があります。
 
-1. **入力を受け付ける** — あなたが打ち込んだコマンドを 1 行読む
-2. **解析する** — 空白で区切って「コマンド名」と「引数」に分ける
-3. **実行する** — コマンドを実際に動かす
+* **標準出力(stdout)** — 文字を出す先。ふだんは画面(ターミナル)につながっています
+* **標準入力(stdin)** — 文字を受け取る元。ふだんはキーボードにつながっています
 
-このうち **1 と 2 は配布コードに用意済み**です。今日あなたが書くのは、**3 の「実行する」部分**です。
+この 2 つを扱う関数が、次の 2 つです。
 
-### 骨組みコードを用意する
+* `printf("文字列")` — **標準出力**に文字を出す
+* `fgets(格納先の配列, 最大文字数, stdin)` — **標準入力**から 1 行読み込み、配列に格納する
 
-作業用のフォルダを作り、その中に `myshell.c` を作ります。
+> **Note:** `printf` の `f` も `fgets` の `f` も "formatted / file" の f です。今は「`printf` は出す」「`fgets` は 1 行読む」とだけ覚えれば十分です。
+
+### 入力を読んで、そのまま返してみる
+
+まず、作業用のフォルダを作ります。
 
 ```bash
 mkdir myshell
 cd myshell
 ```
 
-エディタ(`nano myshell.c` など、好きなもので構いません)で `myshell.c` を作り、次の内容をそのまま貼り付けて保存します。
+エディタ(`nano echo_test.c` など、好きなもので構いません)で `echo_test.c` を作り、次を貼り付けて保存します。
+
+`echo_test.c`
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+    char buffer[1024];   /* 入力した文字を入れておく箱 */
+
+    printf("何か入力してください: ");
+    fgets(buffer, 1024, stdin);    /* 1 行読んで buffer に入れる */
+    printf("あなたの入力: %s", buffer);   /* buffer の中身を出す */
+
+    return 0;
+}
+```
+
+`fgets` で読んだ 1 行を `buffer` に入れ、それを `printf` の `%s`(文字列を差し込む場所)で出しているだけのプログラムです。コンパイルして動かします。
+
+```bash
+gcc echo_test.c -o echo_test
+./echo_test
+```
+
+**期待される出力:**
+
+```
+何か入力してください: hello
+あなたの入力: hello
+```
+
+入力した文字がそのまま返ってくれば成功です。
+
+> **Tip:** 最後の `printf("あなたの入力: %s", buffer)` には、実は `\n`(改行)を書いていません。それでも出力が改行されるのはなぜでしょう? 答えは次のセクションにあります。
+
+### fgets が配列に入れているもの
+
+さきほど、`printf` に `\n` を書いていないのに改行されました。これは、**`fgets` が「あなたが押した Enter(改行)」も一緒に配列へ格納しているから**です。
+
+たとえば `abc` と打って Enter を押すと、`buffer` の中身はこうなります。
+
+```
+buffer:  'a'  'b'  'c'  '\n'  '\0'  ...
+          └───┬───┘   └┬┘   └┬┘
+            打った文字  改行   文字列の終わり
+```
+
+* `'\n'` … Enter を押したことを表す **改行文字**。`fgets` は**改行まで含めて**格納します
+* `'\0'` … 「ここで文字列が終わり」を表す **番兵(ヌル文字)**。C の文字列は必ずこれで終わります
+
+つまり `fgets` は「入力した文字 + 改行 + `\0`」を配列に入れます。この **末尾の改行が、あとで少しだけ邪魔になります**。それをどう取り除くかは、次のステップの `parse` で扱います。
+
+もう 1 つ、`fgets` には大事な性質があります。**読み込みに成功したら格納先の配列を、入力が終わり(キーボードで `Ctrl-D`)なら `NULL` を返します。** この返り値を見れば、「もう入力がないから終了しよう」と判断できます。次のステップで実際に使います。
+
+## シェルのループと解析を作る
+Duration: 0:18:00
+
+`printf` と `fgets` が分かったので、いよいよシェル本体 `myshell.c` を作ります。「1 行読む → 解析する → 実行する」を**ずっと繰り返す**のがシェルでした。まずはこの繰り返し(ループ)から作ります。
+
+### main 関数 — 「1 行読む」を繰り返す
+
+`myshell.c` を新しく作り、次を貼り付けます。**2 か所の `TODO` は、まだ書かずに空けておいてください。**
 
 `myshell.c`
 
 ```c
 #include <stdio.h>
+
+#define BUFLEN 1024
+
+int main(void)
+{
+    char command_buffer[BUFLEN];   /* 入力を読み込む箱 */
+    char *result;                  /* fgets の返り値を受け取る */
+
+    for (;;) {                     /* 無限ループ（ずっと繰り返す） */
+
+        /* TODO ①: プロンプト "myshell> " を表示する */
+
+
+        /* TODO ②: 1 行読み込んで、返り値を result に代入する */
+
+
+        /* 入力の終わり(Ctrl-D)なら、ループを抜けて終了 */
+        if (result == NULL) {
+            printf("\n");
+            break;
+        }
+
+        printf("入力: %s", command_buffer);   /* いまは確認用にそのまま返す */
+    }
+    return 0;
+}
+```
+
+さきほど学んだ `printf` と `fgets` を思い出して、**`TODO ①` と `TODO ②` を自分で書いてみましょう。**
+
+* `TODO ①` … プロンプト `myshell> ` を表示する
+* `TODO ②` … 1 行読み込み、その返り値を `result` に代入する
+
+> **Tip:** `TODO ②` は `echo_test.c` の `fgets(buffer, 1024, stdin)` とほぼ同じです。違いは、返り値を `result = ...` の形で受け取るところだけです。
+
+書けたら、答え合わせです。それぞれ次のようになります。
+
+`TODO ①`
+
+```c
+        printf("myshell> ");
+```
+
+`TODO ②`
+
+```c
+        result = fgets(command_buffer, BUFLEN, stdin);
+```
+
+> **Note:** 前のバージョンでは `if (fgets(...) == NULL)` のように「読み込み」と「判定」を 1 行でまとめて書くこともできますが、慣れないうちは分かりにくいので、**まず `result` に受け取ってから、次の行で `result` を判定**する形にしています。
+
+書けたらコンパイルして動かします。
+
+```bash
+gcc myshell.c -o myshell
+./myshell
+```
+
+**期待される出力:**
+
+```
+myshell> hello
+入力: hello
+myshell> exit
+入力: exit
+```
+
+プロンプトが出て、打った文字がそのまま返り、また次のプロンプトが出る —— この繰り返しがシェルの骨格です。`Ctrl-D` を押すと、ループを抜けて終了します。
+
+> **Tip:** いまはまだ `exit` と打っても「入力: exit」と返るだけで終了しません。コマンドを見分ける仕組みは、次の `parse` で作ります。
+
+### parse 関数 — 入力をコマンドと引数に分ける
+
+いまの `command_buffer` には、`cd /tmp` のように **1 本の文字列**がまるごと入っています。コマンドを実行するには、これを「コマンド名(`cd`)」と「引数(`/tmp`)」に**分ける**必要があります。これを担当するのが `parse` 関数です。
+
+`parse` はポインタ操作が多く、初学者が最初から書くのは大変です。そこで、**中身を 4 つに分けて、解説を読みながらコピペ**していきましょう。`main` 関数の**下**に、順番に貼り付けていきます。ここでは入力 `cd /tmp` を例に、配列がどう変化するかを追いかけます。
+
+まず、`fgets` の直後の `command_buffer` はこうなっています(前セクションのとおり、末尾に改行が入っています)。
+
+```
+c   d   ␣   /   t   m   p   \n  \0
+                (␣ = 空白)
+```
+
+**① 関数の入り口 — 末尾の改行を消す**
+
+```c
+int parse(char buffer[], char *args[])
+{
+    int arg_index = 0;   /* 何個目の引数かを数えるカウンタ */
+
+    /* 末尾の改行(\n)を \0 に置き換える */
+    buffer[strlen(buffer) - 1] = '\0';
+```
+
+`strlen` は文字列の長さ(`\0` の手前まで)を返します。その 1 つ手前が末尾の改行なので、そこを `\0` に上書きします。これで配列はこうなります。
+
+```
+c   d   ␣   /   t   m   p   \0      ← 改行が消えた
+```
+
+**② 「exit」だけは特別扱い**
+
+```c
+    /* "exit" と入力されたら、終了の合図として 2 を返す */
+    if (strcmp(buffer, "exit") == 0) {
+        return 2;
+    }
+```
+
+`strcmp` は 2 つの文字列が同じなら `0` を返す関数です。`exit` のときだけ、あとで `main` が終了できるように `2` を返します。
+
+**③ 空白で区切って、単語の先頭を記録する(ここが心臓部)**
+
+```c
+    /* 文字列の終わり(\0)に来るまで繰り返す */
+    while (*buffer != '\0') {
+
+        /* 空白・タブを \0 に置き換えて読み飛ばす */
+        while (*buffer == ' ' || *buffer == '\t') {
+            *(buffer++) = '\0';
+        }
+        if (*buffer == '\0') {   /* 空白の後がもう終わりなら抜ける */
+            break;
+        }
+
+        /* ここは単語の先頭。そのアドレスを args[] に記録する */
+        args[arg_index++] = buffer;
+
+        /* 次の空白か \0 まで、単語を読み進める */
+        while (*buffer != '\0' && *buffer != ' ' && *buffer != '\t') {
+            ++buffer;
+        }
+    }
+```
+
+`*buffer` は「いま見ている 1 文字」、`buffer++` は「次の文字へ進む」という意味です(ポインタ操作)。難しければ、**「空白を `\0` に変えて単語を区切り、各単語の先頭の場所を `args` に記録している」**とだけ理解すれば大丈夫です。`cd /tmp` を追うと、こう動きます。
+
+```
+1周目: buffer は先頭 'c' を指している
+       → 'c' は空白でないので args[0] に「'c' の場所」を記録
+       → 空白に当たるまで進む（c → d → ␣ で止まる）
+
+       args[0] ─┐
+                ▼
+        c  d  ␣  /  t  m  p  \0
+
+2周目: いま空白 '␣' を指している
+       → 空白を \0 に置き換える（ここで "cd" が区切られる!）
+       → 次の '/' は空白でないので args[1] に「'/' の場所」を記録
+
+       args[0]      args[1]
+        │            │
+        ▼            ▼
+        c  d  \0  /  t  m  p  \0
+              └ここが \0 になった
+
+3周目: 進んだ先が \0 なので、ループ終了
+```
+
+結果として、`args[0]` は `"cd"`、`args[1]` は `"/tmp"` を指すようになります。もとは 1 本だった文字列が、`\0` を境に 2 つの単語に切り分けられました。
+
+**④ 仕上げ — 配列の終わりを示して返す**
+
+```c
+    args[arg_index] = NULL;   /* 引数の最後の目印(番兵) */
+
+    if (arg_index == 0) {     /* 単語が 1 つもなければ空行 */
+        return 3;
+    }
+    return 0;                 /* 通常のコマンド */
+}
+```
+
+最後に `args` の末尾へ `NULL` を入れて「ここで引数は終わり」と示します。まとめると、`cd /tmp` は最終的にこうなります。
+
+```
+args[0] → "cd"
+args[1] → "/tmp"
+args[2] → NULL
+```
+
+> **Note:** `parse` が返す数字には意味があります。`0` = 通常のコマンド、`2` = exit、`3` = 空行。この数字を見て `main` が次の動きを決めます。
+
+### main に parse をつなぐ
+
+`parse` ができたので、`main` から呼び出します。あわせて、コマンドを実行する係の `execute_command`(中身は次のステップで作ります)も呼ぶようにします。`myshell.c` の先頭と `main` を、次のように書き換えます。
+
+まず、ファイルの先頭(`#include` と `#define` のあたり)を差し替えます。
+
+`myshell.c`（先頭）
+
+```c
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>     /* chdir, getcwd, fork, execvp */
-#include <sys/wait.h>   /* wait */
+#include <unistd.h>     /* chdir, getcwd, fork, execvp（後で使う） */
+#include <sys/wait.h>   /* wait（後で使う） */
 
 #define BUFLEN      1024   /* 入力バッファの大きさ */
 #define MAXARGNUM    256   /* 引数の最大数 */
@@ -176,72 +437,50 @@ cd myshell
 
 int  parse(char buffer[], char *args[]);
 void execute_command(char *args[]);
+```
 
+次に、`main` の中の確認用の `printf("入力: ...")` を、`parse` と `execute_command` の呼び出しに置き換えます。`main` 全体はこうなります。
+
+`myshell.c`（main 関数）
+
+```c
 int main(void)
 {
-    char command_buffer[BUFLEN];  /* 入力を読み込むバッファ */
-    char *args[MAXARGNUM];        /* 解析後の引数の配列 */
-    int  status;
+    char command_buffer[BUFLEN];   /* 入力を読み込む箱 */
+    char *args[MAXARGNUM];         /* 解析後の引数の配列 */
+    char *result;                  /* fgets の返り値 */
+    int  status;                   /* parse の返り値 */
 
     for (;;) {
         printf("myshell> ");
 
-        /* 1 行読み込む。Ctrl-D（入力の終わり）で終了 */
-        if (fgets(command_buffer, BUFLEN, stdin) == NULL) {
+        result = fgets(command_buffer, BUFLEN, stdin);
+        if (result == NULL) {          /* Ctrl-D で終了 */
             printf("\n");
             break;
         }
 
         status = parse(command_buffer, args);
 
-        if (status == 2) {   /* "exit" が入力された */
+        if (status == 2) {             /* exit */
             printf("done.\n");
             break;
         }
-        if (status == 3) {   /* 空行だった */
+        if (status == 3) {             /* 空行 */
             continue;
         }
 
-        execute_command(args);
+        execute_command(args);         /* コマンドを実行する */
     }
     return 0;
 }
+```
 
-/*
- * 入力を空白で区切り、args[] に格納する。
- * 返り値: 0 = 通常コマンド / 2 = exit / 3 = 空行
- * ※ この関数は今日は変更しません。中身を読まなくても大丈夫です。
- */
-int parse(char buffer[], char *args[])
-{
-    int arg_index = 0;
+最後に、まだ中身のない `execute_command` を用意します。`parse` 関数の**下**に、次を貼り付けてください。中身は次のステップから育てていきます。
 
-    buffer[strlen(buffer) - 1] = '\0';   /* 末尾の改行を消す */
+`myshell.c`（parse の下に追加）
 
-    if (strcmp(buffer, "exit") == 0) {
-        return 2;
-    }
-
-    while (*buffer != '\0') {
-        while (*buffer == ' ' || *buffer == '\t') {
-            *(buffer++) = '\0';
-        }
-        if (*buffer == '\0') {
-            break;
-        }
-        args[arg_index++] = buffer;
-        while (*buffer != '\0' && *buffer != ' ' && *buffer != '\t') {
-            ++buffer;
-        }
-    }
-    args[arg_index] = NULL;   /* 配列の終わりを示す */
-
-    if (arg_index == 0) {
-        return 3;
-    }
-    return 0;
-}
-
+```c
 void execute_command(char *args[])
 {
     /* === 課題: ここに cd の処理を書く === */
@@ -252,16 +491,14 @@ void execute_command(char *args[])
 }
 ```
 
-`main` は「読む → 解析する → 実行する」を繰り返すだけの短いループです。`parse` は入力を引数の配列に分ける係で、今日は触りません。あなたが育てていくのは、いちばん下の `execute_command` です。
+### 骨組みの完成を確認する
 
-### コンパイルして実行する
+これで骨組みが完成しました。コンパイルして動かします。
 
 ```bash
 gcc myshell.c -o myshell
 ./myshell
 ```
-
-`myshell>` というプロンプトが出たら成功です。試しに何か打ってみましょう。
 
 **期待される出力:**
 
@@ -272,7 +509,11 @@ myshell> exit
 done.
 ```
 
-まだ何も実行できませんが、これが出発点です。`exit` または `Ctrl-D` で終了できます。
+* コマンドを打つと「まだ実装されていません: ○○」と出る(= `parse` が働き、`execute_command` が呼ばれている)
+* `exit` と打つと `done.` と出て終了する
+* `Ctrl-D` でも終了する
+
+まだ何も実行できませんが、これが土台です。ここに `cd` と外部コマンドの実行を足していきます。
 
 > **Tip:** コードを書き換えたら、そのたびに `gcc myshell.c -o myshell` でコンパイルし直してから `./myshell` を実行します。この 2 つはこれから何度も繰り返します。
 
