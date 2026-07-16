@@ -362,9 +362,8 @@
 </style>
 </head>
 <body>
-  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid=""
-                  codelab-ga4id=""
                   id="linux-shell-hands-on"
                   title="自作シェルで学ぶ OS の裏側"
                   environment="web"
@@ -541,18 +540,22 @@ gcc (Ubuntu ...) 13.x.x
 
       </google-codelab-step>
     
-      <google-codelab-step label="骨組みのシェルを動かす" duration="10">
-        <p>まずは、今日の土台になる <strong>骨組みシェル</strong> を用意します。入力を受け取って解析するところまでは、こちらで用意済みです。あなたはこの上に <code>cd</code> や外部コマンドの実行を足していきます。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">シェルがやること（おさらい）</h2>
-<p>シェルは、次の 3 つをひたすら繰り返すプログラムです。</p>
-<ol type="1">
-<li><strong>入力を受け付ける</strong> — あなたが打ち込んだコマンドを 1 行読む</li>
-<li><strong>解析する</strong> — 空白で区切って「コマンド名」と「引数」に分ける</li>
-<li><strong>実行する</strong> — コマンドを実際に動かす</li>
-</ol>
-<p>このうち <strong>1 と 2 は配布コードに用意済み</strong>です。今日あなたが書くのは、<strong>3 の「実行する」部分</strong>です。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">骨組みコードを用意する</h2>
-<p>作業用のフォルダを作り、その中に <code>myshell.c</code> を作ります。</p>
+      <google-codelab-step label="標準入力と標準出力にふれる" duration="12">
+        <p>シェルは、結局のところ「<strong>キーボードから文字を受け取り、画面に文字を出す</strong>」プログラムです。まずはその 2 つを担当する関数、<code>printf</code> と <code>fgets</code> に慣れるところから始めます。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">printf と fgets — 画面とキーボードをつなぐ関数</h2>
+<p>プログラムには、外とやり取りするための 2 つの「窓口」があります。</p>
+<ul>
+<li><strong>標準出力(stdout)</strong> — 文字を出す先。ふだんは画面(ターミナル)につながっています</li>
+<li><strong>標準入力(stdin)</strong> — 文字を受け取る元。ふだんはキーボードにつながっています</li>
+</ul>
+<p>この 2 つを扱う関数が、次の 2 つです。</p>
+<ul>
+<li><code>printf("文字列")</code> — <strong>標準出力</strong>に文字を出す</li>
+<li><code>fgets(格納先の配列, 最大文字数, stdin)</code> — <strong>標準入力</strong>から 1 行読み込み、配列に格納する</li>
+</ul>
+<aside class="warning"><p><strong>Note: </strong><code>printf</code> の <code>f</code> も <code>fgets</code> の <code>f</code> も &#34;formatted / file&#34; の f です。今は「<code>printf</code> は出す」「<code>fgets</code> は 1 行読む」とだけ覚えれば十分です。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">入力を読んで、そのまま返してみる</h2>
+<p>まず、作業用のフォルダを作ります。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -566,7 +569,99 @@ gcc (Ubuntu ...) 13.x.x
 cd myshell
 </code></pre>
 </div>
-<p>エディタ(<code>nano myshell.c</code> など、好きなもので構いません)で <code>myshell.c</code> を作り、次の内容をそのまま貼り付けて保存します。</p>
+<p>エディタ(<code>nano echo_test.c</code> など、好きなもので構いません)で <code>echo_test.c</code> を作り、次を貼り付けて保存します。</p>
+<p><code>echo_test.c</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char buffer[1024];   /* 入力した文字を入れておく箱 */
+
+    printf(&#34;何か入力してください: &#34;);
+    fgets(buffer, 1024, stdin);    /* 1 行読んで buffer に入れる */
+    printf(&#34;あなたの入力: %s&#34;, buffer);   /* buffer の中身を出す */
+
+    return 0;
+}
+</code></pre>
+</div>
+<p><code>fgets</code> で読んだ 1 行を <code>buffer</code> に入れ、それを <code>printf</code> の <code>%s</code>(文字列を差し込む場所)で出しているだけのプログラムです。コンパイルして動かします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">gcc echo_test.c -o echo_test
+./echo_test
+</code></pre>
+</div>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>何か入力してください: hello
+あなたの入力: hello
+</code></pre>
+</div>
+<p>入力した文字がそのまま返ってくれば成功です。</p>
+<aside class="special"><p><strong>Tip:</strong> 最後の <code>printf("あなたの入力: %s", buffer)</code> には、実は <code>\n</code>(改行)を書いていません。それでも出力が改行されるのはなぜでしょう? 答えは次のセクションにあります。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">fgets が配列に入れているもの</h2>
+<p>さきほど、<code>printf</code> に <code>\n</code> を書いていないのに改行されました。これは、<strong><code>fgets</code></strong></p>
+<p><strong> が「あなたが押した Enter(改行)」も一緒に配列へ格納しているから</strong>です。</p>
+<p>たとえば <code>abc</code> と打って Enter を押すと、<code>buffer</code> の中身はこうなります。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>buffer:  &#39;a&#39;  &#39;b&#39;  &#39;c&#39;  &#39;\n&#39;  &#39;\0&#39;  ...
+          └───┬───┘   └┬┘   └┬┘
+            打った文字  改行   文字列の終わり
+</code></pre>
+</div>
+<ul>
+<li><code>'\n'</code> ... Enter を押したことを表す <strong>改行文字</strong>。<code>fgets</code> は<strong>改行まで含めて</strong>格納します</li>
+<li><code>'\0'</code> ... 「ここで文字列が終わり」を表す <strong>番兵(ヌル文字)</strong>。C の文字列は必ずこれで終わります</li>
+</ul>
+<p>つまり <code>fgets</code> は「入力した文字 + 改行 + <code>\0</code>」を配列に入れます。この <strong>末尾の改行が、あとで少しだけ邪魔になります</strong>。それをどう取り除くかは、次のステップの <code>parse</code> で扱います。</p>
+<p>もう 1 つ、<code>fgets</code> には大事な性質があります。<strong>読み込みに成功したら格納先の配列を、入力が終わり(キーボードで </strong></p>
+<p><strong><code>Ctrl-D</code></strong></p>
+<p><strong>)なら </strong></p>
+<p><strong><code>NULL</code></strong></p>
+<p><strong> を返します。</strong> この返り値を見れば、「もう入力がないから終了しよう」と判断できます。次のステップで実際に使います。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="シェルのループと解析を作る" duration="18">
+        <p><code>printf</code> と <code>fgets</code> が分かったので、いよいよシェル本体 <code>myshell.c</code> を作ります。「1 行読む → 解析する → 実行する」を<strong>ずっと繰り返す</strong>のがシェルでした。まずはこの繰り返し(ループ)から作ります。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">main 関数 — 「1 行読む」を繰り返す</h2>
+<p><code>myshell.c</code> を新しく作り、次を貼り付けます。<strong>2 か所の </strong></p>
+<p><strong><code>TODO</code></strong></p>
+<p><strong> は、まだ書かずに空けておいてください。</strong></p>
 <p><code>myshell.c</code></p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -578,95 +673,76 @@ cd myshell
   </button>
 </div>
 <pre><code language="language-c" class="language-c">#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
-#include &lt;unistd.h&gt;     /* chdir, getcwd, fork, execvp */
-#include &lt;sys/wait.h&gt;   /* wait */
 
-#define BUFLEN      1024   /* 入力バッファの大きさ */
-#define MAXARGNUM    256   /* 引数の最大数 */
-#define PATH_MAX_LEN 1024
-
-int  parse(char buffer[], char *args[]);
-void execute_command(char *args[]);
+#define BUFLEN 1024
 
 int main(void)
 {
-    char command_buffer[BUFLEN];  /* 入力を読み込むバッファ */
-    char *args[MAXARGNUM];        /* 解析後の引数の配列 */
-    int  status;
+    char command_buffer[BUFLEN];   /* 入力を読み込む箱 */
+    char *result;                  /* fgets の返り値を受け取る */
 
-    for (;;) {
-        printf(&#34;myshell&gt; &#34;);
+    for (;;) {                     /* 無限ループ（ずっと繰り返す） */
 
-        /* 1 行読み込む。Ctrl-D（入力の終わり）で終了 */
-        if (fgets(command_buffer, BUFLEN, stdin) == NULL) {
+        /* TODO ①: プロンプト &#34;myshell&gt; &#34; を表示する */
+
+
+        /* TODO ②: 1 行読み込んで、返り値を result に代入する */
+
+
+        /* 入力の終わり(Ctrl-D)なら、ループを抜けて終了 */
+        if (result == NULL) {
             printf(&#34;\n&#34;);
             break;
         }
 
-        status = parse(command_buffer, args);
-
-        if (status == 2) {   /* &#34;exit&#34; が入力された */
-            printf(&#34;done.\n&#34;);
-            break;
-        }
-        if (status == 3) {   /* 空行だった */
-            continue;
-        }
-
-        execute_command(args);
+        printf(&#34;入力: %s&#34;, command_buffer);   /* いまは確認用にそのまま返す */
     }
     return 0;
-}
-
-/*
- * 入力を空白で区切り、args[] に格納する。
- * 返り値: 0 = 通常コマンド / 2 = exit / 3 = 空行
- * ※ この関数は今日は変更しません。中身を読まなくても大丈夫です。
- */
-int parse(char buffer[], char *args[])
-{
-    int arg_index = 0;
-
-    buffer[strlen(buffer) - 1] = &#39;\0&#39;;   /* 末尾の改行を消す */
-
-    if (strcmp(buffer, &#34;exit&#34;) == 0) {
-        return 2;
-    }
-
-    while (*buffer != &#39;\0&#39;) {
-        while (*buffer == &#39; &#39; || *buffer == &#39;\t&#39;) {
-            *(buffer++) = &#39;\0&#39;;
-        }
-        if (*buffer == &#39;\0&#39;) {
-            break;
-        }
-        args[arg_index++] = buffer;
-        while (*buffer != &#39;\0&#39; &amp;&amp; *buffer != &#39; &#39; &amp;&amp; *buffer != &#39;\t&#39;) {
-            ++buffer;
-        }
-    }
-    args[arg_index] = NULL;   /* 配列の終わりを示す */
-
-    if (arg_index == 0) {
-        return 3;
-    }
-    return 0;
-}
-
-void execute_command(char *args[])
-{
-    /* === 課題: ここに cd の処理を書く === */
-
-    /* === 発展課題: ここで外部コマンドを実行する === */
-
-    printf(&#34;まだ実装されていません: %s\n&#34;, args[0]);
 }
 </code></pre>
 </div>
-<p><code>main</code> は「読む → 解析する → 実行する」を繰り返すだけの短いループです。<code>parse</code> は入力を引数の配列に分ける係で、今日は触りません。あなたが育てていくのは、いちばん下の <code>execute_command</code> です。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">コンパイルして実行する</h2>
+<p>さきほど学んだ <code>printf</code> と <code>fgets</code> を思い出して、<strong><code>TODO ①</code></strong></p>
+<p><strong> と </strong></p>
+<p><strong><code>TODO ②</code></strong></p>
+<p><strong> を自分で書いてみましょう。</strong></p>
+<ul>
+<li><code>TODO ①</code> ... プロンプト <code>myshell></code>  を表示する</li>
+<li><code>TODO ②</code> ... 1 行読み込み、その返り値を <code>result</code> に代入する</li>
+</ul>
+<aside class="special"><p><strong>Tip: </strong><code>TODO ②</code> は <code>echo_test.c</code> の <code>fgets(buffer, 1024, stdin)</code> とほぼ同じです。違いは、返り値を <code>result = ...</code> の形で受け取るところだけです。</p></aside>
+<p>書けたら、答え合わせです。それぞれ次のようになります。</p>
+<p><code>TODO ①</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">        printf(&#34;myshell&gt; &#34;);
+</code></pre>
+</div>
+<p><code>TODO ②</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">        result = fgets(command_buffer, BUFLEN, stdin);
+</code></pre>
+</div>
+<aside class="warning"><p><strong>Note:</strong> 前のバージョンでは <code>if (fgets(...) == NULL)</code> のように「読み込み」と「判定」を 1 行でまとめて書くこともできますが、慣れないうちは分かりにくいので、<strong>まず </strong></p></aside>
+<p><strong><code>result</code></strong></p>
+<p><strong> に受け取ってから、次の行で </strong></p>
+<p><strong><code>result</code></strong></p>
+<p><strong> を判定</strong>する形にしています。</p>
+<p>書けたらコンパイルして動かします。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -680,7 +756,301 @@ void execute_command(char *args[])
 ./myshell
 </code></pre>
 </div>
-<p><code>myshell></code> というプロンプトが出たら成功です。試しに何か打ってみましょう。</p>
+<p><strong>期待される出力:</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>myshell&gt; hello
+入力: hello
+myshell&gt; exit
+入力: exit
+</code></pre>
+</div>
+<p>プロンプトが出て、打った文字がそのまま返り、また次のプロンプトが出る —— この繰り返しがシェルの骨格です。<code>Ctrl-D</code> を押すと、ループを抜けて終了します。</p>
+<aside class="special"><p><strong>Tip:</strong> いまはまだ <code>exit</code> と打っても「入力: exit」と返るだけで終了しません。コマンドを見分ける仕組みは、次の <code>parse</code> で作ります。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">parse 関数 — 入力をコマンドと引数に分ける</h2>
+<p>いまの <code>command_buffer</code> には、<code>cd /tmp</code> のように <strong>1 本の文字列</strong>がまるごと入っています。コマンドを実行するには、これを「コマンド名(<code>cd</code>)」と「引数(<code>/tmp</code>)」に<strong>分ける</strong>必要があります。これを担当するのが <code>parse</code> 関数です。</p>
+<p><code>parse</code> はポインタ操作が多く、初学者が最初から書くのは大変です。そこで、<strong>中身を 4 つに分けて、解説を読みながらコピペ</strong>していきましょう。<code>main</code> 関数の<strong>下</strong>に、順番に貼り付けていきます。ここでは入力 <code>cd /tmp</code> を例に、配列がどう変化するかを追いかけます。</p>
+<p>まず、<code>fgets</code> の直後の <code>command_buffer</code> はこうなっています(前セクションのとおり、末尾に改行が入っています)。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>c   d   ␣   /   t   m   p   \n  \0
+                (␣ = 空白)
+</code></pre>
+</div>
+<p><strong>① 関数の入り口 — 末尾の改行を消す</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">int parse(char buffer[], char *args[])
+{
+    int arg_index = 0;   /* 何個目の引数かを数えるカウンタ */
+
+    /* 末尾の改行(\n)を \0 に置き換える */
+    buffer[strlen(buffer) - 1] = &#39;\0&#39;;
+</code></pre>
+</div>
+<p><code>strlen</code> は文字列の長さ(<code>\0</code> の手前まで)を返します。その 1 つ手前が末尾の改行(<code>\n</code>)なので、そこを <code>\0</code> に上書きします。これで配列はこうなります。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>c   d   ␣   /   t   m   p   \0  \0    ← 改行(\n)が \0 になった
+                            ↑    ↑
+                    ここが \n     もともと fgets が
+                    だった        付けていた終端の \0
+</code></pre>
+</div>
+<p><code>\0</code> が 2 つ並ぶのがポイントです。もともと <code>fgets</code> が末尾に付けた終端の <code>\0</code>(いちばん右)はそのまま残り、その 1 つ手前にあった <code>\n</code> が新しく <code>\0</code> に変わりました。文字列としては <strong>最初に出てくる </strong></p>
+<p><strong><code>\0</code></strong></p>
+<p><strong> までが中身</strong>なので、これで <code>"cd /tmp"</code> として扱われます。</p>
+<p><strong>② 「exit」だけは特別扱い</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">    /* &#34;exit&#34; と入力されたら、終了の合図として 2 を返す */
+    if (strcmp(buffer, &#34;exit&#34;) == 0) {
+        return 2;
+    }
+</code></pre>
+</div>
+<p><code>strcmp</code> は 2 つの文字列が同じなら <code>0</code> を返す関数です。<code>exit</code> のときだけ、あとで <code>main</code> が終了できるように <code>2</code> を返します。</p>
+<p><strong>③ 空白で区切って、単語の先頭を記録する(ここが心臓部)</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">    /* 文字列の終わり(\0)に来るまで繰り返す */
+    while (*buffer != &#39;\0&#39;) {
+
+        /* 空白・タブを \0 に置き換えて読み飛ばす */
+        while (*buffer == &#39; &#39; || *buffer == &#39;\t&#39;) {
+            *buffer = &#39;\0&#39;;   /* いま見ている空白を \0 に置き換える */
+            buffer++;         /* 次の文字へ進む */
+        }
+        if (*buffer == &#39;\0&#39;) {   /* 空白の後がもう終わりなら抜ける */
+            break;
+        }
+
+        /* ここは単語の先頭。そのアドレスを args[] に記録する */
+        args[arg_index] = buffer;   /* 単語の先頭の場所を記録 */
+        arg_index++;                /* 次の引数の番号へ進める */
+
+        /* 次の空白か \0 まで、単語を読み進める */
+        while (*buffer != &#39;\0&#39; &amp;&amp; *buffer != &#39; &#39; &amp;&amp; *buffer != &#39;\t&#39;) {
+            buffer++;   /* 次の文字へ進む */
+        }
+    }
+</code></pre>
+</div>
+<p><code>*buffer</code> は「いま見ている 1 文字」、<code>buffer++</code> は「次の文字へ進む」という意味です(ポインタ操作)。難しければ、**「空白を <code>\0</code> に変えて単語を区切り、各単語の先頭の場所を <code>args</code> に記録している」**とだけ理解すれば大丈夫です。<code>cd /tmp</code> を追うと、こう動きます。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>1周目: buffer は先頭 &#39;c&#39; を指している
+       → &#39;c&#39; は空白でないので args[0] に「&#39;c&#39; の場所」を記録
+       → 空白に当たるまで進む（c → d → ␣ で止まる）
+
+       args[0] ─┐
+                ▼
+        c  d  ␣  /  t  m  p  \0  \0
+
+2周目: いま空白 &#39;␣&#39; を指している
+       → 空白を \0 に置き換える（ここで &#34;cd&#34; が区切られる!）
+       → 次の &#39;/&#39; は空白でないので args[1] に「&#39;/&#39; の場所」を記録
+
+       args[0]      args[1]
+        │            │
+        ▼            ▼
+        c  d  \0  /  t  m  p  \0  \0
+              └ここが \0 になった
+
+3周目: 進んだ先が \0 なので、ループ終了
+</code></pre>
+</div>
+<p>結果として、<code>args[0]</code> は <code>"cd"</code>、<code>args[1]</code> は <code>"/tmp"</code> を指すようになります。もとは 1 本だった文字列が、<code>\0</code> を境に 2 つの単語に切り分けられました。</p>
+<p><strong>④ 仕上げ — 配列の終わりを示して返す</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">    args[arg_index] = NULL;   /* 引数の最後の目印(番兵) */
+
+    if (arg_index == 0) {     /* 単語が 1 つもなければ空行 */
+        return 3;
+    }
+    return 0;                 /* 通常のコマンド */
+}
+</code></pre>
+</div>
+<p>最後に <code>args</code> の末尾へ <code>NULL</code> を入れて「ここで引数は終わり」と示します。まとめると、<code>cd /tmp</code> は最終的にこうなります。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>args[0] → &#34;cd&#34;
+args[1] → &#34;/tmp&#34;
+args[2] → NULL
+</code></pre>
+</div>
+<aside class="warning"><p><strong>Note: </strong><code>parse</code> が返す数字には意味があります。<code>0</code> = 通常のコマンド、<code>2</code> = exit、<code>3</code> = 空行。この数字を見て <code>main</code> が次の動きを決めます。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">main に parse をつなぐ</h2>
+<p><code>parse</code> ができたので、<code>main</code> から呼び出します。あわせて、コマンドを実行する係の <code>execute_command</code>(中身は次のステップで作ります)も呼ぶようにします。<code>myshell.c</code> の先頭と <code>main</code> を、次のように書き換えます。</p>
+<p>まず、ファイルの先頭(<code>#include</code> と <code>#define</code> のあたり)を差し替えます。</p>
+<p><code>myshell.c</code>（先頭）</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;     /* chdir, getcwd, fork, execvp（後で使う） */
+#include &lt;sys/wait.h&gt;   /* wait（後で使う） */
+
+#define BUFLEN      1024   /* 入力バッファの大きさ */
+#define MAXARGNUM    256   /* 引数の最大数 */
+#define PATH_MAX_LEN 1024
+
+int  parse(char buffer[], char *args[]);
+void execute_command(char *args[]);
+</code></pre>
+</div>
+<p>次に、<code>main</code> の中の確認用の <code>printf("入力: ...")</code> を、<code>parse</code> と <code>execute_command</code> の呼び出しに置き換えます。<code>main</code> 全体はこうなります。</p>
+<p><code>myshell.c</code>（main 関数）</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">int main(void)
+{
+    char command_buffer[BUFLEN];   /* 入力を読み込む箱 */
+    char *args[MAXARGNUM];         /* 解析後の引数の配列 */
+    char *result;                  /* fgets の返り値 */
+    int  status;                   /* parse の返り値 */
+
+    for (;;) {
+        printf(&#34;myshell&gt; &#34;);
+
+        result = fgets(command_buffer, BUFLEN, stdin);
+        if (result == NULL) {          /* Ctrl-D で終了 */
+            printf(&#34;\n&#34;);
+            break;
+        }
+
+        status = parse(command_buffer, args);
+
+        if (status == 2) {             /* exit */
+            printf(&#34;done.\n&#34;);
+            break;
+        }
+        if (status == 3) {             /* 空行 */
+            continue;
+        }
+
+        execute_command(args);         /* コマンドを実行する */
+    }
+    return 0;
+}
+</code></pre>
+</div>
+<p>最後に、まだ中身のない <code>execute_command</code> を用意します。<code>parse</code> 関数の<strong>下</strong>に、次を貼り付けてください。中身は次のステップから育てていきます。</p>
+<p><code>myshell.c</code>（parse の下に追加）</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">void execute_command(char *args[])
+{
+    /* === 課題: ここに cd の処理を書く === */
+
+    /* === 発展課題: ここで外部コマンドを実行する === */
+
+    printf(&#34;まだ実装されていません: %s\n&#34;, args[0]);
+}
+</code></pre>
+</div>
+<h2 is-upgraded data-claat-source-heading-level="3">骨組みの完成を確認する</h2>
+<p>これで骨組みが完成しました。コンパイルして動かします。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">gcc myshell.c -o myshell
+./myshell
+</code></pre>
+</div>
 <p><strong>期待される出力:</strong></p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -697,29 +1067,95 @@ myshell&gt; exit
 done.
 </code></pre>
 </div>
-<p>まだ何も実行できませんが、これが出発点です。<code>exit</code> または <code>Ctrl-D</code> で終了できます。</p>
+<ul>
+<li>コマンドを打つと「まだ実装されていません: ○○」と出る(= <code>parse</code> が働き、<code>execute_command</code> が呼ばれている)</li>
+<li><code>exit</code> と打つと <code>done.</code> と出て終了する</li>
+<li><code>Ctrl-D</code> でも終了する</li>
+</ul>
+<p>まだ何も実行できませんが、これが土台です。ここに <code>cd</code> と外部コマンドの実行を足していきます。</p>
 <aside class="special"><p><strong>Tip:</strong> コードを書き換えたら、そのたびに <code>gcc myshell.c -o myshell</code> でコンパイルし直してから <code>./myshell</code> を実行します。この 2 つはこれから何度も繰り返します。</p></aside>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="【課題】cd コマンドを実装する" duration="20">
-        <p>いよいよ本題です。<code>cd</code> を自分の手で実装します。その前に、<strong>なぜ </strong></p>
-<p><strong><code>cd</code></strong></p>
-<p><strong> だけ特別な作りが必要なのか</strong>を確認しておきましょう。ここが今日いちばん大事なポイントです。</p>
+        <p>いよいよ本題です。<code>cd</code> を自分の手で実装します。その前に、<strong>「いまいるディレクトリ」はどこにあって、それを変えるには何が必要か</strong>を押さえておきましょう。ここが今日いちばん大事なポイントです。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">カレントディレクトリは「カーネルが管理する情報」</h2>
+<p>「いまどのディレクトリにいるか(カレントディレクトリ)」は、実は <strong>あなたのプログラムの中の変数ではありません。</strong> これは <strong>カーネルが、プロセスごとに覚えている情報</strong>です。</p>
+<p>スライドで見たとおり、カーネルは各プロセスの状態(使っているメモリ、開いているファイルなど)を管理しています。カレントディレクトリも、その一つです。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code>カーネルが、プロセスごとに状態を管理している：
+
+  プロセスA（あなたのシェル） ... カレントディレクトリ = /home/you
+  プロセスB（別のプログラム）   ... カレントディレクトリ = /tmp
+                                            ↑ プロセスごとに別々
+</code></pre>
+</div>
+<p>つまりディレクトリを変えるには、<strong>自分でどこかの変数を書き換えるのではなく、カーネルに「移動して」とお願いする</strong>必要があります。この「お願い」こそが、スライドで学んだ <strong>システムコール</strong>です。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">なぜ cd は「組み込みコマンド」なのか</h2>
-<p>スライドで見たとおり、シェルは <code>ls</code> のような外部コマンドを <strong>子プロセスを作って(fork)</strong> その中で実行します。ここで効いてくるのが、<strong>プロセスはそれぞれ独立した「作業ディレクトリ」を持つ</strong>という性質です。</p>
-<p>もし <code>cd</code> を外部コマンドと同じように、子プロセスの中で実行したらどうなるでしょう?</p>
+<p>カレントディレクトリが <strong>プロセスごとに</strong> 管理されている、という点が <code>cd</code> の作りを決めます。</p>
+<p>シェルは <code>ls</code> のような外部コマンドを <strong>子プロセスを作って(fork)</strong> その中で実行します。もし <code>cd</code> を同じように子プロセスの中で実行したら、どうなるでしょう?</p>
 <ul>
-<li>子プロセスの中で作業ディレクトリを変える</li>
-<li>→ 変わるのは <strong>子プロセスの</strong>ディレクトリだけ</li>
+<li>子プロセスの中で、カーネルに「移動して」とお願いする</li>
+<li>→ 変わるのは <strong>子プロセスの</strong>カレントディレクトリだけ</li>
 <li>→ 子プロセスはコマンドが終わると消えてしまう</li>
-<li>→ <strong>親であるシェルのディレクトリは、まったく変わらない</strong></li>
+<li>→ <strong>親であるシェルのカレントディレクトリは、まったく変わらない</strong></li>
 </ul>
-<p>つまり <code>cd</code> を外部コマンドと同じ作りにすると、<strong>まったく効きません。</strong> だから <code>cd</code> は fork せず、<strong>シェル自身のプロセスの中で直接ディレクトリを変える</strong>必要があります。このように、シェル本体が自分で処理するコマンドを <strong>組み込み(built-in)コマンド</strong> と呼びます。</p>
+<p>つまり <code>cd</code> を外部コマンドと同じ作りにすると、<strong>まったく効きません。</strong> だから <code>cd</code> は fork せず、<strong>シェル自身のプロセスの中で直接</strong>カーネルにお願いする必要があります。このように、シェル本体が自分で処理するコマンドを <strong>組み込み(built-in)コマンド</strong> と呼びます。</p>
 <aside class="warning"><p><strong>Note: </strong><code>pwd</code> や <code>ls</code> は外部コマンド(別プログラム)ですが、<code>cd</code> はどんなシェルでも組み込みコマンドです。理由はいま説明したとおりです。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">使うシステムコール: chdir と getcwd</h2>
+<p>「カーネルにお願いする」ための関数が用意されています。<code>cd</code> では次の 2 つを使います(どちらも、中でシステムコールを呼ぶ関数です)。</p>
+<p><strong><code>chdir</code></strong></p>
+<p><strong> — カレントディレクトリを変える</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">int chdir(const char *path);
+</code></pre>
+</div>
+<ul>
+<li><code>path</code> ... 移動先のディレクトリのパス(例: <code>"/tmp"</code>)</li>
+<li>返り値 ... 成功なら <code>0</code>、失敗(パスが存在しない等)なら <code>-1</code></li>
+</ul>
+<p><strong><code>getcwd</code></strong></p>
+<p><strong> — 今いるディレクトリのパスを取得する</strong></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">char *getcwd(char *buf, size_t size);
+</code></pre>
+</div>
+<ul>
+<li><code>buf</code> ... 現在のパスを書き込むための配列</li>
+<li><code>size</code> ... その配列の大きさ(<code>sizeof(buf)</code> を渡せばOK)</li>
+<li>返り値 ... 成功なら <code>buf</code>、失敗なら <code>NULL</code></li>
+</ul>
+<aside class="warning"><p><strong>Note:</strong> ほかに 2 つ、補助的な関数を使います。<code>getenv("HOME")</code> は環境変数 <code>HOME</code>(あなたのホームディレクトリのパス)を取り出す関数で、引数なしの <code>cd</code> で使います。<code>perror("メッセージ")</code> は、直前の失敗の理由を人間向けに表示する関数です。</p></aside>
 <h2 is-upgraded data-claat-source-heading-level="3">cd 関数を書く</h2>
-<p>ディレクトリの変更には、<code>chdir()</code> というシステムコールのラッパー関数を使います。<code>execute_command</code> の <strong>すぐ上</strong>に、次の <code>cd</code> 関数を追加します。</p>
+<p>いま紹介した関数を使って、<code>cd</code> を実装します。<code>execute_command</code> の <strong>すぐ上</strong>に、次の枠組みを貼り付けてください。<strong><code>chdir</code></strong></p>
+<p><strong> を呼ぶ 2 か所(</strong></p>
+<p><strong><code>TODO</code></strong></p>
+<p><strong>)は、自分で書いてみましょう。</strong></p>
 <p><code>myshell.c</code>（<code>execute_command</code> の上に追加）</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -735,11 +1171,13 @@ done.
     int result;
 
     if (args[1] == NULL) {
-        /* 引数なし（&#34;cd&#34; だけ）ならホームディレクトリへ */
-        result = chdir(getenv(&#34;HOME&#34;));
+        /* TODO ①: ホームディレクトリ getenv(&#34;HOME&#34;) へ移動し、
+                   返り値を result に代入する */
+
     } else {
-        /* &#34;cd &lt;パス&gt;&#34; なら、そのパスへ移動 */
-        result = chdir(args[1]);
+        /* TODO ②: args[1] のパスへ移動し、
+                   返り値を result に代入する */
+
     }
 
     if (result != 0) {
@@ -753,7 +1191,35 @@ done.
 }
 </code></pre>
 </div>
-<p><code>chdir()</code> がディレクトリを変える本体です。成功したら <code>getcwd()</code> で今いる場所を取り出して表示し、失敗したら <code>perror()</code> で理由を出します。</p>
+<p><code>chdir</code> の返り値(成功なら <code>0</code>)を <code>result</code> で受け取り、それを見て「成功 → 今いる場所を表示」「失敗 → エラー理由を表示」と分けています。<code>TODO ①</code> と <code>TODO ②</code> を埋めてみましょう。</p>
+<aside class="special"><p><strong>Tip:</strong> どちらも <code>chdir(パス)</code> を呼んで、その返り値を <code>result = ...</code> で受け取るだけです。移動先のパスが、<code>①</code> はホームディレクトリ、<code>②</code> は <code>args[1]</code> になります。</p></aside>
+<p>書けたら答え合わせです。</p>
+<p><code>TODO ①</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">        result = chdir(getenv(&#34;HOME&#34;));
+</code></pre>
+</div>
+<p><code>TODO ②</code></p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-c" class="language-c">        result = chdir(args[1]);
+</code></pre>
+</div>
 <h2 is-upgraded>execute_command から cd を呼ぶ</h2>
 <p>次に、コマンド名が <code>cd</code> だったときに、いま作った関数を呼ぶようにします。<code>execute_command</code> を次のように書き換えます。</p>
 <p><code>myshell.c</code></p>
