@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <meta name="theme-color" content="#4F7DC9">
   <meta charset="UTF-8">
-  <title>WebMCP を作って Antigravity から呼び出してみよう！ WebMCP 開発ハンズオン</title>
+  <title>WebMCP を作って Antigravity IDE から呼び出してみよう！ WebMCP 開発ハンズオン</title>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
   <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="libs/codelab-elements.css">
@@ -18,8 +18,8 @@
       color: red;
     }
   </style>
-<meta id="claat-local-ogp-og-title" property="og:title" content="WebMCP を作って Antigravity から呼び出してみよう！ WebMCP 開発ハンズオン">
-<meta id="claat-local-ogp-twitter-title" name="twitter:title" content="WebMCP を作って Antigravity から呼び出してみよう！ WebMCP 開発ハンズオン">
+<meta id="claat-local-ogp-og-title" property="og:title" content="WebMCP を作って Antigravity IDE から呼び出してみよう！ WebMCP 開発ハンズオン">
+<meta id="claat-local-ogp-twitter-title" name="twitter:title" content="WebMCP を作って Antigravity IDE から呼び出してみよう！ WebMCP 開発ハンズオン">
 <meta id="claat-local-ogp-og-description" property="og:description" content="WebMCP を使って席予約サイトの機能を AI エージェントから呼び出すハンズオン">
 <meta id="claat-local-ogp-twitter-description" name="twitter:description" content="WebMCP を使って席予約サイトの機能を AI エージェントから呼び出すハンズオン">
 <meta id="claat-local-ogp-twitter-card" name="twitter:card" content="summary_large_image">
@@ -385,16 +385,16 @@
   <google-codelab codelab-gaid=""
                   codelab-ga4id=""
                   id="webmcp-agent"
-                  title="WebMCP を作って Antigravity から呼び出してみよう！ WebMCP 開発ハンズオン"
+                  title="WebMCP を作って Antigravity IDE から呼び出してみよう！ WebMCP 開発ハンズオン"
                   environment="web"
                   feedback-link="https://github.com/gdg-jp/ticket-booking-sample/issues">
     
-      <google-codelab-step label="はじめに" duration="5">
-        <p>このコードラボでは、既存の席予約サイトに WebMCP を追加し、Antigravity CLI の AI エージェントから席の検索、予約、予約確認、キャンセルを行えるようにします。</p>
+      <google-codelab-step label="はじめに" duration="3">
+        <p>このコードラボでは、既存の席予約サイトに WebMCP を追加し、Antigravity IDE の AI エージェントから席の検索、予約、予約確認、キャンセルを行えるようにします。</p>
 <p class="image-container"><img alt="WebMCP に対応した席予約サイトの完成イメージ" src="img/c07f3f20e9d3103d.png"></p>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで作るもの</h2>
 <p>開始時点の席予約サイトは、人がフォームやボタンを操作すれば予約できます。このサイトに WebMCP の tool を追加し、AI エージェントにも同じ機能を利用できる入口を用意します。</p>
-<p>完成すると、Antigravity に次のような自然言語で依頼できます。</p>
+<p>完成すると、Antigravity IDE の Agent パネルに次のような自然言語で依頼できます。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -419,15 +419,14 @@ A-1 を予約してください。
 <li>JSON Schema で tool の入力を定義する方法</li>
 <li>ブラウザ内のログインセッションを WebMCP tool から再利用する方法</li>
 <li>読み取り tool と状態変更 tool を区別する方法</li>
-<li>Antigravity から WebMCP tool を実行して確認する方法</li>
+<li>Antigravity IDE の Agent パネルから WebMCP tool を実行して確認する方法</li>
 </ul>
 <h2 is-upgraded data-claat-source-heading-level="3">必要なもの</h2>
 <ul>
 <li>Windows または macOS の PC</li>
 <li>Google Chrome</li>
-<li>Visual Studio Code</li>
+<li>Antigravity IDE</li>
 <li>Node.js と npm</li>
-<li>Antigravity CLI</li>
 <li>connpass ID</li>
 <li>GitHub からファイルをダウンロードできるネットワーク</li>
 </ul>
@@ -435,7 +434,7 @@ A-1 を予約してください。
 <ul>
 <li>HTML のタグと属性に関する基本的な理解</li>
 <li>JavaScript の関数と object に関する基本的な理解</li>
-<li>ターミナルまたは PowerShell でコマンドを実行できること</li>
+<li>IDE のターミナルでコマンドを実行できること</li>
 </ul>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで扱わないこと</h2>
 <ul>
@@ -445,7 +444,7 @@ A-1 を予約してください。
 <li>Antigravity 以外の AI エージェントでの動作保証</li>
 <li>WebMCP 仕様のすべての API</li>
 </ul>
-<aside class="special"><p><strong>補足:</strong> WebMCP は実験段階の仕様です。このコードラボでは、指定された Chrome、拡張機能、MCP bridge、Antigravity CLI の組み合わせを使います。</p></aside>
+<aside class="special"><p><strong>補足:</strong> WebMCP は実験段階の仕様です。このコードラボでは、指定された Chrome、拡張機能、MCP bridge、Antigravity IDE の組み合わせを使います。</p></aside>
 
 
       </google-codelab-step>
@@ -550,32 +549,40 @@ A-1 を予約してください。
 <p>また、WebMCP は、ブラウザが tool を AI エージェントへ渡す方法を MCP に限定していません。ブラウザに組み込まれた AI エージェントが直接利用することも、別の function calling の仕組みへ渡すこともできます。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで WebMCP を呼び出す方法</h2>
 <p>2026 年 7 月時点では、一般の開発者が WebMCP tool の動作確認に利用できる、WebMCP 対応のブラウザ組み込み AI エージェントはまだ一般提供されていません。Google は <a href="https://developer.chrome.com/blog/chrome-at-io26?hl=ja" target="_blank">Gemini in Chrome で今後 WebMCP API をサポートする予定</a>と案内しています。</p>
-<p>そこで、このコードラボでは WebMCP を体験するためのデモ環境として、Chrome 拡張機能と <code>webmcp-bridge-mcp</code> を使います。表示中のページが公開した WebMCP tool を MCP tool に変換し、Antigravity CLI から呼び出せるようにします。</p>
+<p>そこで、このコードラボでは WebMCP を体験するためのデモ環境として、Chrome 拡張機能と <code>webmcp-bridge-mcp</code> を使います。表示中のページが公開した WebMCP tool を MCP tool に変換し、Antigravity IDE の Agent パネルから呼び出せるようにします。</p>
 <p>今回の構成では、次の順番で処理が進みます。</p>
 <ol type="1">
 <li>席予約サイトが WebMCP tool を公開する</li>
 <li>Chrome 拡張機能が表示中のページから tool を読み取る</li>
-<li><code>webmcp-bridge-mcp</code> が WebMCP tool を MCP tool として Antigravity へ渡す</li>
-<li>Antigravity がユーザーの依頼に合う tool を選んで実行する</li>
+<li><code>webmcp-bridge-mcp</code> が WebMCP tool を MCP tool として Antigravity IDE へ渡す</li>
+<li>Antigravity IDE の Agent がユーザーの依頼に合う tool を選んで実行する</li>
 </ol>
-<p>この構成では、Antigravity が MCP host、Antigravity 内部の接続機能が MCP client、<code>webmcp-bridge-mcp</code> が MCP server にあたります。Chrome 拡張機能と bridge は、WebMCP と Antigravity を接続するためのデモ用の部品であり、WebMCP の仕様には含まれません。</p>
+<p>この構成では、Antigravity IDE が MCP host、Antigravity IDE 内部の接続機能が MCP client、<code>webmcp-bridge-mcp</code> が MCP server にあたります。Chrome 拡張機能と bridge は、WebMCP と Antigravity IDE を接続するためのデモ用の部品であり、WebMCP の仕様には含まれません。</p>
 <p>このあと、席予約サイトの機能を「情報を読む操作」と「予約状態を変更する操作」に分け、それぞれを WebMCP tool として公開します。tool を用意しても操作が自動的に安全になるわけではないため、予約やキャンセルのように状態を変更する操作は、その副作用を名前と説明に明記します。本番の Web アプリケーションでは、認証、認可、入力検証、必要に応じたユーザー確認もアプリケーション側で行います。</p>
-<p class="image-container"><img alt="WebMCP tool を Chrome 拡張機能と webmcp-bridge-mcp で Antigravity へ中継するデモ用の接続経路" src="img/c8e78cf3b1d87444.png"></p>
+<p class="image-container"><img alt="WebMCP tool を Chrome 拡張機能と webmcp-bridge-mcp で Antigravity IDE へ中継するデモ用の接続経路" src="img/c8e78cf3b1d87444.png"></p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="セットアップ" duration="20">
-        <p>このステップでは、インストールに時間がかかる Visual Studio Code、Node.js、Antigravity CLI を準備します。すでにインストール済みのものは、バージョン確認だけ行って次へ進んでください。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">Windows のセットアップ手順</h2>
-<h3 is-upgraded data-claat-source-heading-level="4">Visual Studio Code をインストールする</h3>
-<p>次の公式サイトから Windows 版をダウンロードし、インストーラを実行します。</p>
-<p><a href="https://code.visualstudio.com/Download" target="_blank"><paper-button class="colored" raised>Visual Studio Code をダウンロード</paper-button></a></p>
-<p>インストーラでは <strong>Add to PATH</strong> と <strong>Open with Code</strong> を有効にしておくと、後の操作が簡単になります。</p>
-<h3 is-upgraded data-claat-source-heading-level="4">Node.js と npm をインストールする</h3>
-<p>次の公式サイトから <strong>LTS</strong> と表示された Windows Installer をダウンロードして実行します。</p>
+      <google-codelab-step label="セットアップ" duration="10">
+        <p>このステップでは、コードの編集、コマンドの実行、AI エージェントとの対話をひとつの画面で行うため、Antigravity IDE と Node.js を準備します。コード編集と AI エージェントの操作は Antigravity IDE に集約します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">Antigravity IDE をインストールする</h2>
+<p>次の公式ページを開き、使用している OS に合う Antigravity IDE をダウンロードします。</p>
+<p><a href="https://antigravity.google/download" target="_blank"><paper-button class="colored" raised>Antigravity IDE をダウンロード</paper-button></a></p>
+<ul>
+<li>Windows: ダウンロードしたインストーラを実行し、画面の案内に従う</li>
+<li>macOS: ダウンロードしたファイルを開き、画面の案内に従う</li>
+</ul>
+<p>インストール後、Antigravity IDE を起動して Google アカウントでログインします。初期設定で Agent の利用方法を選ぶ画面が表示された場合は、実行内容を確認しながら進められる <strong>Review-driven development</strong> を選びます。</p>
+<p>エディタ画面が表示され、右側に Agent パネルがあれば準備完了です。Agent パネルが見えない場合は、画面右上の Agent アイコンを押して表示します。</p>
+<aside class="special"><p><strong>補足:</strong> Antigravity IDE のインストールと画面構成は、<a href="https://codelabs.developers.google.com/getting-started-agy-ide" target="_blank">Antigravity IDE 公式コードラボ</a>でも確認できます。</p></aside>
+<p class="image-container"><img alt="Antigravityダウンロードガイド1" src="img/57b35a7992a3d5f5.png"></p>
+<p class="image-container"><img alt="Antigravityダウンロードガイド2" src="img/14c96dc4481388b7.png"></p>
+<h2 is-upgraded data-claat-source-heading-level="3">Node.js と npm をインストールする</h2>
+<p>次の公式サイトから <strong>LTS</strong> と表示された、使用している OS 向けのインストーラをダウンロードして実行します。</p>
 <p><a href="https://nodejs.org/en/download" target="_blank"><paper-button class="colored" raised>Node.js LTS をダウンロード</paper-button></a></p>
-<p>インストール後、新しい PowerShell を開いて確認します。</p>
+<p class="image-container"><img alt="Node.jsダウンロードガイド" src="img/137ba1eb7fb0b351.png"></p>
+<p>インストール後、Antigravity IDE のメニューから <strong>Terminal</strong> → <strong>New Terminal</strong> を選び、次のコマンドを実行します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -585,7 +592,7 @@ A-1 を予約してください。
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-powershell" class="language-powershell">node --version
+<pre><code language="language-shell" class="language-shell">node --version
 npm --version
 </code></pre>
 </div>
@@ -603,108 +610,16 @@ npm --version
 11.x.x
 </code></pre>
 </div>
-<p>バージョン番号が表示されれば成功です。コマンドが見つからない場合は PowerShell を開き直し、それでも解決しなければ PC を再起動します。</p>
-<h3 is-upgraded data-claat-source-heading-level="4">Antigravity CLI をインストールする</h3>
-<p>PowerShell で公式インストールスクリプトを実行します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-powershell" class="language-powershell">irm https://antigravity.google/cli/install.ps1 | iex
-</code></pre>
-</div>
-<p>PowerShell を開き直して確認します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-powershell" class="language-powershell">agy --version
-</code></pre>
-</div>
-<p><code>agy</code>に続いてバージョン番号が表示されれば成功です。</p>
-<aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>agy</code>が見つからない場合は、PowerShellを開き直してください。Windowsでは通常、<code>%LOCALAPPDATA%\agy\bin</code>へインストールされます。</p></aside>
-<h2 is-upgraded data-claat-source-heading-level="3">macOS のセットアップ手順</h2>
-<h3 is-upgraded data-claat-source-heading-level="4">Visual Studio Code をインストールする</h3>
-<p>次の公式サイトから macOS 版をダウンロードします。ZIP を展開し、Visual Studio Code を <strong>アプリケーション</strong> フォルダへ移動します。</p>
-<p><a href="https://code.visualstudio.com/Download" target="_blank"><paper-button class="colored" raised>Visual Studio Code をダウンロード</paper-button></a></p>
-<h3 is-upgraded data-claat-source-heading-level="4">Node.js と npm をインストールする</h3>
-<p>次の公式サイトから <strong>LTS</strong> と表示された macOS Installer をダウンロードして実行します。</p>
-<p><a href="https://nodejs.org/en/download" target="_blank"><paper-button class="colored" raised>Node.js LTS をダウンロード</paper-button></a></p>
-<p>インストール後、新しいターミナルを開いて確認します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">node --version
-npm --version
-</code></pre>
-</div>
-<p><strong>期待される出力:</strong></p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">v24.x.x
-11.x.x
-</code></pre>
-</div>
-<h3 is-upgraded data-claat-source-heading-level="4">Antigravity CLI をインストールする</h3>
-<p>ターミナルで公式インストールスクリプトを実行します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">curl -fsSL https://antigravity.google/cli/install.sh | bash
-</code></pre>
-</div>
-<p>ターミナルを開き直して確認します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">agy --version
-</code></pre>
-</div>
-<p><code>agy</code>に続いてバージョン番号が表示されれば成功です。</p>
-<aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>agy</code>が見つからない場合は、ターミナルを開き直してください。macOSでは通常、<code>~/.local/bin/agy</code>へインストールされます。</p></aside>
+<p>バージョン番号が表示されれば成功です。コマンドが見つからない場合は Antigravity IDE を再起動し、それでも解決しなければ PC を再起動します。</p>
+<aside class="special"><p><strong>Tips</strong>: Node.js のバージョンは 18 以上であれば問題ありません。</p></aside>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="プロジェクトを開く" duration="20">
-        <p>このステップでは、テンプレートコードをダウンロードし、Antigravity から最初から用意されている <code>ping</code> tool を実行できるところまで準備します。</p>
+      <google-codelab-step label="プロジェクトを開く" duration="10">
+        <p>このステップでは、テンプレートコードをダウンロードし、Antigravity IDE の Agent パネルから <code>ping</code> tool を実行します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">テンプレートコードをダウンロードする</h2>
-<p>次のボタンから ZIP ファイルをダウンロードします。Git は使いません。</p>
+<p>このボタンから ZIP ファイルをダウンロードします。</p>
 <p><a href="https://github.com/gdg-jp/ticket-booking-template/archive/refs/heads/main.zip" target="_blank"><paper-button class="colored" raised>テンプレートコードをダウンロード</paper-button></a></p>
 <p>ダウンロードした <code>ticket-booking-template-main.zip</code> を展開します。</p>
 <ul>
@@ -712,24 +627,20 @@ npm --version
 <li>macOS: Finder で ZIP をダブルクリックする</li>
 </ul>
 <p>展開後はこのようなファイルが確認できます。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">ticket-booking-template-main
-├── app.js
-├── index.html
-├── style.css
-└── webmcp.js
-</code></pre>
-</div>
+<p class="image-container"><img alt="template-expanded" src="img/590312a2a25ede83.png"></p>
+<h2 is-upgraded data-claat-source-heading-level="3">プロジェクトを Antigravity IDE で開く</h2>
+<p>Antigravity IDE を起動し、**Open Folder...**から<code>ticket-booking-template-main</code>を開きます。</p>
+<p class="image-container"><img alt="Antigravity Open Folder" src="img/d09810c2841ae336.png"></p>
+<p class="image-container"><img alt="Antigravity Open Folder 2" src="img/ecd914f655bba4bc.png"></p>
+<p class="image-container"><img alt="Antigravity Trust author" src="img/8a6ff91d144152ac.png"></p>
+<aside class="special"><p><strong>Tips</strong>: Trust Author を選択してください。</p></aside>
+<p>Explorerに次のファイルが表示されることを確認します。</p>
+<p class="image-container"><img alt="Antigravity Explorer" src="img/7a631c263111b67.png"></p>
+<p>これ以降は、左側の Explorer でファイルを選んで中央のエディタで編集し、右側の Agent パネルへ依頼します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">席予約サイトをローカルサーバーで起動する</h2>
-<p>PowerShellまたはターミナルを開き、展開した<code>ticket-booking-template-main</code>フォルダへ移動します。次のコマンドでローカルサーバーを起動します。</p>
+<p>Antigravity IDE のメニューから <strong>Terminal</strong> → <strong>New Terminal</strong> を選びます。</p>
+<p class="image-container"><img alt="agy_open_terminal.png" src="img/d889f5d2250b89b.png"></p>
+<p>ターミナルの現在位置が<code>ticket-booking-template-main</code>になっていることを確認し、次のコマンドでローカルサーバーを起動します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -743,7 +654,8 @@ npm --version
 </code></pre>
 </div>
 <p>初回実行時に<code>serve</code>のインストール確認が表示された場合は、<code>y</code>を入力してEnterキーを押します。<code>Local</code>に<code>http://localhost:8080</code>と表示されたら、Google ChromeでそのURLを開きます。</p>
-<p>コードラボが終わるまで、ローカルサーバーを起動したPowerShellまたはターミナルは開いたままにします。</p>
+<p class="image-container"><img alt="agy_npx_serve.png" src="img/f570919fea91a20.png"></p>
+<p>コードラボが終わるまで、ローカルサーバーを起動した Antigravity IDE のターミナルは開いたままにします。</p>
 <p><strong>期待される状態:</strong></p>
 <ul>
 <li>「席予約 WebMCP ハンズオン」と表示される</li>
@@ -756,34 +668,17 @@ npm --version
 <p><strong>ログイン</strong>セクションへ自分のconnpass IDを入力し、<strong>ログイン</strong>ボタンを押します。<code>ログイン中: &lt;自分のconnpass ID&gt;</code>と表示されれば成功です。</p>
 <p>参加者IDは<code>participantId</code>というセッションCookieへ保存されます。ページを再読み込みしても同じブラウザセッション内ではログイン状態が残り、予約、予約確認、キャンセルのAPI呼び出しで<code>X-Participant-ID</code>ヘッダーとしてサーバーへ渡されます。</p>
 <aside class="special"><p><strong>補足:</strong> このログインはハンズオン用の参加者ID選択です。本番向けの本人確認や認可を実装するものではありません。</p></aside>
-<h2 is-upgraded data-claat-source-heading-level="3">プロジェクトを Visual Studio Code で開く</h2>
-<p>Visual Studio Code を起動し、<strong>File</strong> → **Open Folder...**から<code>ticket-booking-template-main</code>を開きます。</p>
-<p>Explorerに次のファイルが表示されることを確認します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">ticket-booking-template-main
-├── README.md
-├── app.js
-├── index.html
-├── style.css
-└── webmcp.js
-</code></pre>
-</div>
 <h2 is-upgraded data-claat-source-heading-level="3">WebMCP bridge MCP を設定する</h2>
-<p>AntigravityからChrome側のWebMCP toolを利用するため、<code>webmcp-bridge-mcp</code>を設定します。</p>
-<p>設定ファイルは次の場所です。フォルダやファイルがなければ作成します。</p>
-<ul>
-<li>Windows: <code>%USERPROFILE%\.gemini\config\mcp_config.json</code></li>
-<li>macOS: <code>~/.gemini/config/mcp_config.json</code></li>
-</ul>
-<p><code>mcp_config.json</code>を次の内容にします。</p>
+<p>Antigravity IDE から Chrome 側の WebMCP tool を利用するため、<code>webmcp-bridge-mcp</code>を設定します。設定ファイルの保存場所を自分で探す必要はありません。</p>
+<ol type="1">
+<li>Agent パネル右上の <strong>...</strong> を押す</li>
+<li><strong>MCP Servers</strong> を選ぶ</li>
+<li>画面右上の <strong>Manage MCP Servers</strong> を押す</li>
+<li><strong>View raw config</strong> を押す</li>
+</ol>
+<p class="image-container"><img alt="agy_mcp_1" src="img/45627cfe3967730b.png"></p>
+<p class="image-container"><img alt="agy_mcp_2" src="img/d0f80eee9b78211e.png"></p>
+<p>Antigravity IDE のエディタで<code>mcp_config.json</code>が開きます。ファイルが空、または<code>mcpServers</code>がまだない場合は、次の内容にします。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -803,7 +698,11 @@ npm --version
 }
 </code></pre>
 </div>
-<p>この設定により、Antigravityは<code>npx -y webmcp-bridge-mcp</code>をローカルMCP serverとして起動します。</p>
+<p><code>mcp_config.json</code>に別の MCP server がすでにある場合は、既存の設定を消さず、<code>mcpServers</code>の中へ<code>webmcp</code>の設定を追加します。</p>
+<p>保存したら MCP Servers の画面へ戻り、<strong>Refresh</strong>を押します。<code>webmcp</code>が表示され、有効になっていれば設定完了です。この設定により、Antigravity IDE は<code>npx -y webmcp-bridge-mcp</code>をローカル MCP server として起動します。</p>
+<aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>webmcp</code>が表示されない場合は、<code>mcp_config.json</code>を保存したことと、JSON の括弧やカンマが正しいことを確認してから、もう一度 <strong>Refresh</strong>を押してください。</p></aside>
+<p class="image-container"><img alt="agy_mcp_3" src="img/7d3772a83bc9e597.png"></p>
+<p class="image-container"><img alt="agy_mcp_4" src="img/38db5b6bdf04782.png"></p>
 <h2 is-upgraded data-claat-source-heading-level="3">Chrome の WebMCP flag を有効にする</h2>
 <p>Chromeのアドレスバーに次を入力します。</p>
 <div class="claat-code-block" data-code-theme="light">
@@ -820,35 +719,7 @@ npm --version
 </div>
 <p><strong>WebMCP Testing</strong>を<strong>Enabled</strong>へ変更し、Chromeを再起動します。再起動後、<code>http://localhost:8080</code>をChromeで開き直します。</p>
 <aside class="troubleshooting"><p><strong>Troubleshooting:</strong> flagが見つからない場合は、Chromeを最新版へ更新してからもう一度確認してください。</p></aside>
-<h2 is-upgraded data-claat-source-heading-level="3">Antigravity CLI を起動する</h2>
-<p>新しいPowerShellまたはターミナルで次を実行します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">agy
-</code></pre>
-</div>
-<p>初回起動時にブラウザが開いた場合は、案内に従ってログインします。Antigravityが起動したら、プロンプトに次を入力します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">/mcp
-</code></pre>
-</div>
-<p>MCP managerで<code>webmcp</code>または<code>webmcp-bridge-mcp</code>に<code>✓</code>が表示されれば、MCP serverの起動は成功です。</p>
-<aside class="warning"><p><strong>Warning:</strong> ここから拡張機能の追加と<code>ping</code>の確認が終わるまで、Antigravity CLIを閉じないでください。CLIを閉じるとbridgeの接続も停止します。</p></aside>
+<p class="image-container"><img alt="chrome_flag.png" src="img/c1bea4b6b2049510.png"></p>
 <h2 is-upgraded data-claat-source-heading-level="3">Chrome 拡張機能を追加する</h2>
 <p>次のReleasesページから、講師が指定した<code>webmcp-bridge-extension</code>をダウンロードします。</p>
 <p><a href="https://github.com/gdg-jp/webmcp-bridge-extension/releases/latest/download/webmcp-bridge-extension.zip" target="_blank"><paper-button class="colored" raised>WebMCP bridge 拡張機能をダウンロード</paper-button></a></p>
@@ -861,7 +732,7 @@ npm --version
 <li>席予約サイトを再読み込みする</li>
 </ol>
 <h2 is-upgraded data-claat-source-heading-level="3"><code>ping</code> tool で接続を確認する</h2>
-<p>Antigravityへ次のように依頼します。</p>
+<p>Antigravity IDE の Agent パネルへ次のように依頼します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -881,12 +752,12 @@ npm --version
 <li><code>message: "pong"</code>が返る</li>
 <li><code>pageTitle</code>に席予約サイトのタイトルが入る</li>
 </ul>
-<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> toolが見えない場合は、<code>/mcp</code>の接続状態、Chrome拡張機能、WebMCP flagを順に確認し、最後に席予約サイトを再読み込みしてください。</p></aside>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> toolが見えない場合は、MCP Servers 画面で<code>webmcp</code>が有効か、Chrome拡張機能が有効か、WebMCP flagが有効かを順に確認し、最後に席予約サイトを再読み込みしてください。</p></aside>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="席を予約する WebMCP tool を実装する" duration="12">
+      <google-codelab-step label="席を予約する WebMCP tool を実装する" duration="8">
         <p>このステップでは、既存の予約フォームを<code>reserve_seat</code> toolとして公開します。予約フォームが受け取るのは席番号だけです。参加者IDは、ログイン時に保存したCookieを既存のJavaScriptが読み取ります。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">宣言型 WebMCP とは</h2>
 <p>宣言型 WebMCP は、HTML フォームに専用の属性を追加し、そのフォームを AI エージェント向けの tool として公開する方法です。既存の入力欄、バリデーション、送信処理を再利用できるため、tool を登録する JavaScript を書かずに WebMCP へ対応できます。</p>
@@ -1062,7 +933,7 @@ npm --version
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-html" class="claat-diff-code language-html" data-claat-diff="true" data-claat-diff-language="html">&lt;form
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">&lt;form
   id=&#34;reservation-form&#34;
   action=&#34;https://api.webmcp.gdgs.jp/api/reservations&#34;
   method=&#34;post&#34;
@@ -1085,7 +956,7 @@ npm --version
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-html" class="claat-diff-code language-html" data-claat-diff="true" data-claat-diff-language="html">&lt;label&gt;
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">&lt;label&gt;
   席番号
   &lt;input
     name=&#34;seatId&#34;
@@ -1102,7 +973,7 @@ npm --version
 <p>Agentがフォームを送信すると、既存のsubmitハンドラが人の操作と同じ<code>reserveSeat()</code>を呼びます。<code>reserveSeat()</code>はCookieの参加者IDを<code>X-Participant-ID</code>ヘッダーへ設定し、<code>respondWith()</code>は予約結果をAgentへ返します。これにより、参加者IDをtoolの引数として公開せずにブラウザ内のログイン状態を利用できます。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">AI エージェントから予約 tool を呼び出す</h2>
 <p>保存後、Chromeで席予約サイトを再読み込みします。座席マップを見て、<code>A-1</code>から<code>F-5</code>までの空席を1つ選びます。</p>
-<p>Antigravityへ、選んだ空席を指定して依頼します。</p>
+<p>Antigravity IDE の Agent パネルへ、選んだ空席を指定して依頼します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -1147,7 +1018,7 @@ npm --version
 
       </google-codelab-step>
     
-      <google-codelab-step label="座席一覧を取得する WebMCP tool を実装する" duration="12">
+      <google-codelab-step label="座席一覧を取得する WebMCP tool を実装する" duration="8">
         <p>このステップでは、全席の状態を返す<code>list_seat</code> toolを追加します。Agentはこのtoolを使って、予約する前に空席を探せるようになります。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">命令型 WebMCP とは</h2>
 <p>命令型 WebMCP は、JavaScript から<code>document.modelContext.registerTool()</code>を呼び出し、AI エージェントが利用できる tool をプログラムとして登録する方法です。HTML フォームに対応しないデータ取得、複数の処理を組み合わせる操作、既存の JavaScript 関数を再利用する処理に適しています。</p>
@@ -1329,7 +1200,7 @@ controller.abort();
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-js" class="claat-diff-code language-js" data-claat-diff="true" data-claat-diff-language="js">  await document.modelContext.registerTool({
+<pre><code language="language-js" class="language-js claat-diff-code" data-claat-diff="true" data-claat-diff-language="js">  await document.modelContext.registerTool({
     name: &#34;ping&#34;,
     title: &#34;Ping&#34;,
     description: &#34;WebMCP の命令型 tool が登録できているか確認する。&#34;,
@@ -1375,7 +1246,7 @@ controller.abort();
 <p><code>getSeats()</code>は<code>app.js</code>に定義済みのAPI関数です。<code>index.html</code>が<code>app.js</code>の後に<code>webmcp.js</code>を読み込むため、toolから直接呼び出せます。</p>
 <p><code>list_seat</code>は予約データを変更しないため、<code>readOnlyHint: true</code>を付けます。これはAgentの判断を助けるhintであり、権限制御そのものではありません。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">AI エージェントから座席一覧を取得する</h2>
-<p>保存後、Chromeで席予約サイトを再読み込みします。Antigravityへ次のように依頼します。</p>
+<p>保存後、Chromeで席予約サイトを再読み込みします。Antigravity IDE の Agent パネルへ次のように依頼します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -1419,7 +1290,7 @@ controller.abort();
 
       </google-codelab-step>
     
-      <google-codelab-step label="自分の予約を確認する WebMCP tool を実装する" duration="10">
+      <google-codelab-step label="自分の予約を確認する WebMCP tool を実装する" duration="8">
         <p>このステップでは、ブラウザへログイン中の参加者の現在の予約を返す<code>get_my_reservation</code> toolを追加します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">引数を持たない tool を設計する</h2>
 <p><code>get_my_reservation</code>はブラウザ内のログイン状態を使うため、参加者IDを引数にしません。引数を持たないtoolも、空のobjectとしてJSON Schemaを定義します。</p>
@@ -1493,7 +1364,7 @@ controller.abort();
 </div>
 <p>このtoolはサーバー上の予約状態を読むだけなので、<code>readOnlyHint: true</code>を付けます。WebMCPの実装から入力欄の値や画面表示は変更しません。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">AI エージェントから予約情報を取得する</h2>
-<p>保存後、Chromeで席予約サイトを再読み込みします。Antigravityへ次のように依頼します。</p>
+<p>保存後、Chromeで席予約サイトを再読み込みします。Antigravity IDE の Agent パネルへ次のように依頼します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -1536,7 +1407,7 @@ controller.abort();
 
       </google-codelab-step>
     
-      <google-codelab-step label="予約をキャンセルする WebMCP tool を実装する" duration="10">
+      <google-codelab-step label="予約をキャンセルする WebMCP tool を実装する" duration="8">
         <p>このステップでは、ログイン中の参加者の予約を解除する<code>cancel_reservation</code> toolを追加します。これまでのtoolと異なり、サーバー上の状態を変更します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">状態を変更する tool を確認する</h2>
 <p><code>list_seat</code>と<code>get_my_reservation</code>はデータを読むtoolでした。<code>cancel_reservation</code>は予約を削除するため、読み取り専用ではありません。</p>
@@ -1648,8 +1519,8 @@ controller.abort();
 
       </google-codelab-step>
     
-      <google-codelab-step label="おめでとうございます！" duration="5">
-        <p>席予約サイトにWebMCPの入口を追加し、AntigravityからWebページの機能をtoolとして実行できるようになりました。</p>
+      <google-codelab-step label="おめでとうございます！" duration="0">
+        <p>席予約サイトにWebMCPの入口を追加し、Antigravity IDE の Agent パネルからWebページの機能をtoolとして実行できるようになりました。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">学んだこと</h2>
 <ul>
 <li>MCP と WebMCP の関係を説明する方法</li>
@@ -1659,7 +1530,7 @@ controller.abort();
 <li>ブラウザ内のログインセッションを WebMCP tool から再利用する方法</li>
 <li>読み取り tool と状態変更 tool を区別する方法</li>
 <li>UI と API 呼び出しを分離して既存ロジックを再利用する方法</li>
-<li>Antigravity から WebMCP tool を実行して確認する方法</li>
+<li>Antigravity IDE の Agent パネルから WebMCP tool を実行して確認する方法</li>
 </ul>
 <h2 is-upgraded data-claat-source-heading-level="3">作成した tool</h2>
 <table>

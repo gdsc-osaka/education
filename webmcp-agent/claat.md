@@ -6,13 +6,13 @@ status: Published
 feedback link: https://github.com/gdg-jp/ticket-booking-sample/issues
 author: GDG on Campus University of Osaka
 
-# WebMCP を作って Antigravity から呼び出してみよう！ WebMCP 開発ハンズオン
+# WebMCP を作って Antigravity IDE から呼び出してみよう！ WebMCP 開発ハンズオン
 
 ## はじめに
 
-Duration: 0:05:00
+Duration: 0:03:00
 
-このコードラボでは、既存の席予約サイトに WebMCP を追加し、Antigravity CLI の AI エージェントから席の検索、予約、予約確認、キャンセルを行えるようにします。
+このコードラボでは、既存の席予約サイトに WebMCP を追加し、Antigravity IDE の AI エージェントから席の検索、予約、予約確認、キャンセルを行えるようにします。
 
 ![WebMCP に対応した席予約サイトの完成イメージ](img/ogp.png)
 
@@ -20,7 +20,7 @@ Duration: 0:05:00
 
 開始時点の席予約サイトは、人がフォームやボタンを操作すれば予約できます。このサイトに WebMCP の tool を追加し、AI エージェントにも同じ機能を利用できる入口を用意します。
 
-完成すると、Antigravity に次のような自然言語で依頼できます。
+完成すると、Antigravity IDE の Agent パネルに次のような自然言語で依頼できます。
 
 ```text
 空いている席を教えてください。
@@ -39,15 +39,14 @@ A-1 を予約してください。
 - JSON Schema で tool の入力を定義する方法
 - ブラウザ内のログインセッションを WebMCP tool から再利用する方法
 - 読み取り tool と状態変更 tool を区別する方法
-- Antigravity から WebMCP tool を実行して確認する方法
+- Antigravity IDE の Agent パネルから WebMCP tool を実行して確認する方法
 
 ### 必要なもの
 
 - Windows または macOS の PC
 - Google Chrome
-- Visual Studio Code
+- Antigravity IDE
 - Node.js と npm
-- Antigravity CLI
 - connpass ID
 - GitHub からファイルをダウンロードできるネットワーク
 
@@ -55,7 +54,7 @@ A-1 を予約してください。
 
 - HTML のタグと属性に関する基本的な理解
 - JavaScript の関数と object に関する基本的な理解
-- ターミナルまたは PowerShell でコマンドを実行できること
+- IDE のターミナルでコマンドを実行できること
 
 ### このコードラボで扱わないこと
 
@@ -65,7 +64,7 @@ A-1 を予約してください。
 - Antigravity 以外の AI エージェントでの動作保証
 - WebMCP 仕様のすべての API
 
-> **補足:** WebMCP は実験段階の仕様です。このコードラボでは、指定された Chrome、拡張機能、MCP bridge、Antigravity CLI の組み合わせを使います。
+> **補足:** WebMCP は実験段階の仕様です。このコードラボでは、指定された Chrome、拡張機能、MCP bridge、Antigravity IDE の組み合わせを使います。
 
 ## MCP と WebMCP を理解する
 
@@ -152,50 +151,61 @@ WebMCP は MCP の後継や、MCP をブラウザへ移植したものではあ�
 
 2026 年 7 月時点では、一般の開発者が WebMCP tool の動作確認に利用できる、WebMCP 対応のブラウザ組み込み AI エージェントはまだ一般提供されていません。Google は [Gemini in Chrome で今後 WebMCP API をサポートする予定](https://developer.chrome.com/blog/chrome-at-io26?hl=ja)と案内しています。
 
-そこで、このコードラボでは WebMCP を体験するためのデモ環境として、Chrome 拡張機能と `webmcp-bridge-mcp` を使います。表示中のページが公開した WebMCP tool を MCP tool に変換し、Antigravity CLI から呼び出せるようにします。
+そこで、このコードラボでは WebMCP を体験するためのデモ環境として、Chrome 拡張機能と `webmcp-bridge-mcp` を使います。表示中のページが公開した WebMCP tool を MCP tool に変換し、Antigravity IDE の Agent パネルから呼び出せるようにします。
 
 今回の構成では、次の順番で処理が進みます。
 
 1. 席予約サイトが WebMCP tool を公開する
 2. Chrome 拡張機能が表示中のページから tool を読み取る
-3. `webmcp-bridge-mcp` が WebMCP tool を MCP tool として Antigravity へ渡す
-4. Antigravity がユーザーの依頼に合う tool を選んで実行する
+3. `webmcp-bridge-mcp` が WebMCP tool を MCP tool として Antigravity IDE へ渡す
+4. Antigravity IDE の Agent がユーザーの依頼に合う tool を選んで実行する
 
-この構成では、Antigravity が MCP host、Antigravity 内部の接続機能が MCP client、`webmcp-bridge-mcp` が MCP server にあたります。Chrome 拡張機能と bridge は、WebMCP と Antigravity を接続するためのデモ用の部品であり、WebMCP の仕様には含まれません。
+この構成では、Antigravity IDE が MCP host、Antigravity IDE 内部の接続機能が MCP client、`webmcp-bridge-mcp` が MCP server にあたります。Chrome 拡張機能と bridge は、WebMCP と Antigravity IDE を接続するためのデモ用の部品であり、WebMCP の仕様には含まれません。
 
 このあと、席予約サイトの機能を「情報を読む操作」と「予約状態を変更する操作」に分け、それぞれを WebMCP tool として公開します。tool を用意しても操作が自動的に安全になるわけではないため、予約やキャンセルのように状態を変更する操作は、その副作用を名前と説明に明記します。本番の Web アプリケーションでは、認証、認可、入力検証、必要に応じたユーザー確認もアプリケーション側で行います。
 
-![WebMCP tool を Chrome 拡張機能と webmcp-bridge-mcp で Antigravity へ中継するデモ用の接続経路](img/flow-webmcp-demo-bridge.png)
+![WebMCP tool を Chrome 拡張機能と webmcp-bridge-mcp で Antigravity IDE へ中継するデモ用の接続経路](img/flow-webmcp-demo-bridge.png)
 
 ## セットアップ
 
-Duration: 0:20:00
+Duration: 0:10:00
 
-このステップでは、インストールに時間がかかる Visual Studio Code、Node.js、Antigravity CLI を準備します。すでにインストール済みのものは、バージョン確認だけ行って次へ進んでください。
+このステップでは、コードの編集、コマンドの実行、AI エージェントとの対話をひとつの画面で行うため、Antigravity IDE と Node.js を準備します。コード編集と AI エージェントの操作は Antigravity IDE に集約します。
 
-### Windows のセットアップ手順
+### Antigravity IDE をインストールする
 
-#### Visual Studio Code をインストールする
-
-次の公式サイトから Windows 版をダウンロードし、インストーラを実行します。
+次の公式ページを開き、使用している OS に合う Antigravity IDE をダウンロードします。
 
 <button>
-  [Visual Studio Code をダウンロード](https://code.visualstudio.com/Download)
+  [Antigravity IDE をダウンロード](https://antigravity.google/download)
 </button>
 
-インストーラでは **Add to PATH** と **Open with Code** を有効にしておくと、後の操作が簡単になります。
+- Windows: ダウンロードしたインストーラを実行し、画面の案内に従う
+- macOS: ダウンロードしたファイルを開き、画面の案内に従う
 
-#### Node.js と npm をインストールする
+インストール後、Antigravity IDE を起動して Google アカウントでログインします。初期設定で Agent の利用方法を選ぶ画面が表示された場合は、実行内容を確認しながら進められる **Review-driven development** を選びます。
 
-次の公式サイトから **LTS** と表示された Windows Installer をダウンロードして実行します。
+エディタ画面が表示され、右側に Agent パネルがあれば準備完了です。Agent パネルが見えない場合は、画面右上の Agent アイコンを押して表示します。
+
+> **補足:** Antigravity IDE のインストールと画面構成は、[Antigravity IDE 公式コードラボ](https://codelabs.developers.google.com/getting-started-agy-ide)でも確認できます。
+
+![Antigravityダウンロードガイド1](img/antigravity_dl_1.png)
+
+![Antigravityダウンロードガイド2](img/antigravity_dl_2.png)
+
+### Node.js と npm をインストールする
+
+次の公式サイトから **LTS** と表示された、使用している OS 向けのインストーラをダウンロードして実行します。
 
 <button>
   [Node.js LTS をダウンロード](https://nodejs.org/en/download)
 </button>
 
-インストール後、新しい PowerShell を開いて確認します。
+![Node.jsダウンロードガイド](img/nodejs_dl.png)
 
-```powershell
+インストール後、Antigravity IDE のメニューから **Terminal** → **New Terminal** を選び、次のコマンドを実行します。
+
+```shell
 node --version
 npm --version
 ```
@@ -207,85 +217,19 @@ v24.x.x
 11.x.x
 ```
 
-バージョン番号が表示されれば成功です。コマンドが見つからない場合は PowerShell を開き直し、それでも解決しなければ PC を再起動します。
+バージョン番号が表示されれば成功です。コマンドが見つからない場合は Antigravity IDE を再起動し、それでも解決しなければ PC を再起動します。
 
-#### Antigravity CLI をインストールする
-
-PowerShell で公式インストールスクリプトを実行します。
-
-```powershell
-irm https://antigravity.google/cli/install.ps1 | iex
-```
-
-PowerShell を開き直して確認します。
-
-```powershell
-agy --version
-```
-
-`agy`に続いてバージョン番号が表示されれば成功です。
-
-> **Troubleshooting:** `agy`が見つからない場合は、PowerShellを開き直してください。Windowsでは通常、`%LOCALAPPDATA%\agy\bin`へインストールされます。
-
-### macOS のセットアップ手順
-
-#### Visual Studio Code をインストールする
-
-次の公式サイトから macOS 版をダウンロードします。ZIP を展開し、Visual Studio Code を **アプリケーション** フォルダへ移動します。
-
-<button>
-  [Visual Studio Code をダウンロード](https://code.visualstudio.com/Download)
-</button>
-
-#### Node.js と npm をインストールする
-
-次の公式サイトから **LTS** と表示された macOS Installer をダウンロードして実行します。
-
-<button>
-  [Node.js LTS をダウンロード](https://nodejs.org/en/download)
-</button>
-
-インストール後、新しいターミナルを開いて確認します。
-
-```bash
-node --version
-npm --version
-```
-
-**期待される出力:**
-
-```text
-v24.x.x
-11.x.x
-```
-
-#### Antigravity CLI をインストールする
-
-ターミナルで公式インストールスクリプトを実行します。
-
-```bash
-curl -fsSL https://antigravity.google/cli/install.sh | bash
-```
-
-ターミナルを開き直して確認します。
-
-```bash
-agy --version
-```
-
-`agy`に続いてバージョン番号が表示されれば成功です。
-
-> **Troubleshooting:** `agy`が見つからない場合は、ターミナルを開き直してください。macOSでは通常、`~/.local/bin/agy`へインストールされます。
+> **Tips**: Node.js のバージョンは 18 以上であれば問題ありません。
 
 ## プロジェクトを開く
 
-Duration: 0:20:00
+Duration: 0:10:00
 
-このステップでは、テンプレートコードをダウンロードし、Antigravity から最初から用意されている `ping` tool を実行できるところまで準備します。
+このステップでは、テンプレートコードをダウンロードし、Antigravity IDE の Agent パネルから `ping` tool を実行します。
 
 ### テンプレートコードをダウンロードする
 
-次のボタンから ZIP ファイルをダウンロードします。Git は使いません。
+このボタンから ZIP ファイルをダウンロードします。
 
 <button>
   [テンプレートコードをダウンロード](https://github.com/gdg-jp/ticket-booking-template/archive/refs/heads/main.zip)
@@ -298,17 +242,33 @@ Duration: 0:20:00
 
 展開後はこのようなファイルが確認できます。
 
-```text
-ticket-booking-template-main
-├── app.js
-├── index.html
-├── style.css
-└── webmcp.js
-```
+![template-expanded](img/template-expanded.png)
+
+### プロジェクトを Antigravity IDE で開く
+
+Antigravity IDE を起動し、**Open Folder...**から`ticket-booking-template-main`を開きます。
+
+![Antigravity Open Folder](img/agy_open_folder.png)
+
+![Antigravity Open Folder 2](img/agy_open_folder_2.png)
+
+![Antigravity Trust author](img/agy_trust_author.png)
+
+> **Tips**: Trust Author を選択してください。
+
+Explorerに次のファイルが表示されることを確認します。
+
+![Antigravity Explorer](img/agy_explorer.png)
+
+これ以降は、左側の Explorer でファイルを選んで中央のエディタで編集し、右側の Agent パネルへ依頼します。
 
 ### 席予約サイトをローカルサーバーで起動する
 
-PowerShellまたはターミナルを開き、展開した`ticket-booking-template-main`フォルダへ移動します。次のコマンドでローカルサーバーを起動します。
+Antigravity IDE のメニューから **Terminal** → **New Terminal** を選びます。
+
+![agy_open_terminal.png](img/agy_open_terminal.png)
+
+ターミナルの現在位置が`ticket-booking-template-main`になっていることを確認し、次のコマンドでローカルサーバーを起動します。
 
 ```bash
 npx serve -p 8080
@@ -316,7 +276,9 @@ npx serve -p 8080
 
 初回実行時に`serve`のインストール確認が表示された場合は、`y`を入力してEnterキーを押します。`Local`に`http://localhost:8080`と表示されたら、Google ChromeでそのURLを開きます。
 
-コードラボが終わるまで、ローカルサーバーを起動したPowerShellまたはターミナルは開いたままにします。
+![agy_npx_serve.png](img/agy_npx_serve.png)
+
+コードラボが終わるまで、ローカルサーバーを起動した Antigravity IDE のターミナルは開いたままにします。
 
 **期待される状態:**
 
@@ -335,31 +297,20 @@ npx serve -p 8080
 
 > **補足:** このログインはハンズオン用の参加者ID選択です。本番向けの本人確認や認可を実装するものではありません。
 
-### プロジェクトを Visual Studio Code で開く
-
-Visual Studio Code を起動し、**File** → **Open Folder...**から`ticket-booking-template-main`を開きます。
-
-Explorerに次のファイルが表示されることを確認します。
-
-```text
-ticket-booking-template-main
-├── README.md
-├── app.js
-├── index.html
-├── style.css
-└── webmcp.js
-```
-
 ### WebMCP bridge MCP を設定する
 
-AntigravityからChrome側のWebMCP toolを利用するため、`webmcp-bridge-mcp`を設定します。
+Antigravity IDE から Chrome 側の WebMCP tool を利用するため、`webmcp-bridge-mcp`を設定します。設定ファイルの保存場所を自分で探す必要はありません。
 
-設定ファイルは次の場所です。フォルダやファイルがなければ作成します。
+1. Agent パネル右上の **…** を押す
+2. **MCP Servers** を選ぶ
+3. 画面右上の **Manage MCP Servers** を押す
+4. **View raw config** を押す
 
-- Windows: `%USERPROFILE%\.gemini\config\mcp_config.json`
-- macOS: `~/.gemini/config/mcp_config.json`
+![agy_mcp_1](img/agy_mcp_1.png)
 
-`mcp_config.json`がなかった人はファイルを次の内容にします。
+![agy_mcp_2](img/agy_mcp_2.png)
+
+Antigravity IDE のエディタで`mcp_config.json`が開きます。ファイルが空、または`mcpServers`がまだない場合は、次の内容にします。
 
 ```json
 {
@@ -372,9 +323,15 @@ AntigravityからChrome側のWebMCP toolを利用するため、`webmcp-bridge-m
 }
 ```
 
-`mcp_config.json`がすでにあった人は、`mcpServers`の末尾に`webmcp`の設定を追加します。
+`mcp_config.json`に別の MCP server がすでにある場合は、既存の設定を消さず、`mcpServers`の中へ`webmcp`の設定を追加します。
 
-この設定により、Antigravityは`npx -y webmcp-bridge-mcp`をローカルMCP serverとして起動します。
+保存したら MCP Servers の画面へ戻り、**Refresh**を押します。`webmcp`が表示され、有効になっていれば設定完了です。この設定により、Antigravity IDE は`npx -y webmcp-bridge-mcp`をローカル MCP server として起動します。
+
+> **Troubleshooting:** `webmcp`が表示されない場合は、`mcp_config.json`を保存したことと、JSON の括弧やカンマが正しいことを確認してから、もう一度 **Refresh**を押してください。
+
+![agy_mcp_3](img/agy_mcp_3.png)
+
+![agy_mcp_4](img/agy_mcp_4.png)
 
 ### Chrome の WebMCP flag を有効にする
 
@@ -388,27 +345,11 @@ chrome://flags/#enable-webmcp-testing
 
 > **Troubleshooting:** flagが見つからない場合は、Chromeを最新版へ更新してからもう一度確認してください。
 
-### Antigravity CLI を起動する
-
-新しいPowerShellまたはターミナルで次を実行します。
-
-```bash
-agy
-```
-
-初回起動時にブラウザが開いた場合は、案内に従ってログインします。Antigravityが起動したら、プロンプトに次を入力します。
-
-```text
-/mcp
-```
-
-MCP managerで`webmcp`または`webmcp-bridge-mcp`に`✓`が表示されれば、MCP serverの起動は成功です。
-
-> **Warning:** ここから拡張機能の追加と`ping`の確認が終わるまで、Antigravity CLIを閉じないでください。CLIを閉じるとbridgeの接続も停止します。
+![chrome_flag.png](img/chrome_flag.png)
 
 ### Chrome 拡張機能を追加する
 
-次のReleasesページから、講師が指定した`webmcp-bridge-extension`をダウンロードします。
+次のReleasesページから、講師が指定した`webmcp-bridge-extension`をダウンロードし、展開してください。
 
 <button>
   [WebMCP bridge 拡張機能をダウンロード](https://github.com/gdg-jp/webmcp-bridge-extension/releases/latest/download/webmcp-bridge-extension.zip)
@@ -419,14 +360,20 @@ MCP managerで`webmcp`または`webmcp-bridge-mcp`に`✓`が表示されれば�
 3. ダウンロードしたファイルを展開する
 4. **パッケージ化されていない拡張機能を読み込む**を選ぶ
 5. 展開した拡張機能のフォルダを選ぶ
-6. 席予約サイトを再読み込みする
+6. http://localhost:8080 を再読み込みし、「WebMCP をインストール」をクリックする
+
+![chrome_extension_1.png](img/chrome_extension_1.png)
+
+![chrome_extension_2.png](img/chrome_extension_2.png)
+
+![chrome_extension_3.png](img/chrome_extension_3.png)
 
 ### `ping` tool で接続を確認する
 
-Antigravityへ次のように依頼します。
+Antigravity IDE の Agent パネルで次のプロンプトを送信します。
 
 ```text
-WebMCP で ping ツールを実行してください。
+localhost:8080 に登録されている WebMCP ツールを列挙してください。もし ping ツールが見つかればそれを実行してください。
 ```
 
 **期待される結果:**
@@ -436,11 +383,11 @@ WebMCP で ping ツールを実行してください。
 - `message: "pong"`が返る
 - `pageTitle`に席予約サイトのタイトルが入る
 
-> **Troubleshooting:** toolが見えない場合は、`/mcp`の接続状態、Chrome拡張機能、WebMCP flagを順に確認し、最後に席予約サイトを再読み込みしてください。
+> **Troubleshooting:** toolが見えない場合は、MCP Servers 画面で`webmcp`が有効か、Chrome拡張機能が有効か、WebMCP flagが有効かを順に確認し、最後に席予約サイトを再読み込みしてください。
 
 ## 席を予約する WebMCP tool を実装する
 
-Duration: 0:12:00
+Duration: 0:08:00
 
 このステップでは、既存の予約フォームを`reserve_seat` toolとして公開します。予約フォームが受け取るのは席番号だけです。参加者IDは、ログイン時に保存したCookieを既存のJavaScriptが読み取ります。
 
@@ -612,7 +559,7 @@ Agentがフォームを送信すると、既存のsubmitハンドラが人の操
 
 保存後、Chromeで席予約サイトを再読み込みします。座席マップを見て、`A-1`から`F-5`までの空席を1つ選びます。
 
-Antigravityへ、選んだ空席を指定して依頼します。
+Antigravity IDE の Agent パネルへ、選んだ空席を指定して依頼します。
 
 ```text
 WebMCP で <空いている席番号> を予約してください。
@@ -645,7 +592,7 @@ WebMCP で <空いている席番号> を予約してください。
 
 ## 座席一覧を取得する WebMCP tool を実装する
 
-Duration: 0:12:00
+Duration: 0:08:00
 
 このステップでは、全席の状態を返す`list_seat` toolを追加します。Agentはこのtoolを使って、予約する前に空席を探せるようになります。
 
@@ -831,7 +778,7 @@ controller.abort();
 
 ### AI エージェントから座席一覧を取得する
 
-保存後、Chromeで席予約サイトを再読み込みします。Antigravityへ次のように依頼します。
+保存後、Chromeで席予約サイトを再読み込みします。Antigravity IDE の Agent パネルへ次のように依頼します。
 
 ```text
 WebMCP で座席情報を教えてください。
@@ -863,7 +810,7 @@ WebMCP で座席情報を教えてください。
 
 ## 自分の予約を確認する WebMCP tool を実装する
 
-Duration: 0:10:00
+Duration: 0:08:00
 
 このステップでは、ブラウザへログイン中の参加者の現在の予約を返す`get_my_reservation` toolを追加します。
 
@@ -928,7 +875,7 @@ await document.modelContext.registerTool({
 
 ### AI エージェントから予約情報を取得する
 
-保存後、Chromeで席予約サイトを再読み込みします。Antigravityへ次のように依頼します。
+保存後、Chromeで席予約サイトを再読み込みします。Antigravity IDE の Agent パネルへ次のように依頼します。
 
 ```text
 WebMCP で自分の予約情報を教えてください。
@@ -958,7 +905,7 @@ WebMCP で自分の予約情報を教えてください。
 
 ## 予約をキャンセルする WebMCP tool を実装する
 
-Duration: 0:10:00
+Duration: 0:08:00
 
 このステップでは、ログイン中の参加者の予約を解除する`cancel_reservation` toolを追加します。これまでのtoolと異なり、サーバー上の状態を変更します。
 
@@ -1050,9 +997,9 @@ WebMCP で自分の予約情報を教えてください。
 
 ## おめでとうございます！
 
-Duration: 0:05:00
+Duration: 0:00:00
 
-席予約サイトにWebMCPの入口を追加し、AntigravityからWebページの機能をtoolとして実行できるようになりました。
+席予約サイトにWebMCPの入口を追加し、Antigravity IDE の Agent パネルからWebページの機能をtoolとして実行できるようになりました。
 
 ### 学んだこと
 
@@ -1063,7 +1010,7 @@ Duration: 0:05:00
 - ブラウザ内のログインセッションを WebMCP tool から再利用する方法
 - 読み取り tool と状態変更 tool を区別する方法
 - UI と API 呼び出しを分離して既存ロジックを再利用する方法
-- Antigravity から WebMCP tool を実行して確認する方法
+- Antigravity IDE の Agent パネルから WebMCP tool を実行して確認する方法
 
 ### 作成した tool
 
