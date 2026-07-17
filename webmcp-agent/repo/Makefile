@@ -28,14 +28,14 @@ help:
 	@echo "  make reset     Reset local seats with the dev admin token"
 
 setup:
-	cd $(BACKEND_DIR) && bun install
+	cd $(BACKEND_DIR) && pnpm install --frozen-lockfile
 	$(MAKE) d1
 
 d1:
-	cd $(BACKEND_DIR) && bun run d1:apply:local
+	cd $(BACKEND_DIR) && pnpm run d1:apply:local
 
 backend:
-	cd $(BACKEND_DIR) && bun run dev
+	cd $(BACKEND_DIR) && pnpm run dev
 
 sample:
 	python3 -m http.server $(SAMPLE_PORT) --directory $(SAMPLE_DIR)
@@ -61,7 +61,7 @@ dev:
 		fi; \
 	}; \
 	trap cleanup INT TERM EXIT; \
-	(cd $(BACKEND_DIR) && bun run dev) & pids+=($$!); \
+	(cd $(BACKEND_DIR) && pnpm run dev) & pids+=($$!); \
 	python3 -m http.server $(SAMPLE_PORT) --directory $(SAMPLE_DIR) & pids+=($$!); \
 	python3 -m http.server $(TEMPLATE_PORT) --directory $(TEMPLATE_DIR) & pids+=($$!); \
 	python3 -m http.server $(MONITOR_PORT) --directory $(MONITOR_DIR) & pids+=($$!); \
