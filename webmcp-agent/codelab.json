@@ -3,11 +3,11 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2026-07-15T16:08:44+09:00",
+  "updated": "2026-07-17T15:29:30+09:00",
   "id": "webmcp-agent",
-  "duration": 151,
-  "title": "WebMCPを使ってAIエージェントから呼び出してみよう！",
-  "summary": "WebMCP を使って席予約サイトを AI エージェントから呼び出すハンズオン",
+  "duration": 109,
+  "title": "WebMCP で席予約サイトを AI エージェントに対応させよう",
+  "summary": "WebMCP を使って席予約サイトの機能を AI エージェントから呼び出すハンズオン",
   "source": "webmcp-agent/claat.md",
   "theme": "",
   "status": [
@@ -20,6 +20,6 @@
   "tags": [
     "web"
   ],
-  "feedback": "https://github.com/googlecodelabs/your-first-pwapp/issues",
+  "feedback": "https://github.com/gdg-jp/ticket-booking-sample/issues",
   "url": "webmcp-agent"
 }

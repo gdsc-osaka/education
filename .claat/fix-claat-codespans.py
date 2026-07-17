@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Post-process claat-exported index.html files.
 
-Nine fixes are applied:
+Ten fixes are applied:
 
 1. Escape unescaped HTML tags inside inline <code>...</code> spans. claat's
    markdown renderer leaves backtick spans like `<html>` as
@@ -28,15 +28,18 @@ Nine fixes are applied:
    links are also restored to `<paper-button>` links with a `download`
    attribute.
 
-6. Inject local CSS and JS that make code blocks light by default, style the
-   toolbar buttons, preserve the dark-mode toggle, and add a full outline to
-   callouts.
+6. Convert the first row of each claat-generated table from data cells into a
+   semantic <thead> containing <th> cells, and wrap remaining rows in <tbody>.
 
-7. Add the repository favicon from assets/favicon.png.
+7. Inject local CSS and JS that make code blocks light by default, style the
+   toolbar buttons, preserve the dark-mode toggle, add a full outline to
+   callouts, and render tables with bordered, tinted header rows.
 
-8. Convert bare http(s) URLs in prose into links.
+8. Add the repository favicon from assets/favicon.png.
 
-9. Inject Open Graph and Twitter card meta tags from the source claat markdown.
+9. Convert bare http(s) URLs in prose into links.
+
+10. Inject Open Graph and Twitter card meta tags from the source claat markdown.
    og:title uses the first H1, og:description uses the summary frontmatter, and
    og:image uses the first markdown image.
 """
@@ -398,6 +401,23 @@ LOCAL_STYLE = f"""<style id="{STYLE_ID}">
   google-codelab #drawer .claat-step-nav-heading-level-4 {{
     margin-left: 14px;
     font-size: 11px;
+  }}
+
+  google-codelab-step .instructions table {{
+    width: 100%;
+    border: 1px solid #cbdced;
+    border-collapse: collapse;
+  }}
+
+  google-codelab-step .instructions table th,
+  google-codelab-step .instructions table td {{
+    border: 1px solid #cbdced;
+  }}
+
+  google-codelab-step .instructions table > thead > tr > th {{
+    background: #e8f0fe;
+    font-weight: 700;
+    text-align: center;
   }}
 
   @media (max-width: 640px) {{
@@ -847,8 +867,19 @@ def load_markdown_code_fences(source_md: str | None) -> list[dict[str, str]]:
 def markdown_inline_to_text(value: str) -> str:
     value = re.sub(r"!\[([^\]]*)\]\([^)]+\)", r"\1", value)
     value = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", value)
-    value = re.sub(r"`([^`]*)`", lambda m: html_lib.escape(m.group(1)), value)
+    code_spans: list[str] = []
+
+    def preserve_code_span(match: re.Match) -> str:
+        index = len(code_spans)
+        code_spans.append(html_lib.escape(match.group(1)))
+        return f"CLAATINLINECODE{index}TOKEN"
+
+    # Keep punctuation inside inline code literal. In particular, underscores in
+    # tool names such as `get_my_reservation` are content, not emphasis markers.
+    value = re.sub(r"`([^`]*)`", preserve_code_span, value)
     value = re.sub(r"[*_~]+", "", value)
+    for index, code_span in enumerate(code_spans):
+        value = value.replace(f"CLAATINLINECODE{index}TOKEN", code_span)
     value = re.sub(r"<[^>]+>", "", value)
     return normalize_plain_text(value)
 
@@ -1176,6 +1207,50 @@ def escape_codespans(html: str) -> tuple[str, int]:
         total += n
 
 
+def semanticize_table_headers(html: str) -> tuple[str, int]:
+    """Turn claat's first table row into a semantic header row."""
+    table_pattern = re.compile(
+        r"<table(?P<attrs>\b[^>]*)>(?P<body>.*?)</table>",
+        re.DOTALL | re.IGNORECASE,
+    )
+    first_row_pattern = re.compile(
+        r"(?P<leading>\s*)(?P<header><tr\b[^>]*>.*?</tr>)(?P<rest>.*)\Z",
+        re.DOTALL | re.IGNORECASE,
+    )
+    total = 0
+
+    def replace_table(match: re.Match) -> str:
+        nonlocal total
+        body = match.group("body")
+        if re.match(r"\s*<thead\b", body, re.IGNORECASE):
+            return match.group(0)
+
+        first_row = first_row_pattern.fullmatch(body)
+        if not first_row:
+            return match.group(0)
+
+        header = re.sub(
+            r"(<\s*/?\s*)td(?=[\s>])",
+            r"\1th",
+            first_row.group("header"),
+            flags=re.IGNORECASE,
+        )
+        if header == first_row.group("header"):
+            return match.group(0)
+
+        total += 1
+        result = (
+            f'<table{match.group("attrs")}>'
+            f'{first_row.group("leading")}<thead>\n{header}\n</thead>'
+        )
+        rest = first_row.group("rest")
+        if rest.strip():
+            result += f"\n<tbody>{rest}</tbody>"
+        return result + "\n</table>"
+
+    return table_pattern.sub(replace_table, html), total
+
+
 def wrap_asides(html: str) -> tuple[str, int]:
     keys = "|".join(re.escape(k) for k in ASIDE_KEYWORDS)
     # <p><strong>Keyword:</strong>...</p> optionally followed by a single <ul>/<ol> block.
@@ -1496,6 +1571,7 @@ def fix(
     source_md: str | None = None,
 ) -> tuple[str, int, int, int, int, int, int, int, int, int, int, int]:
     html, n_code = escape_codespans(html)
+    html, _n_tables = semanticize_table_headers(html)
     html, n_aside = wrap_asides(html)
     html, n_retagged = retag_troubleshooting_asides(html)
     html, n_diff, n_filenames = annotate_code_blocks(html, source_md)
