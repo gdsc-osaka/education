@@ -35,3 +35,9 @@
 [submodule "webmcp-agent/repo/template"]
   path = webmcp-agent/repo/template
 	url = https://github.com/gdg-jp/ticket-booking-template
+[submodule "webmcp-agent/repo/webmcp-bridge-extension"]
+	path = webmcp-agent/repo/webmcp-bridge-extension
+	url = https://github.com/gdg-jp/webmcp-bridge-extension.git
+[submodule "webmcp-agent/repo/webmcp-bridge-mcp"]
+	path = webmcp-agent/repo/webmcp-bridge-mcp
+	url = https://github.com/gdg-jp/webmcp-bridge-mcp.git
