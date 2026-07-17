@@ -405,17 +405,19 @@
   </button>
 </div>
 <pre><code language="language-text" class="language-text">空いている席を教えてください。
-参加者 ID alice_123 で A-1 を予約してください。
-alice_123 の現在の予約を教えてください。
-alice_123 の予約をキャンセルしてください。
+A-1 を予約してください。
+自分の現在の予約を教えてください。
+自分の予約をキャンセルしてください。
 </code></pre>
 </div>
+<p>参加者IDは最初にWebページへログインするとブラウザのCookieへ保存されます。WebMCP toolはこのログイン状態を再利用するため、Agentへ参加者IDを毎回伝える必要はありません。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで学ぶこと</h2>
 <ul>
 <li>MCP と WebMCP の関係を説明する方法</li>
 <li>HTML フォームを WebMCP tool として公開する方法</li>
 <li>JavaScript 関数を WebMCP tool として公開する方法</li>
 <li>JSON Schema で tool の入力を定義する方法</li>
+<li>ブラウザ内のログインセッションを WebMCP tool から再利用する方法</li>
 <li>読み取り tool と状態変更 tool を区別する方法</li>
 <li>Antigravity から WebMCP tool を実行して確認する方法</li>
 </ul>
@@ -449,7 +451,7 @@ alice_123 の予約をキャンセルしてください。
       </google-codelab-step>
     
       <google-codelab-step label="MCP と WebMCP を理解する" duration="15">
-        <p>席予約サイトでは、人が画面を見て空席を探し、参加者 ID と席番号を入力して予約します。では、AI エージェントが同じ操作をするとしたら、何を手がかりにすればよいでしょうか。</p>
+        <p>席予約サイトでは、人が参加者IDでログインし、画面を見て空席を探して予約します。では、AI エージェントが同じログイン状態で予約するとしたら、何を手がかりにすればよいでしょうか。</p>
 <p>このステップでは、AI エージェントが Web サイトの機能を使う方法と、そのために MCP と WebMCP が担う役割を整理します。API や HTML 属性の詳細は、実際に実装するステップで説明します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">Web サイトを AI が操作するときの難しさ</h2>
 <p>人が使う Web サイトは、見出し、入力欄、ボタン、画面の変化などを組み合わせて操作方法を伝えています。AI エージェントが同じ画面を操作する場合は、スクリーンショット、DOM、アクセシビリティツリーなどを読み、どこをクリックし、何を入力すればよいか推測します。</p>
@@ -470,13 +472,13 @@ alice_123 の予約をキャンセルしてください。
 </td><td colspan="1" rowspan="1"><p><code>reserve_seat</code></p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p>説明</p>
-</td><td colspan="1" rowspan="1"><p>参加者 ID と席番号を指定して席を予約する</p>
+</td><td colspan="1" rowspan="1"><p>ログイン中の参加者として席番号を指定して予約する</p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p>入力</p>
-</td><td colspan="1" rowspan="1"><p><code>participantId</code>、<code>seatId</code></p>
+</td><td colspan="1" rowspan="1"><p><code>seatId</code></p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p>処理</p>
-</td><td colspan="1" rowspan="1"><p>予約 API を呼び、結果を返す</p>
+</td><td colspan="1" rowspan="1"><p>Cookieの参加者IDを使って予約APIを呼び、結果を返す</p>
 </td></tr>
 </tbody>
 </table>
@@ -745,10 +747,15 @@ npm --version
 <p><strong>期待される状態:</strong></p>
 <ul>
 <li>「席予約 WebMCP ハンズオン」と表示される</li>
-<li>予約フォームが表示される</li>
-<li>座席マップと席一覧が表示される</li>
+<li>左側にログイン、予約、自分の予約が縦に表示される</li>
+<li>右側に座席マップと席一覧が表示される</li>
+<li>画面幅を狭くすると1カラム表示へ切り替わる</li>
 </ul>
 <aside class="troubleshooting"><p><strong>Troubleshooting:</strong> 席一覧が表示されない場合は、会場で案内されたAPIへ接続できるネットワークにいるか確認してください。画面下部に表示されたエラーメッセージもTAへ共有してください。</p></aside>
+<h2 is-upgraded data-claat-source-heading-level="3">席予約サイトへログインする</h2>
+<p><strong>ログイン</strong>セクションへ自分のconnpass IDを入力し、<strong>ログイン</strong>ボタンを押します。<code>ログイン中: &lt;自分のconnpass ID&gt;</code>と表示されれば成功です。</p>
+<p>参加者IDは<code>participantId</code>というセッションCookieへ保存されます。ページを再読み込みしても同じブラウザセッション内ではログイン状態が残り、予約、予約確認、キャンセルのAPI呼び出しで<code>X-Participant-ID</code>ヘッダーとしてサーバーへ渡されます。</p>
+<aside class="special"><p><strong>補足:</strong> このログインはハンズオン用の参加者ID選択です。本番向けの本人確認や認可を実装するものではありません。</p></aside>
 <h2 is-upgraded data-claat-source-heading-level="3">プロジェクトを Visual Studio Code で開く</h2>
 <p>Visual Studio Code を起動し、<strong>File</strong> → **Open Folder...**から<code>ticket-booking-template-main</code>を開きます。</p>
 <p>Explorerに次のファイルが表示されることを確認します。</p>
@@ -880,7 +887,7 @@ npm --version
       </google-codelab-step>
     
       <google-codelab-step label="席を予約する WebMCP tool を実装する" duration="12">
-        <p>このステップでは、既存の予約フォームを<code>reserve_seat</code> toolとして公開します。人向けの画面や予約処理は変えず、AIエージェントがフォームの意味を理解するためのmetadataを追加します。</p>
+        <p>このステップでは、既存の予約フォームを<code>reserve_seat</code> toolとして公開します。予約フォームが受け取るのは席番号だけです。参加者IDは、ログイン時に保存したCookieを既存のJavaScriptが読み取ります。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">宣言型 WebMCP とは</h2>
 <p>宣言型 WebMCP は、HTML フォームに専用の属性を追加し、そのフォームを AI エージェント向けの tool として公開する方法です。既存の入力欄、バリデーション、送信処理を再利用できるため、tool を登録する JavaScript を書かずに WebMCP へ対応できます。</p>
 <p>以下では、TODO リストへ項目を追加するフォームを例に、宣言型 WebMCP の仕組みを確認します。</p>
@@ -1035,10 +1042,14 @@ npm --version
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-html" class="language-html">&lt;form action=&#34;https://api.webmcp.gdgs.jp/api/reservations&#34; method=&#34;post&#34;&gt;&lt;/form&gt;
+<pre><code language="language-html" class="language-html">&lt;form
+  id=&#34;reservation-form&#34;
+  action=&#34;https://api.webmcp.gdgs.jp/api/reservations&#34;
+  method=&#34;post&#34;
+&gt;&lt;/form&gt;
 </code></pre>
 </div>
-<p>このフォームはすでに人の操作で予約できます。追加するのはAgent向けの説明だけです。</p>
+<p>このフォームはすでに人の操作で予約できます。<code>app.js</code>のsubmitハンドラがCookieから参加者IDを読み、席番号と合わせてAPIへ送ります。追加するのはAgent向けの説明だけです。</p>
 <h2 is-upgraded data-claat-source-heading-level="3"><code>&lt;form&gt;</code>を MCP tool に対応させる</h2>
 <p><code>form</code>へtool名、説明、自動送信の指定を追加します。</p>
 <p><code>index.html</code></p>
@@ -1052,17 +1063,18 @@ npm --version
   </button>
 </div>
 <pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">&lt;form
+  id=&#34;reservation-form&#34;
   action=&#34;https://api.webmcp.gdgs.jp/api/reservations&#34;
   method=&#34;post&#34;
 + toolname=&#34;reserve_seat&#34;
-+ tooldescription=&#34;参加者IDと席番号を指定して席を予約する。&#34;
++ tooldescription=&#34;ログイン中の参加者として、席番号を指定して予約する。&#34;
 + toolautosubmit
 &gt;
 </code></pre>
 </div>
 <p><code>reserve_seat</code>はtoolの識別子です。<code>tooldescription</code>には、何を入力して何を行うtoolなのかを短く書きます。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">form の入力値に MCP 用の説明を追加する</h2>
-<p>参加者IDと席番号の<code>input</code>へ、それぞれのタイトルと意味を追加します。</p>
+<p>席番号の<code>input</code>へタイトルと意味を追加します。ログインフォームの参加者IDはtoolの引数にしません。</p>
 <p><code>index.html</code></p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -1074,17 +1086,6 @@ npm --version
   </button>
 </div>
 <pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">&lt;label&gt;
-  参加者ID
-  &lt;input
-    id=&#34;participant-id&#34;
-    name=&#34;participantId&#34;
-    required
-    pattern=&#34;[A-Za-z0-9_\-]{1,64}&#34;
-+   toolparamtitle=&#34;参加者ID&#34;
-+   toolparamdescription=&#34;予約する参加者のconnpass ID。&#34;
-  /&gt;
-&lt;/label&gt;
-&lt;label&gt;
   席番号
   &lt;input
     name=&#34;seatId&#34;
@@ -1097,10 +1098,11 @@ npm --version
 &lt;/label&gt;
 </code></pre>
 </div>
-<p><code>name</code>はフォーム送信時のパラメータ名、<code>toolparamtitle</code>は引数の表示名、<code>toolparamdescription</code>はAgentがそのパラメータを理解するための説明です。</p>
+<p><code>name</code>はフォーム送信時のパラメータ名、<code>toolparamtitle</code>は引数の表示名、<code>toolparamdescription</code>はAgentがそのパラメータを理解するための説明です。生成されるtoolのinput schemaには<code>seatId</code>だけが含まれます。</p>
+<p>Agentがフォームを送信すると、既存のsubmitハンドラが人の操作と同じ<code>reserveSeat()</code>を呼びます。<code>reserveSeat()</code>はCookieの参加者IDを<code>X-Participant-ID</code>ヘッダーへ設定し、<code>respondWith()</code>は予約結果をAgentへ返します。これにより、参加者IDをtoolの引数として公開せずにブラウザ内のログイン状態を利用できます。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">AI エージェントから予約 tool を呼び出す</h2>
 <p>保存後、Chromeで席予約サイトを再読み込みします。座席マップを見て、<code>A-1</code>から<code>F-5</code>までの空席を1つ選びます。</p>
-<p>Antigravityへ、自分のconnpass IDと選んだ空席を指定して依頼します。</p>
+<p>Antigravityへ、選んだ空席を指定して依頼します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -1110,13 +1112,14 @@ npm --version
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-text" class="language-text">WebMCP で &lt;自分のconnpass ID&gt; の名前で &lt;空いている席番号&gt; を予約してください。
+<pre><code language="language-text" class="language-text">WebMCP で &lt;空いている席番号&gt; を予約してください。
 </code></pre>
 </div>
 <p><strong>期待される結果:</strong></p>
 <ul>
 <li><code>reserve_seat</code> toolが呼び出される</li>
-<li>参加者IDと席番号がフォームへ渡される</li>
+<li>席番号だけがtoolの引数としてフォームへ渡される</li>
+<li>Cookieの参加者IDがAPIの<code>X-Participant-ID</code>ヘッダーへ渡される</li>
 <li>フォームが自動送信される</li>
 <li>指定した席が予約される</li>
 </ul>
@@ -1417,9 +1420,10 @@ controller.abort();
       </google-codelab-step>
     
       <google-codelab-step label="自分の予約を確認する WebMCP tool を実装する" duration="10">
-        <p>このステップでは、参加者IDを受け取り、その参加者の現在の予約を返す<code>get_my_reservation</code> toolを追加します。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">引数を受け取る tool を設計する</h2>
-<p><code>get_my_reservation</code>は、誰の予約を確認するかを示す<code>participantId</code>を受け取ります。入力はJSON Schemaで定義します。</p>
+        <p>このステップでは、ブラウザへログイン中の参加者の現在の予約を返す<code>get_my_reservation</code> toolを追加します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">引数を持たない tool を設計する</h2>
+<p><code>get_my_reservation</code>はブラウザ内のログイン状態を使うため、参加者IDを引数にしません。引数を持たないtoolも、空のobjectとしてJSON Schemaを定義します。</p>
+<p><code>webmcp.js</code></p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -1431,20 +1435,15 @@ controller.abort();
 </div>
 <pre><code language="language-js" class="language-js">inputSchema: {
   type: &#34;object&#34;,
-  properties: {
-    participantId: {
-      type: &#34;string&#34;,
-      description: &#34;予約状況を確認する参加者ID。&#34;,
-    },
-  },
-  required: [&#34;participantId&#34;],
+  properties: {},
   additionalProperties: false,
 }
 </code></pre>
 </div>
-<p><code>required</code>に含めた値は必須です。<code>additionalProperties: false</code>は、定義していない入力を受け付けないことを示します。</p>
-<h2 is-upgraded data-claat-source-heading-level="3">UI と API 呼び出しの役割を分ける</h2>
-<p><code>app.js</code>には、参加者IDを引数で受け取る次の関数が用意されています。</p>
+<p><code>properties: {}</code>は引数がないことを表します。<code>additionalProperties: false</code>は、定義していない入力を受け付けないことを示します。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">ブラウザのログイン状態を再利用する</h2>
+<p><code>app.js</code>には、Cookieの参加者IDを取得してAPIへ渡す次の関数が用意されています。</p>
+<p><code>app.js</code></p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -1454,12 +1453,14 @@ controller.abort();
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-js" class="language-js">async function getMyReservation(participantId) {
-  return apiFetch(&#34;/api/reservations/me&#34;, { participantId });
+<pre><code language="language-js" class="language-js">async function getMyReservation() {
+  return apiFetch(&#34;/api/reservations/me&#34;, {
+    participantId: requireParticipantId(),
+  });
 }
 </code></pre>
 </div>
-<p>toolの<code>execute</code>はDOMの入力欄を読み書きせず、この関数へ<code>participantId</code>を直接渡します。UIイベント、画面描画、API呼び出しの役割を分けることで、同じAPI関数を人の操作とAgentの操作から再利用できます。</p>
+<p><code>requireParticipantId()</code>はCookieから参加者IDを取得し、未ログインなら「先にログインしてください。」というエラーを返します。toolはログインフォームを読み書きせず、人が作ったブラウザセッションをそのまま利用します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3"><code>get_my_reservation</code> tool を登録する</h2>
 <p><code>list_seat</code>の登録後へ次を追加します。</p>
 <p><code>webmcp.js</code></p>
@@ -1475,23 +1476,17 @@ controller.abort();
 <pre><code language="language-js" class="language-js">await document.modelContext.registerTool({
   name: &#34;get_my_reservation&#34;,
   title: &#34;My Reservation&#34;,
-  description: &#34;参加者IDを指定して、その参加者の現在の予約を確認する。&#34;,
+  description: &#34;ログイン中の参加者の現在の予約を確認する。&#34;,
   inputSchema: {
     type: &#34;object&#34;,
-    properties: {
-      participantId: {
-        type: &#34;string&#34;,
-        description: &#34;予約状況を確認する参加者ID。&#34;,
-      },
-    },
-    required: [&#34;participantId&#34;],
+    properties: {},
     additionalProperties: false,
   },
   annotations: {
     readOnlyHint: true,
   },
-  execute: async ({ participantId }) =&gt; {
-    return getMyReservation(participantId);
+  execute: async () =&gt; {
+    return getMyReservation();
   },
 });
 </code></pre>
@@ -1508,7 +1503,7 @@ controller.abort();
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-text" class="language-text">WebMCP で &lt;自分のconnpass ID&gt; の予約情報を教えてください。
+<pre><code language="language-text" class="language-text">WebMCP で自分の予約情報を教えてください。
 </code></pre>
 </div>
 <p><strong>期待される結果:</strong></p>
@@ -1516,7 +1511,7 @@ controller.abort();
 <li><code>get_my_reservation</code> toolが呼び出される</li>
 <li>予約がある場合は<code>reservation.seatId</code>が返る</li>
 <li>予約がない場合は<code>reservation: null</code>が返る</li>
-<li>画面の参加者ID入力欄は書き換わらない</li>
+<li>toolの引数に参加者IDが含まれない</li>
 </ul>
 <h2 is-upgraded data-claat-source-heading-level="3">現時点のコードベース</h2>
 <div class="claat-code-block" data-code-theme="light">
@@ -1542,13 +1537,14 @@ controller.abort();
       </google-codelab-step>
     
       <google-codelab-step label="予約をキャンセルする WebMCP tool を実装する" duration="10">
-        <p>このステップでは、指定した参加者の予約を解除する<code>cancel_reservation</code> toolを追加します。これまでのtoolと異なり、サーバー上の状態を変更します。</p>
+        <p>このステップでは、ログイン中の参加者の予約を解除する<code>cancel_reservation</code> toolを追加します。これまでのtoolと異なり、サーバー上の状態を変更します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">状態を変更する tool を確認する</h2>
 <p><code>list_seat</code>と<code>get_my_reservation</code>はデータを読むtoolでした。<code>cancel_reservation</code>は予約を削除するため、読み取り専用ではありません。</p>
 <p><code>readOnlyHint</code>の初期値は<code>false</code>です。そのため、このtoolには<code>readOnlyHint: true</code>を付けません。tool名とdescriptionにも、予約をキャンセルする状態変更であることを明記します。</p>
 <aside class="warning"><p><strong>Warning: </strong><code>readOnlyHint</code>はAgentへ性質を伝えるhintであり、認可や実行確認を提供する機能ではありません。本番環境では、サーバー側の認可と重要操作の確認を別途実装してください。</p></aside>
 <h2 is-upgraded data-claat-source-heading-level="3">UI を介さずに予約をキャンセルする</h2>
-<p><code>app.js</code>には、参加者IDを引数で受け取る関数が用意されています。</p>
+<p><code>app.js</code>には、Cookieの参加者IDを使う関数が用意されています。</p>
+<p><code>app.js</code></p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -1558,15 +1554,15 @@ controller.abort();
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-js" class="language-js">async function cancelReservation(participantId) {
+<pre><code language="language-js" class="language-js">async function cancelReservation() {
   return apiFetch(&#34;/api/reservations/me&#34;, {
     method: &#34;DELETE&#34;,
-    participantId,
+    participantId: requireParticipantId(),
   });
 }
 </code></pre>
 </div>
-<p><code>getMyReservation()</code>と同じように、toolは入力欄へ値を設定せず、この関数へ<code>participantId</code>を直接渡します。</p>
+<p><code>getMyReservation()</code>と同じように、toolは参加者IDを引数にせず、人が作ったブラウザセッションを再利用します。</p>
 <h2 is-upgraded data-claat-source-heading-level="3"><code>cancel_reservation</code> tool を登録する</h2>
 <p><code>get_my_reservation</code>の登録後へ次を追加します。</p>
 <p><code>webmcp.js</code></p>
@@ -1582,26 +1578,20 @@ controller.abort();
 <pre><code language="language-js" class="language-js">await document.modelContext.registerTool({
   name: &#34;cancel_reservation&#34;,
   title: &#34;Cancel Reservation&#34;,
-  description: &#34;参加者IDを指定して、その参加者の予約を解除する。&#34;,
+  description: &#34;ログイン中の参加者の予約を解除する。&#34;,
   inputSchema: {
     type: &#34;object&#34;,
-    properties: {
-      participantId: {
-        type: &#34;string&#34;,
-        description: &#34;予約時に使用した参加者ID。&#34;,
-      },
-    },
-    required: [&#34;participantId&#34;],
+    properties: {},
     additionalProperties: false,
   },
-  execute: async ({ participantId }) =&gt; {
-    return cancelReservation(participantId);
+  execute: async () =&gt; {
+    return cancelReservation();
   },
 });
 </code></pre>
 </div>
 <h2 is-upgraded data-claat-source-heading-level="3">AI エージェントから予約をキャンセルする</h2>
-<p>保存後、Chromeで席予約サイトを再読み込みします。予約済みのconnpass IDを使って依頼します。</p>
+<p>保存後、Chromeで席予約サイトを再読み込みします。ログイン状態が表示されていることを確認して依頼します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -1611,13 +1601,13 @@ controller.abort();
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-text" class="language-text">WebMCP で &lt;自分のconnpass ID&gt; の予約をキャンセルしてください。
+<pre><code language="language-text" class="language-text">WebMCP で自分の予約をキャンセルしてください。
 </code></pre>
 </div>
 <p><strong>期待される結果:</strong></p>
 <ul>
 <li><code>cancel_reservation</code> toolが呼び出される</li>
-<li>指定した参加者の予約が解除される</li>
+<li>ログイン中の参加者の予約が解除される</li>
 <li>APIからキャンセル結果が返る</li>
 </ul>
 <p>続けて確認します。</p>
@@ -1630,11 +1620,11 @@ controller.abort();
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-text" class="language-text">WebMCP で &lt;自分のconnpass ID&gt; の予約情報を教えてください。
+<pre><code language="language-text" class="language-text">WebMCP で自分の予約情報を教えてください。
 </code></pre>
 </div>
 <p><code>get_my_reservation</code>の結果が<code>reservation: null</code>になれば成功です。画面の座席情報を更新する場合は、ページを再読み込みします。</p>
-<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> 予約がない参加者IDでキャンセルするとAPIエラーになります。先に<code>get_my_reservation</code>で予約の有無を確認してください。</p></aside>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> 予約がない状態でキャンセルするとAPIエラーになります。先に<code>get_my_reservation</code>で予約の有無を確認してください。</p></aside>
 <h2 is-upgraded data-claat-source-heading-level="3">現時点のコードベース</h2>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
@@ -1666,6 +1656,7 @@ controller.abort();
 <li>HTML フォームを WebMCP tool として公開する方法</li>
 <li>JavaScript 関数を WebMCP tool として公開する方法</li>
 <li>JSON Schema で tool の入力を定義する方法</li>
+<li>ブラウザ内のログインセッションを WebMCP tool から再利用する方法</li>
 <li>読み取り tool と状態変更 tool を区別する方法</li>
 <li>UI と API 呼び出しを分離して既存ロジックを再利用する方法</li>
 <li>Antigravity から WebMCP tool を実行して確認する方法</li>
@@ -1685,7 +1676,7 @@ controller.abort();
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p><code>reserve_seat</code></p>
 </td><td colspan="1" rowspan="1"><p>宣言型</p>
-</td><td colspan="1" rowspan="1"><p>参加者IDと席IDを指定して予約する</p>
+</td><td colspan="1" rowspan="1"><p>ログイン中の参加者として席を予約する</p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p><code>list_seat</code></p>
 </td><td colspan="1" rowspan="1"><p>命令型</p>
@@ -1693,11 +1684,11 @@ controller.abort();
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p><code>get_my_reservation</code></p>
 </td><td colspan="1" rowspan="1"><p>命令型</p>
-</td><td colspan="1" rowspan="1"><p>指定した参加者の予約を確認する</p>
+</td><td colspan="1" rowspan="1"><p>ログイン中の参加者の予約を確認する</p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p><code>cancel_reservation</code></p>
 </td><td colspan="1" rowspan="1"><p>命令型</p>
-</td><td colspan="1" rowspan="1"><p>指定した参加者の予約を解除する</p>
+</td><td colspan="1" rowspan="1"><p>ログイン中の参加者の予約を解除する</p>
 </td></tr>
 </tbody>
 </table>

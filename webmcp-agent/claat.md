@@ -24,10 +24,12 @@ Duration: 0:05:00
 
 ```text
 空いている席を教えてください。
-参加者 ID alice_123 で A-1 を予約してください。
-alice_123 の現在の予約を教えてください。
-alice_123 の予約をキャンセルしてください。
+A-1 を予約してください。
+自分の現在の予約を教えてください。
+自分の予約をキャンセルしてください。
 ```
+
+参加者IDは最初にWebページへログインするとブラウザのCookieへ保存されます。WebMCP toolはこのログイン状態を再利用するため、Agentへ参加者IDを毎回伝える必要はありません。
 
 ### このコードラボで学ぶこと
 
@@ -35,6 +37,7 @@ alice_123 の予約をキャンセルしてください。
 - HTML フォームを WebMCP tool として公開する方法
 - JavaScript 関数を WebMCP tool として公開する方法
 - JSON Schema で tool の入力を定義する方法
+- ブラウザ内のログインセッションを WebMCP tool から再利用する方法
 - 読み取り tool と状態変更 tool を区別する方法
 - Antigravity から WebMCP tool を実行して確認する方法
 
@@ -68,7 +71,7 @@ alice_123 の予約をキャンセルしてください。
 
 Duration: 0:15:00
 
-席予約サイトでは、人が画面を見て空席を探し、参加者 ID と席番号を入力して予約します。では、AI エージェントが同じ操作をするとしたら、何を手がかりにすればよいでしょうか。
+席予約サイトでは、人が参加者IDでログインし、画面を見て空席を探して予約します。では、AI エージェントが同じログイン状態で予約するとしたら、何を手がかりにすればよいでしょうか。
 
 このステップでは、AI エージェントが Web サイトの機能を使う方法と、そのために MCP と WebMCP が担う役割を整理します。API や HTML 属性の詳細は、実際に実装するステップで説明します。
 
@@ -88,12 +91,12 @@ AI エージェントに公開する機能を **tool（ツール）** と呼び�
 
 tool は、AI エージェントが用途と呼び出し方を判断できるように、機能の意味を構造化して伝えます。
 
-| 要素 | 席を予約する tool の例                   |
-| ---- | ---------------------------------------- |
-| 名前 | `reserve_seat`                           |
-| 説明 | 参加者 ID と席番号を指定して席を予約する |
-| 入力 | `participantId`、`seatId`                |
-| 処理 | 予約 API を呼び、結果を返す              |
+| 要素 | 席を予約する tool の例                         |
+| ---- | ---------------------------------------------- |
+| 名前 | `reserve_seat`                                 |
+| 説明 | ログイン中の参加者として席番号を指定して予約する |
+| 入力 | `seatId`                                       |
+| 処理 | Cookieの参加者IDを使って予約APIを呼び、結果を返す |
 
 tool があれば、AI エージェントは予約ボタンの場所を探す代わりに、「どの機能を、どの入力で呼ぶか」を判断できます。
 
@@ -318,10 +321,19 @@ npx serve -p 8080
 **期待される状態:**
 
 - 「席予約 WebMCP ハンズオン」と表示される
-- 予約フォームが表示される
-- 座席マップと席一覧が表示される
+- 左側にログイン、予約、自分の予約が縦に表示される
+- 右側に座席マップと席一覧が表示される
+- 画面幅を狭くすると1カラム表示へ切り替わる
 
 > **Troubleshooting:** 席一覧が表示されない場合は、会場で案内されたAPIへ接続できるネットワークにいるか確認してください。画面下部に表示されたエラーメッセージもTAへ共有してください。
+
+### 席予約サイトへログインする
+
+**ログイン**セクションへ自分のconnpass IDを入力し、**ログイン**ボタンを押します。`ログイン中: <自分のconnpass ID>`と表示されれば成功です。
+
+参加者IDは`participantId`というセッションCookieへ保存されます。ページを再読み込みしても同じブラウザセッション内ではログイン状態が残り、予約、予約確認、キャンセルのAPI呼び出しで`X-Participant-ID`ヘッダーとしてサーバーへ渡されます。
+
+> **補足:** このログインはハンズオン用の参加者ID選択です。本番向けの本人確認や認可を実装するものではありません。
 
 ### プロジェクトを Visual Studio Code で開く
 
@@ -428,7 +440,7 @@ WebMCP で ping ツールを実行してください。
 
 Duration: 0:12:00
 
-このステップでは、既存の予約フォームを`reserve_seat` toolとして公開します。人向けの画面や予約処理は変えず、AIエージェントがフォームの意味を理解するためのmetadataを追加します。
+このステップでは、既存の予約フォームを`reserve_seat` toolとして公開します。予約フォームが受け取るのは席番号だけです。参加者IDは、ログイン時に保存したCookieを既存のJavaScriptが読み取ります。
 
 ### 宣言型 WebMCP とは
 
@@ -542,10 +554,14 @@ TODO を追加する処理そのものは、人の操作でも AI エージェ�
 `index.html`
 
 ```html
-<form action="https://api.webmcp.gdgs.jp/api/reservations" method="post"></form>
+<form
+  id="reservation-form"
+  action="https://api.webmcp.gdgs.jp/api/reservations"
+  method="post"
+></form>
 ```
 
-このフォームはすでに人の操作で予約できます。追加するのはAgent向けの説明だけです。
+このフォームはすでに人の操作で予約できます。`app.js`のsubmitハンドラがCookieから参加者IDを読み、席番号と合わせてAPIへ送ります。追加するのはAgent向けの説明だけです。
 
 ### `<form>`を MCP tool に対応させる
 
@@ -555,10 +571,11 @@ TODO を追加する処理そのものは、人の操作でも AI エージェ�
 
 ```diff html
 <form
+  id="reservation-form"
   action="https://api.webmcp.gdgs.jp/api/reservations"
   method="post"
 + toolname="reserve_seat"
-+ tooldescription="参加者IDと席番号を指定して席を予約する。"
++ tooldescription="ログイン中の参加者として、席番号を指定して予約する。"
 + toolautosubmit
 >
 ```
@@ -567,22 +584,11 @@ TODO を追加する処理そのものは、人の操作でも AI エージェ�
 
 ### form の入力値に MCP 用の説明を追加する
 
-参加者IDと席番号の`input`へ、それぞれのタイトルと意味を追加します。
+席番号の`input`へタイトルと意味を追加します。ログインフォームの参加者IDはtoolの引数にしません。
 
 `index.html`
 
 ```diff html
-<label>
-  参加者ID
-  <input
-    id="participant-id"
-    name="participantId"
-    required
-    pattern="[A-Za-z0-9_\-]{1,64}"
-+   toolparamtitle="参加者ID"
-+   toolparamdescription="予約する参加者のconnpass ID。"
-  />
-</label>
 <label>
   席番号
   <input
@@ -596,22 +602,25 @@ TODO を追加する処理そのものは、人の操作でも AI エージェ�
 </label>
 ```
 
-`name`はフォーム送信時のパラメータ名、`toolparamtitle`は引数の表示名、`toolparamdescription`はAgentがそのパラメータを理解するための説明です。
+`name`はフォーム送信時のパラメータ名、`toolparamtitle`は引数の表示名、`toolparamdescription`はAgentがそのパラメータを理解するための説明です。生成されるtoolのinput schemaには`seatId`だけが含まれます。
+
+Agentがフォームを送信すると、既存のsubmitハンドラが人の操作と同じ`reserveSeat()`を呼びます。`reserveSeat()`はCookieの参加者IDを`X-Participant-ID`ヘッダーへ設定し、`respondWith()`は予約結果をAgentへ返します。これにより、参加者IDをtoolの引数として公開せずにブラウザ内のログイン状態を利用できます。
 
 ### AI エージェントから予約 tool を呼び出す
 
 保存後、Chromeで席予約サイトを再読み込みします。座席マップを見て、`A-1`から`F-5`までの空席を1つ選びます。
 
-Antigravityへ、自分のconnpass IDと選んだ空席を指定して依頼します。
+Antigravityへ、選んだ空席を指定して依頼します。
 
 ```text
-WebMCP で <自分のconnpass ID> の名前で <空いている席番号> を予約してください。
+WebMCP で <空いている席番号> を予約してください。
 ```
 
 **期待される結果:**
 
 - `reserve_seat` toolが呼び出される
-- 参加者IDと席番号がフォームへ渡される
+- 席番号だけがtoolの引数としてフォームへ渡される
+- Cookieの参加者IDがAPIの`X-Participant-ID`ヘッダーへ渡される
 - フォームが自動送信される
 - 指定した席が予約される
 
@@ -854,39 +863,39 @@ WebMCP で座席情報を教えてください。
 
 Duration: 0:10:00
 
-このステップでは、参加者IDを受け取り、その参加者の現在の予約を返す`get_my_reservation` toolを追加します。
+このステップでは、ブラウザへログイン中の参加者の現在の予約を返す`get_my_reservation` toolを追加します。
 
-### 引数を受け取る tool を設計する
+### 引数を持たない tool を設計する
 
-`get_my_reservation`は、誰の予約を確認するかを示す`participantId`を受け取ります。入力はJSON Schemaで定義します。
+`get_my_reservation`はブラウザ内のログイン状態を使うため、参加者IDを引数にしません。引数を持たないtoolも、空のobjectとしてJSON Schemaを定義します。
+
+`webmcp.js`
 
 ```js
 inputSchema: {
   type: "object",
-  properties: {
-    participantId: {
-      type: "string",
-      description: "予約状況を確認する参加者ID。",
-    },
-  },
-  required: ["participantId"],
+  properties: {},
   additionalProperties: false,
 }
 ```
 
-`required`に含めた値は必須です。`additionalProperties: false`は、定義していない入力を受け付けないことを示します。
+`properties: {}`は引数がないことを表します。`additionalProperties: false`は、定義していない入力を受け付けないことを示します。
 
-### UI と API 呼び出しの役割を分ける
+### ブラウザのログイン状態を再利用する
 
-`app.js`には、参加者IDを引数で受け取る次の関数が用意されています。
+`app.js`には、Cookieの参加者IDを取得してAPIへ渡す次の関数が用意されています。
+
+`app.js`
 
 ```js
-async function getMyReservation(participantId) {
-  return apiFetch("/api/reservations/me", { participantId });
+async function getMyReservation() {
+  return apiFetch("/api/reservations/me", {
+    participantId: requireParticipantId(),
+  });
 }
 ```
 
-toolの`execute`はDOMの入力欄を読み書きせず、この関数へ`participantId`を直接渡します。UIイベント、画面描画、API呼び出しの役割を分けることで、同じAPI関数を人の操作とAgentの操作から再利用できます。
+`requireParticipantId()`はCookieから参加者IDを取得し、未ログインなら「先にログインしてください。」というエラーを返します。toolはログインフォームを読み書きせず、人が作ったブラウザセッションをそのまま利用します。
 
 ### `get_my_reservation` tool を登録する
 
@@ -898,23 +907,17 @@ toolの`execute`はDOMの入力欄を読み書きせず、この関数へ`partic
 await document.modelContext.registerTool({
   name: "get_my_reservation",
   title: "My Reservation",
-  description: "参加者IDを指定して、その参加者の現在の予約を確認する。",
+  description: "ログイン中の参加者の現在の予約を確認する。",
   inputSchema: {
     type: "object",
-    properties: {
-      participantId: {
-        type: "string",
-        description: "予約状況を確認する参加者ID。",
-      },
-    },
-    required: ["participantId"],
+    properties: {},
     additionalProperties: false,
   },
   annotations: {
     readOnlyHint: true,
   },
-  execute: async ({ participantId }) => {
-    return getMyReservation(participantId);
+  execute: async () => {
+    return getMyReservation();
   },
 });
 ```
@@ -926,7 +929,7 @@ await document.modelContext.registerTool({
 保存後、Chromeで席予約サイトを再読み込みします。Antigravityへ次のように依頼します。
 
 ```text
-WebMCP で <自分のconnpass ID> の予約情報を教えてください。
+WebMCP で自分の予約情報を教えてください。
 ```
 
 **期待される結果:**
@@ -934,7 +937,7 @@ WebMCP で <自分のconnpass ID> の予約情報を教えてください。
 - `get_my_reservation` toolが呼び出される
 - 予約がある場合は`reservation.seatId`が返る
 - 予約がない場合は`reservation: null`が返る
-- 画面の参加者ID入力欄は書き換わらない
+- toolの引数に参加者IDが含まれない
 
 ### 現時点のコードベース
 
@@ -955,7 +958,7 @@ WebMCP で <自分のconnpass ID> の予約情報を教えてください。
 
 Duration: 0:10:00
 
-このステップでは、指定した参加者の予約を解除する`cancel_reservation` toolを追加します。これまでのtoolと異なり、サーバー上の状態を変更します。
+このステップでは、ログイン中の参加者の予約を解除する`cancel_reservation` toolを追加します。これまでのtoolと異なり、サーバー上の状態を変更します。
 
 ### 状態を変更する tool を確認する
 
@@ -967,18 +970,20 @@ Duration: 0:10:00
 
 ### UI を介さずに予約をキャンセルする
 
-`app.js`には、参加者IDを引数で受け取る関数が用意されています。
+`app.js`には、Cookieの参加者IDを使う関数が用意されています。
+
+`app.js`
 
 ```js
-async function cancelReservation(participantId) {
+async function cancelReservation() {
   return apiFetch("/api/reservations/me", {
     method: "DELETE",
-    participantId,
+    participantId: requireParticipantId(),
   });
 }
 ```
 
-`getMyReservation()`と同じように、toolは入力欄へ値を設定せず、この関数へ`participantId`を直接渡します。
+`getMyReservation()`と同じように、toolは参加者IDを引数にせず、人が作ったブラウザセッションを再利用します。
 
 ### `cancel_reservation` tool を登録する
 
@@ -990,47 +995,41 @@ async function cancelReservation(participantId) {
 await document.modelContext.registerTool({
   name: "cancel_reservation",
   title: "Cancel Reservation",
-  description: "参加者IDを指定して、その参加者の予約を解除する。",
+  description: "ログイン中の参加者の予約を解除する。",
   inputSchema: {
     type: "object",
-    properties: {
-      participantId: {
-        type: "string",
-        description: "予約時に使用した参加者ID。",
-      },
-    },
-    required: ["participantId"],
+    properties: {},
     additionalProperties: false,
   },
-  execute: async ({ participantId }) => {
-    return cancelReservation(participantId);
+  execute: async () => {
+    return cancelReservation();
   },
 });
 ```
 
 ### AI エージェントから予約をキャンセルする
 
-保存後、Chromeで席予約サイトを再読み込みします。予約済みのconnpass IDを使って依頼します。
+保存後、Chromeで席予約サイトを再読み込みします。ログイン状態が表示されていることを確認して依頼します。
 
 ```text
-WebMCP で <自分のconnpass ID> の予約をキャンセルしてください。
+WebMCP で自分の予約をキャンセルしてください。
 ```
 
 **期待される結果:**
 
 - `cancel_reservation` toolが呼び出される
-- 指定した参加者の予約が解除される
+- ログイン中の参加者の予約が解除される
 - APIからキャンセル結果が返る
 
 続けて確認します。
 
 ```text
-WebMCP で <自分のconnpass ID> の予約情報を教えてください。
+WebMCP で自分の予約情報を教えてください。
 ```
 
 `get_my_reservation`の結果が`reservation: null`になれば成功です。画面の座席情報を更新する場合は、ページを再読み込みします。
 
-> **Troubleshooting:** 予約がない参加者IDでキャンセルするとAPIエラーになります。先に`get_my_reservation`で予約の有無を確認してください。
+> **Troubleshooting:** 予約がない状態でキャンセルするとAPIエラーになります。先に`get_my_reservation`で予約の有無を確認してください。
 
 ### 現時点のコードベース
 
@@ -1059,19 +1058,20 @@ Duration: 0:05:00
 - HTML フォームを WebMCP tool として公開する方法
 - JavaScript 関数を WebMCP tool として公開する方法
 - JSON Schema で tool の入力を定義する方法
+- ブラウザ内のログインセッションを WebMCP tool から再利用する方法
 - 読み取り tool と状態変更 tool を区別する方法
 - UI と API 呼び出しを分離して既存ロジックを再利用する方法
 - Antigravity から WebMCP tool を実行して確認する方法
 
 ### 作成した tool
 
-| tool                 | 実装方法         | 役割                             |
-| -------------------- | ---------------- | -------------------------------- |
-| `ping`               | 命令型・実装済み | WebMCPの接続を確認する           |
-| `reserve_seat`       | 宣言型           | 参加者IDと席IDを指定して予約する |
-| `list_seat`          | 命令型           | 全席の状態を取得する             |
-| `get_my_reservation` | 命令型           | 指定した参加者の予約を確認する   |
-| `cancel_reservation` | 命令型           | 指定した参加者の予約を解除する   |
+| tool                 | 実装方法         | 役割                                 |
+| -------------------- | ---------------- | ------------------------------------ |
+| `ping`               | 命令型・実装済み | WebMCPの接続を確認する               |
+| `reserve_seat`       | 宣言型           | ログイン中の参加者として席を予約する |
+| `list_seat`          | 命令型           | 全席の状態を取得する                 |
+| `get_my_reservation` | 命令型           | ログイン中の参加者の予約を確認する   |
+| `cancel_reservation` | 命令型           | ログイン中の参加者の予約を解除する   |
 
 ### 完成コード
 
