@@ -726,12 +726,22 @@ npm --version
 └── webmcp.js
 </code></pre>
 </div>
-<h2 is-upgraded data-claat-source-heading-level="3">席予約サイトをブラウザで開く</h2>
-<p>展開したフォルダの<code>index.html</code>をGoogle Chromeで開きます。</p>
-<ul>
-<li>Windows: <code>index.html</code>を右クリックし、<strong>プログラムから開く</strong>からGoogle Chromeを選ぶ</li>
-<li>macOS: <code>index.html</code>を右クリックし、<strong>このアプリケーションで開く</strong>からGoogle Chromeを選ぶ</li>
-</ul>
+<h2 is-upgraded data-claat-source-heading-level="3">席予約サイトをローカルサーバーで起動する</h2>
+<p>PowerShellまたはターミナルを開き、展開した<code>ticket-booking-template-main</code>フォルダへ移動します。次のコマンドでローカルサーバーを起動します。</p>
+<div class="claat-code-block" data-code-theme="light">
+<div class="claat-code-toolbar" aria-label="Code block actions">
+  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
+    <span class="material-icons" aria-hidden="true">dark_mode</span>
+  </button>
+  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
+    <span class="material-icons" aria-hidden="true">content_copy</span>
+  </button>
+</div>
+<pre><code language="language-bash" class="language-bash">npx serve -p 8080
+</code></pre>
+</div>
+<p>初回実行時に<code>serve</code>のインストール確認が表示された場合は、<code>y</code>を入力してEnterキーを押します。<code>Local</code>に<code>http://localhost:8080</code>と表示されたら、Google ChromeでそのURLを開きます。</p>
+<p>コードラボが終わるまで、ローカルサーバーを起動したPowerShellまたはターミナルは開いたままにします。</p>
 <p><strong>期待される状態:</strong></p>
 <ul>
 <li>「席予約 WebMCP ハンズオン」と表示される</li>
@@ -801,7 +811,7 @@ npm --version
 <pre><code language="language-text" class="language-text">chrome://flags/#enable-webmcp-testing
 </code></pre>
 </div>
-<p><strong>WebMCP Testing</strong>を<strong>Enabled</strong>へ変更し、Chromeを再起動します。再起動後、先ほどの<code>index.html</code>をChromeで開き直します。</p>
+<p><strong>WebMCP Testing</strong>を<strong>Enabled</strong>へ変更し、Chromeを再起動します。再起動後、<code>http://localhost:8080</code>をChromeで開き直します。</p>
 <aside class="troubleshooting"><p><strong>Troubleshooting:</strong> flagが見つからない場合は、Chromeを最新版へ更新してからもう一度確認してください。</p></aside>
 <h2 is-upgraded data-claat-source-heading-level="3">Antigravity CLI を起動する</h2>
 <p>新しいPowerShellまたはターミナルで次を実行します。</p>
@@ -841,7 +851,7 @@ npm --version
 <li>ダウンロードしたファイルを展開する</li>
 <li><strong>パッケージ化されていない拡張機能を読み込む</strong>を選ぶ</li>
 <li>展開した拡張機能のフォルダを選ぶ</li>
-<li>席予約サイトの<code>index.html</code>を再読み込みする</li>
+<li>席予約サイトを再読み込みする</li>
 </ol>
 <h2 is-upgraded data-claat-source-heading-level="3"><code>ping</code> tool で接続を確認する</h2>
 <p>Antigravityへ次のように依頼します。</p>

@@ -303,12 +303,17 @@ ticket-booking-template-main
 └── webmcp.js
 ```
 
-### 席予約サイトをブラウザで開く
+### 席予約サイトをローカルサーバーで起動する
 
-展開したフォルダの`index.html`をGoogle Chromeで開きます。
+PowerShellまたはターミナルを開き、展開した`ticket-booking-template-main`フォルダへ移動します。次のコマンドでローカルサーバーを起動します。
 
-- Windows: `index.html`を右クリックし、**プログラムから開く**からGoogle Chromeを選ぶ
-- macOS: `index.html`を右クリックし、**このアプリケーションで開く**からGoogle Chromeを選ぶ
+```bash
+npx serve -p 8080
+```
+
+初回実行時に`serve`のインストール確認が表示された場合は、`y`を入力してEnterキーを押します。`Local`に`http://localhost:8080`と表示されたら、Google ChromeでそのURLを開きます。
+
+コードラボが終わるまで、ローカルサーバーを起動したPowerShellまたはターミナルは開いたままにします。
 
 **期待される状態:**
 
@@ -365,7 +370,7 @@ Chromeのアドレスバーに次を入力します。
 chrome://flags/#enable-webmcp-testing
 ```
 
-**WebMCP Testing**を**Enabled**へ変更し、Chromeを再起動します。再起動後、先ほどの`index.html`をChromeで開き直します。
+**WebMCP Testing**を**Enabled**へ変更し、Chromeを再起動します。再起動後、`http://localhost:8080`をChromeで開き直します。
 
 > **Troubleshooting:** flagが見つからない場合は、Chromeを最新版へ更新してからもう一度確認してください。
 
@@ -400,7 +405,7 @@ MCP managerで`webmcp`または`webmcp-bridge-mcp`に`✓`が表示されれば�
 3. ダウンロードしたファイルを展開する
 4. **パッケージ化されていない拡張機能を読み込む**を選ぶ
 5. 展開した拡張機能のフォルダを選ぶ
-6. 席予約サイトの`index.html`を再読み込みする
+6. 席予約サイトを再読み込みする
 
 ### `ping` tool で接続を確認する
 
