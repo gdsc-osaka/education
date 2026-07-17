@@ -6,7 +6,7 @@ status: Published
 feedback link: https://github.com/gdg-jp/ticket-booking-sample/issues
 author: GDG on Campus University of Osaka
 
-# WebMCP で席予約サイトを AI エージェントに対応させよう
+# WebMCP を作って Antigravity から呼び出してみよう！ WebMCP 開発ハンズオン
 
 ## はじめに
 
