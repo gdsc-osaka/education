@@ -409,7 +409,7 @@ MCP managerで`webmcp`または`webmcp-bridge-mcp`に`✓`が表示されれば�
 次のReleasesページから、講師が指定した`webmcp-bridge-extension`をダウンロードします。
 
 <button>
-  [WebMCP bridge 拡張機能の Releases を開く](https://github.com/tanahiro2010/webmcp-bridge-extension/releases)
+  [WebMCP bridge 拡張機能の Releases を開く](https://github.com/gdg-jp/webmcp-bridge-extension/releases/latest/download/webmcp-bridge-extension.zip)
 </button>
 
 1. Chromeで`chrome://extensions`を開く
