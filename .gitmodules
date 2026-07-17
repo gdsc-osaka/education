@@ -32,3 +32,6 @@
 [submodule "webmcp-agent/repo/monitor"]
 	path = webmcp-agent/repo/monitor
 	url = https://github.com/gdg-jp/ticket-booking-monitor
+[submodule "webmcp-agent/repo/template"]
+  path = webmcp-agent/repo/template
+	url = https://github.com/gdg-jp/ticket-booking-template
