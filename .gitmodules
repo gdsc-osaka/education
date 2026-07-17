@@ -26,12 +26,12 @@
 [submodule "webmcp-agent/repo/sample"]
 	path = webmcp-agent/repo/sample
 	url = https://github.com/gdg-jp/ticket-booking-sample
-[submodule "webmcp-agent/repo/template"]
-	path = webmcp-agent/repo/template
-	url = https://github.com/tanahiro2010/ticket-booking-template
 [submodule "webmcp-agent/repo/backend"]
 	path = webmcp-agent/repo/backend
 	url = https://github.com/gdg-jp/ticket-booking-backend
 [submodule "webmcp-agent/repo/monitor"]
 	path = webmcp-agent/repo/monitor
-	url = https://github.com/tanahiro2010/ticket-booking-monitor
+	url = https://github.com/gdg-jp/ticket-booking-monitor
+[submodule "webmcp-agent/repo/template"]
+  path = webmcp-agent/repo/template
+	url = https://github.com/gdg-jp/ticket-booking-template
