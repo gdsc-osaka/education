@@ -359,7 +359,7 @@ AntigravityからChrome側のWebMCP toolを利用するため、`webmcp-bridge-m
 - Windows: `%USERPROFILE%\.gemini\config\mcp_config.json`
 - macOS: `~/.gemini/config/mcp_config.json`
 
-`mcp_config.json`を次の内容にします。
+`mcp_config.json`がなかった人はファイルを次の内容にします。
 
 ```json
 {
@@ -371,6 +371,8 @@ AntigravityからChrome側のWebMCP toolを利用するため、`webmcp-bridge-m
   }
 }
 ```
+
+`mcp_config.json`がすでにあった人は、`mcpServers`の末尾に`webmcp`の設定を追加します。
 
 この設定により、Antigravityは`npx -y webmcp-bridge-mcp`をローカルMCP serverとして起動します。
 
