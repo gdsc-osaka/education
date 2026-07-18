@@ -325,7 +325,7 @@ Antigravity IDE のエディタで`mcp_config.json`が開きます。ファイ�
 
 `mcp_config.json`に別の MCP server がすでにある場合は、既存の設定を消さず、`mcpServers`の中へ`webmcp`の設定を追加します。
 
-保存したら MCP Servers の画面へ戻り、**Refresh**を押します。`webmcp`が表示され、有効になっていれば設定完了です。この設定により、Antigravity IDE は`npx -y webmcp-bridge-mcp`をローカル MCP server として起動します。
+保存したら MCP Servers の画面へ戻り、**Refresh**を押します。`webmcp`が表示され、有効になっていれば設定完了です。この設定により、Antigravity IDE は`npx -y github:gdg-jp/webmcp-bridge-mcp`をローカル MCP server として起動します。
 
 > **Troubleshooting:** `webmcp`が表示されない場合は、`mcp_config.json`を保存したことと、JSON の括弧やカンマが正しいことを確認してから、もう一度 **Refresh**を押してください。
 
