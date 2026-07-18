@@ -31,6 +31,18 @@ A-1 を予約してください。
 
 参加者IDは最初にWebページへログインするとブラウザのCookieへ保存されます。WebMCP toolはこのログイン状態を再利用するため、Agentへ参加者IDを毎回伝える必要はありません。
 
+### Discord で質問を受け付けています！
+
+GDG Greater Kwansai の Discord サーバーでハンズオンに関する質問を受け付けています！
+
+こちらのボタンから Discord サーバーに参加し、`#help-hands-on`チャンネルで質問してください。
+
+<button>
+  [Discord に参加する](https://discord.gg/VMYcEZSZq)
+</button>
+
+https://discord.com/channels/1397126037963542569/1527642940283818054
+
 ### このコードラボで学ぶこと
 
 - MCP と WebMCP の関係を説明する方法
@@ -48,7 +60,6 @@ A-1 を予約してください。
 - Antigravity IDE
 - Node.js と npm
 - connpass ID
-- GitHub からファイルをダウンロードできるネットワーク
 
 ### 前提知識
 
@@ -58,11 +69,8 @@ A-1 を予約してください。
 
 ### このコードラボで扱わないこと
 
-- 席予約バックエンド API の実装
 - 本番運用向けの認証、認可、監査、セキュリティ設計
 - MCP の Resources や Prompts の実装
-- Antigravity 以外の AI エージェントでの動作保証
-- WebMCP 仕様のすべての API
 
 > **補足:** WebMCP は実験段階の仕様です。このコードラボでは、指定された Chrome、拡張機能、MCP bridge、Antigravity IDE の組み合わせを使います。
 
@@ -373,7 +381,7 @@ chrome://flags/#enable-webmcp-testing
 Antigravity IDE の Agent パネルで次のプロンプトを送信します。
 
 ```text
-localhost:8080 に登録されている WebMCP ツールを列挙してください。もし ping ツールが見つかればそれを実行してください。
+localhost:8080 に登録されている WebMCP ツールを列挙してください。もし ping ツールが見つかればそれを実行してください。見つからなければ webmcp-bridge-mcp のステータスを報告してください。
 ```
 
 **期待される結果:**
@@ -393,7 +401,7 @@ Duration: 0:08:00
 
 ### 宣言型 WebMCP とは
 
-宣言型 WebMCP は、HTML フォームに専用の属性を追加し、そのフォームを AI エージェント向けの tool として公開する方法です。既存の入力欄、バリデーション、送信処理を再利用できるため、tool を登録する JavaScript を書かずに WebMCP へ対応できます。
+宣言型 WebMCP は、HTML フォームに専用の属性を追加し、そのフォームを AI エージェント向けの tool として公開する方法です。既存の入力欄、バリデーション、送信処理を再利用できるため、HTML だけで WebMCP へ対応できます。
 
 以下では、TODO リストへ項目を追加するフォームを例に、宣言型 WebMCP の仕組みを確認します。
 
