@@ -317,7 +317,7 @@ Antigravity IDE のエディタで`mcp_config.json`が開きます。ファイ�
   "mcpServers": {
     "webmcp": {
       "command": "npx",
-      "args": ["-y", "webmcp-bridge-mcp"]
+      "args": ["-y", "github:gdg-jp/webmcp-bridge-mcp"]
     }
   }
 }
