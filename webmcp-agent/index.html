@@ -411,6 +411,11 @@ A-1 を予約してください。
 </code></pre>
 </div>
 <p>参加者IDは最初にWebページへログインするとブラウザのCookieへ保存されます。WebMCP toolはこのログイン状態を再利用するため、Agentへ参加者IDを毎回伝える必要はありません。</p>
+<h2 is-upgraded data-claat-source-heading-level="3">Discord で質問を受け付けています！</h2>
+<p>GDG Greater Kwansai の Discord サーバーでハンズオンに関する質問を受け付けています！</p>
+<p>こちらのボタンから Discord サーバーに参加し、<code>#help-hands-on</code>チャンネルで質問してください。</p>
+<p><a href="https://discord.gg/VMYcEZSZq" target="_blank"><paper-button class="colored" raised>Discord に参加する</paper-button></a></p>
+<p><a href="https://discord.com/channels/1397126037963542569/1527642940283818054" target="_blank">https://discord.com/channels/1397126037963542569/1527642940283818054</a></p>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで学ぶこと</h2>
 <ul>
 <li>MCP と WebMCP の関係を説明する方法</li>
@@ -428,7 +433,6 @@ A-1 を予約してください。
 <li>Antigravity IDE</li>
 <li>Node.js と npm</li>
 <li>connpass ID</li>
-<li>GitHub からファイルをダウンロードできるネットワーク</li>
 </ul>
 <h2 is-upgraded data-claat-source-heading-level="3">前提知識</h2>
 <ul>
@@ -438,11 +442,8 @@ A-1 を予約してください。
 </ul>
 <h2 is-upgraded data-claat-source-heading-level="3">このコードラボで扱わないこと</h2>
 <ul>
-<li>席予約バックエンド API の実装</li>
 <li>本番運用向けの認証、認可、監査、セキュリティ設計</li>
 <li>MCP の Resources や Prompts の実装</li>
-<li>Antigravity 以外の AI エージェントでの動作保証</li>
-<li>WebMCP 仕様のすべての API</li>
 </ul>
 <aside class="special"><p><strong>補足:</strong> WebMCP は実験段階の仕様です。このコードラボでは、指定された Chrome、拡張機能、MCP bridge、Antigravity IDE の組み合わせを使います。</p></aside>
 
@@ -654,7 +655,7 @@ npm --version
 </code></pre>
 </div>
 <p>初回実行時に<code>serve</code>のインストール確認が表示された場合は、<code>y</code>を入力してEnterキーを押します。<code>Local</code>に<code>http://localhost:8080</code>と表示されたら、Google ChromeでそのURLを開きます。</p>
-<p class="image-container"><img alt="agy_npx_serve.png" src="img/f570919fea91a20.png"></p>
+<p class="image-container"><img alt="agy_npx_serve.png" src="img/ad75c940b4e55086.png"></p>
 <p>コードラボが終わるまで、ローカルサーバーを起動した Antigravity IDE のターミナルは開いたままにします。</p>
 <p><strong>期待される状態:</strong></p>
 <ul>
@@ -692,16 +693,16 @@ npm --version
   &#34;mcpServers&#34;: {
     &#34;webmcp&#34;: {
       &#34;command&#34;: &#34;npx&#34;,
-      &#34;args&#34;: [&#34;-y&#34;, &#34;webmcp-bridge-mcp&#34;]
+      &#34;args&#34;: [&#34;-y&#34;, &#34;github:gdg-jp/webmcp-bridge-mcp&#34;]
     }
   }
 }
 </code></pre>
 </div>
 <p><code>mcp_config.json</code>に別の MCP server がすでにある場合は、既存の設定を消さず、<code>mcpServers</code>の中へ<code>webmcp</code>の設定を追加します。</p>
-<p>保存したら MCP Servers の画面へ戻り、<strong>Refresh</strong>を押します。<code>webmcp</code>が表示され、有効になっていれば設定完了です。この設定により、Antigravity IDE は<code>npx -y webmcp-bridge-mcp</code>をローカル MCP server として起動します。</p>
+<p>保存したら MCP Servers の画面へ戻り、<strong>Refresh</strong>を押します。<code>webmcp</code>が表示され、有効になっていれば設定完了です。この設定により、Antigravity IDE は<code>npx -y github:gdg-jp/webmcp-bridge-mcp</code>をローカル MCP server として起動します。</p>
 <aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>webmcp</code>が表示されない場合は、<code>mcp_config.json</code>を保存したことと、JSON の括弧やカンマが正しいことを確認してから、もう一度 <strong>Refresh</strong>を押してください。</p></aside>
-<p class="image-container"><img alt="agy_mcp_3" src="img/7d3772a83bc9e597.png"></p>
+<p class="image-container"><img alt="agy_mcp_3" src="img/4793baacd42f3913.png"></p>
 <p class="image-container"><img alt="agy_mcp_4" src="img/38db5b6bdf04782.png"></p>
 <h2 is-upgraded data-claat-source-heading-level="3">Chrome の WebMCP flag を有効にする</h2>
 <p>Chromeのアドレスバーに次を入力します。</p>
@@ -721,7 +722,7 @@ npm --version
 <aside class="troubleshooting"><p><strong>Troubleshooting:</strong> flagが見つからない場合は、Chromeを最新版へ更新してからもう一度確認してください。</p></aside>
 <p class="image-container"><img alt="chrome_flag.png" src="img/c1bea4b6b2049510.png"></p>
 <h2 is-upgraded data-claat-source-heading-level="3">Chrome 拡張機能を追加する</h2>
-<p>次のReleasesページから、講師が指定した<code>webmcp-bridge-extension</code>をダウンロードします。</p>
+<p>次のReleasesページから、講師が指定した<code>webmcp-bridge-extension</code>をダウンロードし、展開してください。</p>
 <p><a href="https://github.com/gdg-jp/webmcp-bridge-extension/releases/latest/download/webmcp-bridge-extension.zip" target="_blank"><paper-button class="colored" raised>WebMCP bridge 拡張機能をダウンロード</paper-button></a></p>
 <ol type="1">
 <li>Chromeで<code>chrome://extensions</code>を開く</li>
@@ -729,10 +730,13 @@ npm --version
 <li>ダウンロードしたファイルを展開する</li>
 <li><strong>パッケージ化されていない拡張機能を読み込む</strong>を選ぶ</li>
 <li>展開した拡張機能のフォルダを選ぶ</li>
-<li>席予約サイトを再読み込みする</li>
+<li><a href="http://localhost:8080" target="_blank">http://localhost:8080</a> を再読み込みし、「WebMCP をインストール」をクリックする</li>
 </ol>
+<p class="image-container"><img alt="chrome_extension_1.png" src="img/7cde2a7210a0c4ab.png"></p>
+<p class="image-container"><img alt="chrome_extension_2.png" src="img/6b9e7f313a57ac68.png"></p>
+<p class="image-container"><img alt="chrome_extension_3.png" src="img/9acd8daeb49b4330.png"></p>
 <h2 is-upgraded data-claat-source-heading-level="3"><code>ping</code> tool で接続を確認する</h2>
-<p>Antigravity IDE の Agent パネルへ次のように依頼します。</p>
+<p>Antigravity IDE の Agent パネルで次のプロンプトを送信します。</p>
 <div class="claat-code-block" data-code-theme="light">
 <div class="claat-code-toolbar" aria-label="Code block actions">
   <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
@@ -742,7 +746,7 @@ npm --version
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-text" class="language-text">WebMCP で ping ツールを実行してください。
+<pre><code language="language-text" class="language-text">localhost:8080 に登録されている WebMCP ツールを列挙してください。もし ping ツールが見つかればそれを実行してください。見つからなければ webmcp-bridge-mcp のステータスを報告してください。
 </code></pre>
 </div>
 <p><strong>期待される結果:</strong></p>
@@ -760,7 +764,7 @@ npm --version
       <google-codelab-step label="席を予約する WebMCP tool を実装する" duration="8">
         <p>このステップでは、既存の予約フォームを<code>reserve_seat</code> toolとして公開します。予約フォームが受け取るのは席番号だけです。参加者IDは、ログイン時に保存したCookieを既存のJavaScriptが読み取ります。</p>
 <h2 is-upgraded data-claat-source-heading-level="3">宣言型 WebMCP とは</h2>
-<p>宣言型 WebMCP は、HTML フォームに専用の属性を追加し、そのフォームを AI エージェント向けの tool として公開する方法です。既存の入力欄、バリデーション、送信処理を再利用できるため、tool を登録する JavaScript を書かずに WebMCP へ対応できます。</p>
+<p>宣言型 WebMCP は、HTML フォームに専用の属性を追加し、そのフォームを AI エージェント向けの tool として公開する方法です。既存の入力欄、バリデーション、送信処理を再利用できるため、HTML だけで WebMCP へ対応できます。</p>
 <p>以下では、TODO リストへ項目を追加するフォームを例に、宣言型 WebMCP の仕組みを確認します。</p>
 <h3 is-upgraded data-claat-source-heading-level="4">基本的な使い方</h3>
 <p><code>&lt;form&gt;</code>要素と、その中の<code>&lt;input&gt;</code>要素へそれぞれ専用の属性を追加します。</p>
@@ -933,7 +937,7 @@ npm --version
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-html" class="claat-diff-code language-html" data-claat-diff="true" data-claat-diff-language="html">&lt;form
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">&lt;form
   id=&#34;reservation-form&#34;
   action=&#34;https://api.webmcp.gdgs.jp/api/reservations&#34;
   method=&#34;post&#34;
@@ -956,7 +960,7 @@ npm --version
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-html" class="claat-diff-code language-html" data-claat-diff="true" data-claat-diff-language="html">&lt;label&gt;
+<pre><code language="language-html" class="language-html claat-diff-code" data-claat-diff="true" data-claat-diff-language="html">&lt;label&gt;
   席番号
   &lt;input
     name=&#34;seatId&#34;
@@ -1200,7 +1204,7 @@ controller.abort();
     <span class="material-icons" aria-hidden="true">content_copy</span>
   </button>
 </div>
-<pre><code language="language-js" class="claat-diff-code language-js" data-claat-diff="true" data-claat-diff-language="js">  await document.modelContext.registerTool({
+<pre><code language="language-js" class="language-js claat-diff-code" data-claat-diff="true" data-claat-diff-language="js">  await document.modelContext.registerTool({
     name: &#34;ping&#34;,
     title: &#34;Ping&#34;,
     description: &#34;WebMCP の命令型 tool が登録できているか確認する。&#34;,
