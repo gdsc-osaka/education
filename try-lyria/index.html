@@ -1,15 +1,11 @@
-
-<!doctype html>
-
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-  <meta name="theme-color" content="#4F7DC9">
-  <meta charset="UTF-8">
+<!DOCTYPE html><html><head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"/>
+  <meta name="theme-color" content="#4F7DC9"/>
+  <meta charset="UTF-8"/>
   <title>Lyria 3 Pro で音楽生成を体験しよう</title>
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
-  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="libs/codelab-elements.css">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono"/>
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons"/>
+  <link rel="stylesheet" href="libs/codelab-elements.css"/>
   <style>
     .success {
       color: #1e8e3e;
@@ -18,21 +14,31 @@
       color: red;
     }
   </style>
-<meta id="claat-local-ogp-og-title" property="og:title" content="Lyria 3 Pro で音楽生成を体験しよう">
-<meta id="claat-local-ogp-twitter-title" name="twitter:title" content="Lyria 3 Pro で音楽生成を体験しよう">
-<meta id="claat-local-ogp-og-description" property="og:description" content="Lyria 3 Pro と Media Studio で音楽生成を体験する 25 分ハンズオン">
-<meta id="claat-local-ogp-twitter-description" name="twitter:description" content="Lyria 3 Pro と Media Studio で音楽生成を体験する 25 分ハンズオン">
-<meta id="claat-local-ogp-twitter-card" name="twitter:card" content="summary_large_image">
-<meta id="claat-local-ogp-og-image" property="og:image" content="https://edu.gdgoc-osaka.jp/try-lyria/img/661bd6c01f94ae72.png">
-<meta id="claat-local-ogp-twitter-image" name="twitter:image" content="https://edu.gdgoc-osaka.jp/try-lyria/img/661bd6c01f94ae72.png">
-<link id="claat-local-favicon" rel="icon" type="image/png" href="../assets/favicon.png">
-<style id="claat-local-preprocessor-style">
+<meta id="claat-local-ogp-og-title" property="og:title" content="Lyria 3 Pro で音楽生成を体験しよう"/><meta id="claat-local-ogp-twitter-title" name="twitter:title" content="Lyria 3 Pro で音楽生成を体験しよう"/><meta id="claat-local-ogp-og-description" property="og:description" content="Lyria 3 Pro と Media Studio で音楽生成を体験する 25 分ハンズオン"/><meta id="claat-local-ogp-twitter-description" name="twitter:description" content="Lyria 3 Pro と Media Studio で音楽生成を体験する 25 分ハンズオン"/><meta id="claat-local-ogp-twitter-card" name="twitter:card" content="summary_large_image"/><meta id="claat-local-ogp-og-image" property="og:image" content="https://edu.gdgoc-osaka.jp/try-lyria/img/661bd6c01f94ae72.png"/><meta id="claat-local-ogp-twitter-image" name="twitter:image" content="https://edu.gdgoc-osaka.jp/try-lyria/img/661bd6c01f94ae72.png"/><link id="claat-local-favicon" rel="icon" type="image/png" href="../assets/favicon.png"/><style id="claat-local-preprocessor-style">
   google-codelab-step .instructions .claat-code-block {
     position: relative;
     margin: 16px 0;
     background: #f1f3f4;
     border-radius: 0;
     overflow: hidden;
+  }
+
+  google-codelab-step .instructions .claat-code-filename {
+    display: inline-flex;
+    max-width: min(100%, 56ch);
+    min-height: 42px;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 10px 18px;
+    overflow: hidden;
+    color: #3c4043;
+    background: #e8eaed;
+    border-radius: 6px 6px 0 0;
+    font-family: "Roboto Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   google-codelab-step .instructions .claat-code-block pre {
@@ -114,6 +120,11 @@
 
   google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] {
     background: #28323f;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-filename {
+    color: #f1f3f4;
+    background: #3c4658;
   }
 
   google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre {
@@ -231,7 +242,121 @@
     border-left-width: 4px;
   }
 
+  google-codelab #drawer ol li a {
+    transition:
+      color 300ms ease-in-out,
+      background 300ms ease-in-out,
+      border-color 300ms ease-in-out,
+      box-shadow 300ms ease-in-out;
+  }
+
+  google-codelab #drawer ol li .step {
+    width: 100%;
+    min-width: 0;
+  }
+
+  google-codelab #drawer ol li .step > span {
+    min-width: 0;
+  }
+
+  google-codelab #drawer .claat-step-nav-content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  google-codelab #drawer .claat-step-nav-title {
+    overflow-wrap: anywhere;
+  }
+
+  google-codelab #drawer .claat-step-nav-outline {
+    display: block;
+    max-height: 0;
+    margin: 0 6px 0 44px;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      max-height 260ms ease,
+      margin-bottom 260ms ease,
+      opacity 180ms ease,
+      transform 220ms ease,
+      padding-bottom 260ms ease;
+  }
+
+  google-codelab #drawer ol li[selected] .claat-step-nav-outline {
+    max-height: 360px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  google-codelab #drawer .claat-step-nav-heading {
+    display: block;
+    color: #5f6368;
+    font-weight: 400;
+    line-height: 18px;
+    margin: 1px 0;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading:hover,
+  google-codelab #drawer .claat-step-nav-heading:focus-visible {
+    background: #f1f3f4;
+    color: #202124;
+    outline: none;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading.is-active {
+    background: #e8eaed;
+    color: #202124;
+    font-weight: 500;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading-level-3 {
+    margin-left: 0;
+    font-size: 12px;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading-level-4 {
+    margin-left: 14px;
+    font-size: 11px;
+  }
+
+  google-codelab-step .instructions table {
+    width: 100%;
+    border: 1px solid #cbdced;
+    border-collapse: collapse;
+  }
+
+  google-codelab-step .instructions table th,
+  google-codelab-step .instructions table td {
+    border: 1px solid #cbdced;
+  }
+
+  google-codelab-step .instructions table > thead > tr > th {
+    background: #e8f0fe;
+    font-weight: 700;
+    text-align: center;
+  }
+
   @media (max-width: 640px) {
+    google-codelab-step .instructions .claat-code-filename {
+      max-width: calc(100% - 72px);
+      min-height: 40px;
+      padding: 9px 14px;
+      font-size: 0.86rem;
+    }
+
     google-codelab-step .instructions .claat-code-block pre {
       padding: 56px 14px 16px;
     }
@@ -241,24 +366,18 @@
       padding: 0 14px;
     }
   }
-</style>
-</head>
+</style></head>
 <body>
   <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
-  <google-codelab codelab-gaid=""
-                  codelab-ga4id=""
-                  id="try-lyria"
-                  title="Lyria 3 Pro で音楽生成を体験しよう"
-                  environment="web"
-                  feedback-link="https://github.com/gdsc-osaka/education/issues">
+  <google-codelab codelab-gaid="" codelab-ga4id="" id="try-lyria" title="Lyria 3 Pro で音楽生成を体験しよう" environment="web" feedback-link="https://github.com/gdsc-osaka/education/issues">
     
       <google-codelab-step label="はじめに" duration="1">
-        <p class="image-container"><img alt="Lyria 3 Pro 音楽生成ハンズオンのカバー画像" src="img/661bd6c01f94ae72.png"></p>
+        <p class="image-container"><img alt="Lyria 3 Pro 音楽生成ハンズオンのカバー画像" src="img/661bd6c01f94ae72.png"/></p>
 <p>このコードラボでは、プログラミングや音楽制作の経験がない方を対象に、ブラウザだけで Lyria 3 Pro による音楽生成を体験します。短いプロンプトから始めて、非公式ブログやユーザー投稿でよく紹介されている実践的なコツを使いながら、曲の方向性を調整していきます。</p>
-<p class="image-container"><img alt="Media Studio で音楽を生成している完成イメージ" src="img/b5ad2800d8f7f423.svg"></p>
-<h2 is-upgraded>このコードラボで作るもの</h2>
+<p class="image-container"><img alt="Media Studio で音楽を生成している完成イメージ" src="img/b5ad2800d8f7f423.svg"/></p>
+<h2 data-claat-source-heading-level="3" is-upgraded="">このコードラボで作るもの</h2>
 <p>Google Cloud の Agent Platform Media Studio を使って、テキストや画像から短い音楽を生成します。最初は短い説明で作り、その後にジャンル、雰囲気、楽器、テンポ、曲の構成、避けたい要素などを足して、生成結果がどう変わるかを聴き比べます。</p>
-<h2 is-upgraded>このコードラボで学ぶこと</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">このコードラボで学ぶこと</h2>
 <ul>
 <li>Media Studio を開いて Lyria 3 Pro を選択する方法</li>
 <li>短いテキストプロンプトから音楽を生成する方法</li>
@@ -268,14 +387,14 @@
 <li>Negative prompt で避けたい要素を伝える方法</li>
 <li>画像とテキストを組み合わせて曲の方向性を伝える方法</li>
 </ul>
-<h2 is-upgraded>必要なもの</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">必要なもの</h2>
 <ul>
 <li>インターネットに接続された PC</li>
 <li>Google Chrome などの Web ブラウザ</li>
 <li>Google Cloud にログインする Google アカウント</li>
 <li>音を聴くためのイヤホンまたはスピーカー</li>
 </ul>
-<h2 is-upgraded>このコードラボで扱わないこと</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">このコードラボで扱わないこと</h2>
 <ul>
 <li>Google Cloud プロジェクトの作成</li>
 <li>課金設定や IAM の詳しい説明</li>
@@ -289,15 +408,15 @@
     
       <google-codelab-step label="Google Form でメールアドレスを登録する" duration="2">
         <p>このステップは、まだ参加用メールアドレスを登録していない方だけが行います。すでに登録済みの方は、次のステップへ進んでください。</p>
-<p class="image-container"><img alt="Google Form から Media Studio 利用準備までの流れ" src="img/1cc0799233b99054.svg"></p>
-<h2 is-upgraded>登録が必要な理由</h2>
+<p class="image-container"><img alt="Google Form から Media Studio 利用準備までの流れ" src="img/1cc0799233b99054.svg"/></p>
+<h2 data-claat-source-heading-level="3" is-upgraded="">登録が必要な理由</h2>
 <p>Media Studio で Lyria 3 Pro を使うには、運営側が用意した Google Cloud プロジェクト <code>lyria-hands-on</code> に、参加者の Google アカウントを IAM ユーザーとして追加する必要があります。</p>
-<h2 is-upgraded>フォームに回答する</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">フォームに回答する</h2>
 <p>下のボタンから Google Form を開き、Google Cloud にログインする Gmail アドレスを入力して送信します。</p>
-<p><a href="https://gdgs.jp/lyria-form" target="_blank"><paper-button class="colored" raised>参加用 Google Form を開く</paper-button></a></p>
+<p><a href="https://gdgs.jp/lyria-form" target="_blank"><paper-button class="colored" raised="">参加用 Google Form を開く</paper-button></a></p>
 <p>フォーム送信後、運営スタッフがアカウントを登録します。登録が終わるまで、Media Studio にアクセスできない場合があります。</p>
 <aside class="warning"><p><strong>Warning:</strong> 必ず、これから Google Cloud Console にログインするアカウントのメールアドレスを入力してください。別のアカウントを入力すると、プロジェクトが見えません。</p></aside>
-<h2 is-upgraded>登録完了を待つ</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">登録完了を待つ</h2>
 <p>フォームを送信したら、メンターまたは運営スタッフに声をかけてください。登録完了の案内を受けてから、次のステップへ進みます。</p>
 
 
@@ -305,27 +424,30 @@
     
       <google-codelab-step label="Media Studio を開く" duration="3">
         <p>このステップでは、Media Studio を開き、利用するアカウント、プロジェクト、モデルを確認します。</p>
-<p class="image-container"><img alt="Media Studio で確認する 3 つの場所" src="img/e88aa1a3eb35f7e0.svg"></p>
-<h2 is-upgraded>Media Studio の URL を開く</h2>
+<p class="image-container"><img alt="Media Studio で確認する 3 つの場所" src="img/e88aa1a3eb35f7e0.svg"/></p>
+<h2 data-claat-source-heading-level="3" is-upgraded="">Media Studio の URL を開く</h2>
 <p>下のボタンから、イベント用プロジェクトを指定した Media Studio を開きます。</p>
-<p><a href="https://console.cloud.google.com/agent-platform/studio/media/music?project=lyria-hands-on" target="_blank"><paper-button class="colored" raised>Media Studio を開く</paper-button></a></p>
+<p><a href="https://console.cloud.google.com/agent-platform/studio/media/music?project=lyria-hands-on" target="_blank"><paper-button class="colored" raised="">Media Studio を開く</paper-button></a></p>
 <p>画面が開いたら、右上のアカウントアイコンを確認します。Google Form に登録したアカウントでログインしていることを確認してください。</p>
-<h2 is-upgraded>スマートフォンで開く場合</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">スマートフォンで開く場合</h2>
 <p>PC での参加を推奨します。スマートフォンで画面を確認する場合は、ブラウザのメニューからデスクトップ用サイトを表示します。</p>
 <p>左から、Android Chrome、iPhone Safari の手順 1、手順 2、デスクトップ表示後の画面です。</p>
-<p class="image-container"><img alt="スマートフォンでデスクトップ用サイトを表示する手順" src="img/4dfd45970ebbe2f7.png"></p>
-<h2 is-upgraded>プロジェクトを確認する</h2>
+<p class="image-container"><img alt="スマートフォンでデスクトップ用サイトを表示する手順" src="img/4dfd45970ebbe2f7.png"/></p>
+<h2 data-claat-source-heading-level="3" is-upgraded="">プロジェクトを確認する</h2>
 <p>画面上部のプロジェクト選択欄で、プロジェクトが <code>lyria-hands-on</code> になっていることを確認します。</p>
 <p>別のプロジェクトが表示されている場合は、プロジェクト選択欄を開き、<code>lyria-hands-on</code> を選びます。</p>
 <aside class="warning"><p><strong>Warning:</strong> このハンズオンでは、必ず <code>lyria-hands-on</code> プロジェクトを使います。自分のプロジェクトに切り替えて生成しないでください。</p></aside>
-<h2 is-upgraded>Lyria 3 Pro を選ぶ</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">Lyria 3 Pro を選ぶ</h2>
 <p>音楽生成の画面で、モデルとして <code>Lyria 3 Pro</code> を選択します。すでに選ばれている場合は、そのままで構いません。</p>
-<h2 is-upgraded>困ったときの見分け方</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">困ったときの見分け方</h2>
 <table>
-<tr><td colspan="1" rowspan="1"><p>症状</p>
-</td><td colspan="1" rowspan="1"><p>よくある原因</p>
-</td><td colspan="1" rowspan="1"><p>対応</p>
-</td></tr>
+<thead>
+<tr><th colspan="1" rowspan="1"><p>症状</p>
+</th><th colspan="1" rowspan="1"><p>よくある原因</p>
+</th><th colspan="1" rowspan="1"><p>対応</p>
+</th></tr>
+</thead>
+<tbody>
 <tr><td colspan="1" rowspan="1"><p>プロジェクトが見えない</p>
 </td><td colspan="1" rowspan="1"><p>メールアドレス未登録、または別アカウントでログインしている</p>
 </td><td colspan="1" rowspan="1"><p>アカウントを切り替える、またはメンターに声をかける</p>
@@ -338,6 +460,7 @@
 </td><td colspan="1" rowspan="1"><p>画面やモデル選択欄が更新されている</p>
 </td><td colspan="1" rowspan="1"><p>ページを再読み込みし、メンターに確認する</p>
 </td></tr>
+</tbody>
 </table>
 
 
@@ -346,14 +469,14 @@
       <google-codelab-step label="Google Cloud の Lyria が使えない場合のフォールバック" duration="1">
         <p>Google Cloud の権限や画面表示の都合で Media Studio が使えない場合は、Gemini アプリの音楽生成からハンズオンを続けます。</p>
 <aside class="warning"><p><strong>Caution:</strong> Media Studio が開けた方は、このステップをスキップして「テキストから最初の曲を作る」へ進んでください。</p></aside>
-<h2 is-upgraded>Gemini アプリを開く</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">Gemini アプリを開く</h2>
 <p>下のボタンから Gemini アプリを開きます。Google Cloud で使う予定だった Google アカウントでログインしてください。</p>
-<p><a href="https://gemini.google.com/app" target="_blank"><paper-button class="colored" raised>Gemini アプリを開く</paper-button></a></p>
-<h2 is-upgraded>音楽生成を選ぶ</h2>
+<p><a href="https://gemini.google.com/app" target="_blank"><paper-button class="colored" raised="">Gemini アプリを開く</paper-button></a></p>
+<h2 data-claat-source-heading-level="3" is-upgraded="">音楽生成を選ぶ</h2>
 <p>入力欄の左にある <code>+</code> ボタンを押します。</p>
-<p class="image-container"><img alt="Gemini アプリで入力欄左の追加ボタンを押す" src="img/7d0e4584c1226655.png"></p>
+<p class="image-container"><img alt="Gemini アプリで入力欄左の追加ボタンを押す" src="img/7d0e4584c1226655.png"/></p>
 <p>メニューが開いたら、<code>音楽</code> を選びます。</p>
-<p class="image-container"><img alt="Gemini アプリで音楽生成を選ぶ" src="img/514b5ed49ad493b1.png"></p>
+<p class="image-container"><img alt="Gemini アプリで音楽生成を選ぶ" src="img/514b5ed49ad493b1.png"/></p>
 <p>これ以降のプロンプトは、Media Studio の代わりに Gemini アプリの入力欄へ貼り付けて進めます。モデル選択やプロジェクト確認など、Google Cloud 固有の操作は行いません。</p>
 
 
@@ -361,29 +484,19 @@
     
       <google-codelab-step label="テキストから最初の曲を作る" duration="3">
         <p>このステップでは、短いテキストだけで最初の曲を生成します。まずは細かく考えすぎず、1 回作って再生することを目標にします。</p>
-<p class="image-container"><img alt="短いプロンプトから曲を生成する流れ" src="img/4502f704975ef4e7.svg"></p>
-<h2 is-upgraded>短いプロンプトを入力する</h2>
+<p class="image-container"><img alt="短いプロンプトから曲を生成する流れ" src="img/4502f704975ef4e7.svg"/></p>
+<h2 data-claat-source-heading-level="3" is-upgraded="">短いプロンプトを入力する</h2>
 <p>プロンプト入力欄に、次の英文を貼り付けます。</p>
-<p class="image-container"><img alt="Media Studio のプロンプト入力欄にテキストを入力する" src="img/9b3ac27d58098e0c.png"></p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Energetic electronic dance music with bright synth leads, punchy drums, and a cheerful festival atmosphere. Clean mix, upbeat rhythm.
-</code></pre>
-</div>
+<p class="image-container"><img alt="Media Studio のプロンプト入力欄にテキストを入力する" src="img/9b3ac27d58098e0c.png"/></p>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Energetic electronic dance music with bright synth leads, punchy drums, and a cheerful festival atmosphere. Clean mix, upbeat rhythm.
+</code></pre></div>
 <p>このプロンプトは、「明るいシンセ」「力強いドラム」「フェスのような雰囲気」を Lyria に伝えています。</p>
-<h2 is-upgraded>生成して再生する</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">生成して再生する</h2>
 <p>生成ボタンを押し、結果が表示されるまで待ちます。生成が完了したら、再生ボタンを押して音を確認します。</p>
-<p class="image-container"><img alt="生成された曲の再生ボタンを押す" src="img/d2225bccccd35477.png"></p>
+<p class="image-container"><img alt="生成された曲の再生ボタンを押す" src="img/d2225bccccd35477.png"/></p>
 <p><strong>期待される結果:</strong></p>
 <p>音楽プレイヤーのような表示が出て、生成された曲を再生できます。最初の生成では、思った通りでなくても問題ありません。</p>
-<h2 is-upgraded>できた曲を言葉にする</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">できた曲を言葉にする</h2>
 <p>再生したら、次の 3 点を心の中で確認します。</p>
 <ul>
 <li>明るいか、暗いか</li>
@@ -397,29 +510,22 @@
     
       <google-codelab-step label="プロンプトを音楽の指示書にする" duration="5">
         <p>このステップでは、短いプロンプトを「音楽の制作指示書」に変えて、生成結果をコントロールします。</p>
-<p class="image-container"><img alt="音楽プロンプトを構成する要素" src="img/c528b1e117b98788.svg"></p>
-<h2 is-upgraded>短すぎるプロンプトを確認する</h2>
+<p class="image-container"><img alt="音楽プロンプトを構成する要素" src="img/c528b1e117b98788.svg"/></p>
+<h2 data-claat-source-heading-level="3" is-upgraded="">短すぎるプロンプトを確認する</h2>
 <p>たとえば、次のようなプロンプトでも音楽は生成できます。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Cool pop music.
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Cool pop music.
+</code></pre></div>
 <p>ただし、これだけでは「どんな pop なのか」「どんな楽器なのか」「速さはどれくらいか」が Lyria に伝わりにくくなります。</p>
-<h2 is-upgraded>4 つの基本要素を入れる</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">4 つの基本要素を入れる</h2>
 <p>非公式のプロンプト解説記事では、まず <code>Genre</code>、<code>Mood</code>、<code>Instruments</code>、<code>Tempo</code> の 4 つを入れる方法がよく紹介されています。音楽用語に詳しくなくても、この 4 つだけで「何を作りたいか」が伝わりやすくなります。</p>
 <table>
-<tr><td colspan="1" rowspan="1"><p>要素</p>
-</td><td colspan="1" rowspan="1"><p>書くこと</p>
-</td><td colspan="1" rowspan="1"><p>例</p>
-</td></tr>
+<thead>
+<tr><th colspan="1" rowspan="1"><p>要素</p>
+</th><th colspan="1" rowspan="1"><p>書くこと</p>
+</th><th colspan="1" rowspan="1"><p>例</p>
+</th></tr>
+</thead>
+<tbody>
 <tr><td colspan="1" rowspan="1"><p>Genre</p>
 </td><td colspan="1" rowspan="1"><p>曲の大きな種類</p>
 </td><td colspan="1" rowspan="1"><p><code>city pop</code>, <code>lo-fi hip hop</code>, <code>cinematic orchestral</code></p>
@@ -436,64 +542,38 @@
 </td><td colspan="1" rowspan="1"><p>速さやノリ</p>
 </td><td colspan="1" rowspan="1"><p><code>slow</code>, <code>mid-tempo</code>, <code>around 115 BPM</code></p>
 </td></tr>
+</tbody>
 </table>
 <aside class="special"><p><strong>Tip:</strong> 迷ったら、ジャンル、雰囲気、楽器、テンポを 1 行ずつ書きます。長い文章にするより、要素を分けた方があとから直しやすくなります。</p></aside>
-<h2 is-upgraded>指示を具体的にする</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">指示を具体的にする</h2>
 <p>同じ pop でも、次のように要素を分けて書くと、曲の方向性を伝えやすくなります。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Modern city pop with nostalgic 80s synth textures.
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Modern city pop with nostalgic 80s synth textures.
 Mood: bright, nostalgic, and relaxed.
 Instruments: warm electric piano, slap bass, clean guitar, and disco-inspired drums.
 Tempo: upbeat, around 115 BPM.
 Structure: short intro, catchy main section, gentle outro.
 Production: clean mix with soft reverb.
-</code></pre>
-</div>
+</code></pre></div>
 <p>このプロンプトでは、ジャンル、雰囲気、楽器、テンポ、構成、音作りを分けて指定しています。</p>
-<h2 is-upgraded>アーティスト名ではなく特徴を書く</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">アーティスト名ではなく特徴を書く</h2>
 <p>既存のアーティスト名や曲名をそのまま入れるより、音の特徴に分解して書く方が安定します。たとえば「特定の歌手みたいに」ではなく、次のように書きます。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Country-pop crossover with acoustic guitar, bright airy vocals, storytelling lyrics, crisp drums, and a warm radio-ready mix.
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Country-pop crossover with acoustic guitar, bright airy vocals, storytelling lyrics, crisp drums, and a warm radio-ready mix.
+</code></pre></div>
 <p>この書き方では、ジャンルの混ざり方、歌声の印象、歌詞の方向性、音作りを説明しています。特定の作品をまねるのではなく、自分が欲しい音の条件を並べます。</p>
-<h2 is-upgraded>避けたい要素を書く</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">避けたい要素を書く</h2>
 <p>画面に Negative prompt の入力欄がある場合は、避けたい要素を書きます。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">harsh noise, aggressive distortion, sudden volume changes
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">harsh noise, aggressive distortion, sudden volume changes
+</code></pre></div>
 <p>Negative prompt は「入れてほしくないもの」を伝える欄です。最初は短く、明確な言葉だけを書くのがおすすめです。</p>
-<h2 is-upgraded>聴き比べる</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">聴き比べる</h2>
 <p>生成した曲を聴き、短いプロンプトとの違いを確認します。</p>
 <table>
-<tr><td colspan="1" rowspan="1"><p>指定した要素</p>
-</td><td colspan="1" rowspan="1"><p>変わりやすいところ</p>
-</td></tr>
+<thead>
+<tr><th colspan="1" rowspan="1"><p>指定した要素</p>
+</th><th colspan="1" rowspan="1"><p>変わりやすいところ</p>
+</th></tr>
+</thead>
+<tbody>
 <tr><td colspan="1" rowspan="1"><p>Genre</p>
 </td><td colspan="1" rowspan="1"><p>曲全体の方向性</p>
 </td></tr>
@@ -512,6 +592,7 @@ Production: clean mix with soft reverb.
 <tr><td colspan="1" rowspan="1"><p>Production</p>
 </td><td colspan="1" rowspan="1"><p>音の質感</p>
 </td></tr>
+</tbody>
 </table>
 <aside class="special"><p><strong>Tip:</strong> 良いプロンプトは、感想文ではなく制作指示書です。「かっこいい曲」よりも、「何が、どんな速さで、どんな雰囲気で鳴るか」を書きます。</p></aside>
 
@@ -520,41 +601,22 @@ Production: clean mix with soft reverb.
     
       <google-codelab-step label="用途に合わせてプロンプトを変える" duration="4">
         <p>このステップでは、同じ Lyria でも、BGM、ボーカル曲、長めの曲で指示を変える練習をします。1 つずつ生成しても、読むだけでも構いません。</p>
-<h2 is-upgraded>短く試してから仕上げる</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">短く試してから仕上げる</h2>
 <p>ユーザー投稿では、最初から長い曲を狙うより、短いプロンプトで方向性を確認してから、よかった要素だけを残して詳しくする方法がよく使われています。</p>
 <p>Gemini アプリで <code>Fast</code> や短尺生成を選べる場合は、まず短く試します。仕上げたい方向が決まったら、<code>Lyria 3 Pro</code> や長めの生成で、構成や音作りを足します。</p>
 <aside class="special"><p><strong>補足:</strong> 画面によって、モデル名や長さの選択肢は変わることがあります。選べない場合は、同じモデルのまま短いプロンプトから試してください。</p></aside>
-<h2 is-upgraded>BGM は主張しすぎないようにする</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">BGM は主張しすぎないようにする</h2>
 <p>動画や発表の後ろで流す BGM では、強い主旋律や歌声が邪魔になることがあります。次のように、<code>instrumental only</code>、<code>no vocals</code>、<code>low energy</code>、<code>no melodic lead</code> を入れて、控えめな音に寄せます。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Minimal ambient background music for a tutorial video.
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Minimal ambient background music for a tutorial video.
 Mood: calm, focused, and unobtrusive.
 Instruments: soft piano, airy pads, subtle percussion.
 Tempo: slow, steady, and relaxed.
 Arrangement: instrumental only, no vocals, no melodic lead, no sudden volume changes.
-</code></pre>
-</div>
+</code></pre></div>
 <p>このプロンプトは、曲そのものを目立たせるより、話し声や映像を邪魔しないことを優先しています。</p>
-<h2 is-upgraded>長めの曲は構成を書く</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">長めの曲は構成を書く</h2>
 <p>Lyria 3 Pro で長めの曲を作る場合は、曲の流れを明示すると展開が保ちやすくなります。セクションを角括弧で書き、どこで盛り上げるかを指定します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Upbeat indie pop song with clean guitars, warm bass, live drums, and bright synth accents.
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Upbeat indie pop song with clean guitars, warm bass, live drums, and bright synth accents.
 Mood: hopeful, youthful, and energetic.
 Tempo: around 125 BPM.
 
@@ -572,21 +634,11 @@ Drop the drums, add atmospheric pads, then build back up.
 
 [Outro]
 Return to the guitar riff and end cleanly.
-</code></pre>
-</div>
+</code></pre></div>
 <p>この書き方は、<code>Intro</code>、<code>Verse</code>、<code>Chorus</code>、<code>Bridge</code>、<code>Outro</code> のような区切りを Lyria に伝えます。3 分前後の曲を狙うときほど、構成を書いた方が比較しやすくなります。</p>
-<h2 is-upgraded>歌詞は情景で書く</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">歌詞は情景で書く</h2>
 <p>ボーカル曲にしたい場合は、抽象的な言葉だけでなく、具体的な場面を入れます。非公式の制作メモでは、ありきたりな感情語より、見えるもの、聞こえるもの、誰がどこにいるのかを書く方法がすすめられています。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Acoustic pop ballad with a gentle male vocal, fingerpicked guitar, soft piano, and a warm intimate mix.
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Acoustic pop ballad with a gentle male vocal, fingerpicked guitar, soft piano, and a warm intimate mix.
 Mood: reflective, sincere, and hopeful.
 
 [Verse 1]
@@ -600,8 +652,7 @@ Stay until the morning
 Stay until the sky turns blue
 Every road feels softer
 When it leads me back to you
-</code></pre>
-</div>
+</code></pre></div>
 <p>歌詞を入れるときは、1 行を短めにするとメロディに乗りやすくなります。最初の生成で歌い方が合わない場合は、声質、テンポ、伴奏の密度を変えて試します。</p>
 
 
@@ -609,74 +660,34 @@ When it leads me back to you
     
       <google-codelab-step label="画像から曲の雰囲気を作る" duration="3">
         <p>このステップでは、画像とテキストを組み合わせて、曲の世界観を伝えます。</p>
-<p class="image-container"><img alt="画像とテキストから音楽を生成する流れ" src="img/35759597106475e9.svg"></p>
-<h2 is-upgraded>画像を 1 枚選ぶ</h2>
+<p class="image-container"><img alt="画像とテキストから音楽を生成する流れ" src="img/35759597106475e9.svg"/></p>
+<h2 data-claat-source-heading-level="3" is-upgraded="">画像を 1 枚選ぶ</h2>
 <p>手元にある写真やイラストを 1 枚選びます。夜景、海、自然、部屋、イベント写真など、雰囲気が伝わりやすい画像が向いています。</p>
 <p>手元に画像がない場合は、次のサンプル画像を使っても構いません。気になる画像を 1 枚選び、画像を見て感じた雰囲気をプロンプトに足してみます。</p>
-<p class="image-container"><img alt="ネオンの夜景サンプル画像" src="img/98f1833c7612831f.svg"></p>
-<h2 is-upgraded>サンプル画像を選ぶ</h2>
+<p class="image-container"><img alt="ネオンの夜景サンプル画像" src="img/98f1833c7612831f.svg"/></p>
+<h2 data-claat-source-heading-level="3" is-upgraded="">サンプル画像を選ぶ</h2>
 <p>Jazz:</p>
-<p class="image-container"><img alt="ジャズクラブの実写風サンプル画像" src="img/7d2403e8b4e292fa.png"></p>
-<p><a href="img/sample-jazz.png" download="sample-jazz.png"><paper-button class="colored" raised>ジャズ画像をダウンロード</paper-button></a></p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Warm jazz ballad in a small club. Upright bass, brushed drums, soft piano, and smoky saxophone. Relaxed late-night mood with intimate room ambience.
-</code></pre>
-</div>
+<p class="image-container"><img alt="ジャズクラブの実写風サンプル画像" src="img/7d2403e8b4e292fa.png"/></p>
+<p><a href="img/sample-jazz.png" target="_blank" download="sample-jazz.png"><paper-button class="colored" raised="">   ジャズ画像をダウンロード</paper-button></a></p>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Warm jazz ballad in a small club. Upright bass, brushed drums, soft piano, and smoky saxophone. Relaxed late-night mood with intimate room ambience.
+</code></pre></div>
 <p>Orchestra:</p>
-<p class="image-container"><img alt="オーケストラホールの実写風サンプル画像" src="img/5324e643c5948cfa.png"></p>
-<p><a href="img/sample-orchestra.png" download="sample-orchestra.png"><paper-button class="colored" raised>オーケストラ画像をダウンロード</paper-button></a></p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Grand orchestral music inspired by a concert hall. Rising strings, warm brass, gentle woodwinds, and cinematic percussion. Elegant and emotional mood.
-</code></pre>
-</div>
+<p class="image-container"><img alt="オーケストラホールの実写風サンプル画像" src="img/5324e643c5948cfa.png"/></p>
+<p><a href="img/sample-orchestra.png" target="_blank" download="sample-orchestra.png"><paper-button class="colored" raised="">   オーケストラ画像をダウンロード</paper-button></a></p>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Grand orchestral music inspired by a concert hall. Rising strings, warm brass, gentle woodwinds, and cinematic percussion. Elegant and emotional mood.
+</code></pre></div>
 <p>Sea:</p>
-<p class="image-container"><img alt="朝の海辺の実写風サンプル画像" src="img/8e77591d3b2250f6.png"></p>
-<p><a href="img/sample-sea.png" download="sample-sea.png"><paper-button class="colored" raised>海の画像をダウンロード</paper-button></a></p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Peaceful ambient music inspired by a calm morning sea. Soft piano, airy pads, gentle strings, and slow wave-like movement. Spacious and hopeful mood.
-</code></pre>
-</div>
-<h2 is-upgraded>画像とプロンプトを入力する</h2>
+<p class="image-container"><img alt="朝の海辺の実写風サンプル画像" src="img/8e77591d3b2250f6.png"/></p>
+<p><a href="img/sample-sea.png" target="_blank" download="sample-sea.png"><paper-button class="colored" raised="">   海の画像をダウンロード</paper-button></a></p>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Peaceful ambient music inspired by a calm morning sea. Soft piano, airy pads, gentle strings, and slow wave-like movement. Spacious and hopeful mood.
+</code></pre></div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">画像とプロンプトを入力する</h2>
 <p>画像アップロード欄がある場合は画像を追加し、選んだ画像の下にあるプロンプト例をテキスト欄に入力します。自分の画像を使う場合は、次の例のように画像の雰囲気を短い英文で補います。</p>
-<p class="image-container"><img alt="Media Studio で画像を追加するボタン" src="img/a5fe32722963f175.png"></p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Emotional future bass inspired by neon city nightlife. Bright synth chords, soft vocal chops, deep bass, and a hopeful mood.
-</code></pre>
-</div>
+<p class="image-container"><img alt="Media Studio で画像を追加するボタン" src="img/a5fe32722963f175.png"/></p>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Emotional future bass inspired by neon city nightlife. Bright synth chords, soft vocal chops, deep bass, and a hopeful mood.
+</code></pre></div>
 <p>画像は色、明暗、構図、世界観を伝える材料になります。ただし、画像だけではテンポ、楽器、構成、ボーカルの有無までは決まりません。テキストでは、ジャンルや楽器など、画像だけでは分かりにくい音楽的な指示を補います。</p>
-<h2 is-upgraded>生成して聴き比べる</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">生成して聴き比べる</h2>
 <p>生成ボタンを押して、画像なしで作った曲と聴き比べます。画像の雰囲気が曲にどのように反映されたかを確認します。</p>
 <aside class="troubleshooting"><p><strong>Troubleshooting:</strong> 画像アップロード欄が見つからない場合は、このステップをスキップして、テキストプロンプトだけで生成してください。画面の機能は更新されることがあります。</p></aside>
 
@@ -685,7 +696,7 @@ When it leads me back to you
     
       <google-codelab-step label="まとめと次の一手" duration="1">
         <p>このコードラボでは、Lyria 3 Pro と Media Studio を使って、ブラウザだけで音楽生成を体験しました。短いプロンプトから始めて、要素を分ける、避けたい音を書く、用途に合わせて制約する、画像で雰囲気を補う、という流れを試しました。</p>
-<h2 is-upgraded>学んだこと</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">学んだこと</h2>
 <ul>
 <li>Media Studio を開いて Lyria 3 Pro を選択する方法</li>
 <li>短いテキストプロンプトから音楽を生成する方法</li>
@@ -695,71 +706,22 @@ When it leads me back to you
 <li>Negative prompt で避けたい要素を伝える方法</li>
 <li>画像とテキストを組み合わせて曲の方向性を伝える方法</li>
 </ul>
-<h2 is-upgraded>余裕がある人向けのプロンプト例</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">余裕がある人向けのプロンプト例</h2>
 <p>EDM:</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Festival EDM with energetic synth leads, huge drops, punchy kick drums, and emotional chord progressions.
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Festival EDM with energetic synth leads, huge drops, punchy kick drums, and emotional chord progressions.
+</code></pre></div>
 <p>Lo-fi:</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Relaxed lo-fi hip hop with dusty vinyl texture, mellow piano, soft drums, and rainy night atmosphere.
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Relaxed lo-fi hip hop with dusty vinyl texture, mellow piano, soft drums, and rainy night atmosphere.
+</code></pre></div>
 <p>Cinematic:</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Epic cinematic orchestral music with rising strings, deep percussion, and emotional brass swells.
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Epic cinematic orchestral music with rising strings, deep percussion, and emotional brass swells.
+</code></pre></div>
 <p>Anime opening:</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Emotional anime opening theme with fast drums, bright guitars, uplifting energy, and a dramatic chorus.
-</code></pre>
-</div>
-<h2 is-upgraded>プロンプトの型</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Emotional anime opening theme with fast drums, bright guitars, uplifting energy, and a dramatic chorus.
+</code></pre></div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">プロンプトの型</h2>
 <p>迷ったときは、次の型に当てはめます。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">Genre: [ジャンルや時代感]
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">Genre: [ジャンルや時代感]
 Mood: [感情、明るさ、緊張感]
 Instruments: [目立たせたい楽器]
 Tempo: [slow / mid-tempo / upbeat / BPM]
@@ -767,10 +729,9 @@ Structure: [Intro / Verse / Chorus / Bridge / Outro]
 Vocals: [instrumental only / female vocal / male vocal / choir など]
 Avoid: [避けたい音、歌声、展開]
 Use case: [BGM / short jingle / full song / opening theme など]
-</code></pre>
-</div>
+</code></pre></div>
 <p>この型を全部埋める必要はありません。生成結果を聴いて、変えたい項目だけを書き換えます。</p>
-<h2 is-upgraded>次のステップ</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">次のステップ</h2>
 <ul>
 <li><a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/music/music-gen-prompt-guide?hl=ja" target="_blank">Lyria のプロンプトガイド</a>を読んで、プロンプト要素を増やす</li>
 <li><a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/music/generate-music?hl=ja" target="_blank">Vertex AI の音楽生成ドキュメント</a>で Media Studio の使い方を確認する</li>
@@ -783,7 +744,7 @@ Use case: [BGM / short jingle / full song / opening theme など]
     
       <google-codelab-step label="Extra: 非公式 Tips 早見表" duration="3">
         <p>このステップは、2026-05-23 時点で公開されているユーザーブログ、解説記事、ユーザー投稿の傾向を箇条書きでまとめたものです。非公式情報は画面やモデルの更新で変わるため、必ず実際の生成結果を聴いて判断してください。</p>
-<h2 is-upgraded>プロンプトの組み立て</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">プロンプトの組み立て</h2>
 <ul>
 <li>まず <code>Genre</code>、<code>Mood</code>、<code>Instruments</code>、<code>Tempo</code> の 4 要素を書く。</li>
 <li>「かっこいい曲」のような感想ではなく、制作指示書として書く。</li>
@@ -791,7 +752,7 @@ Use case: [BGM / short jingle / full song / opening theme など]
 <li>具体的すぎるキー、音量、細かいエフェクト指定は効きにくいことがあるため、最初は大きな方向性から調整する。</li>
 <li>Negative prompt は長くしすぎず、<code>no vocals</code>、<code>no sudden volume changes</code>、<code>no harsh noise</code> のように短く明確に書く。</li>
 </ul>
-<h2 is-upgraded>用途別の調整</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">用途別の調整</h2>
 <ul>
 <li>BGM では <code>instrumental only</code>、<code>no vocals</code>、<code>low energy</code>、<code>no melodic lead</code> を入れて、主張しすぎない音にする。</li>
 <li>長めの曲では <code>[Intro]</code>、<code>[Verse]</code>、<code>[Chorus]</code>、<code>[Bridge]</code>、<code>[Outro]</code> のようなセクションタグで展開を指定する。</li>
@@ -799,7 +760,7 @@ Use case: [BGM / short jingle / full song / opening theme など]
 <li>歌詞は 1 行を短めにして、コーラスは verse より覚えやすく単純にする。</li>
 <li>ロックやメタルなど強いジャンルは丸く出ることがあるため、ドラム、歪み、テンポ、エネルギー感を具体的に書いて何度か試す。</li>
 </ul>
-<h2 is-upgraded>試行錯誤の進め方</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">試行錯誤の進め方</h2>
 <ul>
 <li>最初から長い曲を狙わず、短い生成で方向性を確認してから Lyria 3 Pro で仕上げる。</li>
 <li>1 回のプロンプトに全部を詰め込まず、よかった要素を残し、変えたい要素だけを書き換える。</li>
@@ -807,7 +768,7 @@ Use case: [BGM / short jingle / full song / opening theme など]
 <li>画像入力は雰囲気の補助として使い、テンポ、楽器、構成、ボーカルの有無はテキストで補う。</li>
 <li>生成結果を聴いたら、明るさ、速さ、目立つ楽器、展開、ボーカルの有無をメモして次のプロンプトに反映する。</li>
 </ul>
-<h2 is-upgraded>参考リンク</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">参考リンク</h2>
 <ul>
 <li><a href="https://artlist.io/blog/lyria-3-prompts/" target="_blank">Artlist: Lyria 3 prompts</a></li>
 <li><a href="https://sonilo.com/blog/lyria-3-pro-prompts-video-background-music/" target="_blank">Sonilo: Lyria 3 Pro prompts for video background music</a></li>
@@ -826,6 +787,8 @@ Use case: [BGM / short jingle / full song / opening theme など]
   <script src="libs/prettify.js"></script>
   <script src="libs/codelab-elements.js"></script>
   <script src="//support.google.com/inapp/api.js"></script>
+
+
 
 <script id="claat-local-preprocessor-script">
 (function () {
@@ -937,6 +900,218 @@ Use case: [BGM / short jingle / full song / opening theme など]
     });
   }
 
+  function normalizeText(value) {
+    return (value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function headingOutlineForStep(step, stepIndex) {
+    var headings = Array.prototype.slice.call(
+      step.querySelectorAll('.instructions [data-claat-source-heading-level="3"], .instructions [data-claat-source-heading-level="4"]')
+    );
+
+    return headings.map(function (heading, index) {
+      var level = Number(heading.dataset.claatSourceHeadingLevel);
+      if (!heading.id) {
+        heading.id = 'claat-section-' + stepIndex + '-' + index;
+      }
+      return {
+        id: heading.id,
+        level: level,
+        text: normalizeText(heading.textContent)
+      };
+    }).filter(function (item) {
+      return item.text;
+    });
+  }
+
+  function prepareDrawerStepContent(item) {
+    var step = item.querySelector('.step');
+    if (!step) return null;
+
+    var content = step.querySelector('.claat-step-nav-content');
+    if (content) return content;
+
+    var titleSource = step.firstElementChild;
+    if (!titleSource) return null;
+
+    content = document.createElement('span');
+    content.className = 'claat-step-nav-content';
+
+    var title = document.createElement('span');
+    title.className = 'claat-step-nav-title';
+    while (titleSource.firstChild) {
+      title.appendChild(titleSource.firstChild);
+    }
+
+    content.appendChild(title);
+    step.replaceChild(content, titleSource);
+    return content;
+  }
+
+  function renderDrawerStepOutline(item, outline) {
+    prepareDrawerStepContent(item);
+
+    var outlineKey = JSON.stringify(outline);
+    if (item.dataset.claatStepNavOutline === outlineKey) return;
+    item.dataset.claatStepNavOutline = outlineKey;
+
+    var existing = item.querySelector('.claat-step-nav-outline');
+    if (existing) existing.remove();
+    if (!outline.length) return;
+
+    var container = document.createElement('span');
+    container.className = 'claat-step-nav-outline';
+
+    outline.forEach(function (heading) {
+      var row = document.createElement('span');
+      row.className = 'claat-step-nav-heading claat-step-nav-heading-level-' + heading.level;
+      row.dataset.claatSectionId = heading.id;
+      row.setAttribute('role', 'button');
+      row.setAttribute('tabindex', '0');
+      row.textContent = heading.text;
+      row.addEventListener('click', activateDrawerSection);
+      row.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        activateDrawerSection(event);
+      });
+      container.appendChild(row);
+    });
+
+    item.appendChild(container);
+  }
+
+  function selectedStepIndex(codelab) {
+    var selectedItem = codelab.querySelector('#drawer .steps ol li[selected]');
+    if (!selectedItem) return -1;
+    return Array.prototype.indexOf.call(selectedItem.parentNode.children, selectedItem);
+  }
+
+  function selectedStep(codelab) {
+    var index = selectedStepIndex(codelab);
+    var steps = codelab.querySelectorAll('google-codelab-step');
+    return index >= 0 ? steps[index] : null;
+  }
+
+  function scrollSelectedStepToSection(sectionId) {
+    var codelab = document.querySelector('google-codelab');
+    if (!codelab || !sectionId) return;
+
+    var step = selectedStep(codelab);
+    var heading = document.getElementById(sectionId);
+    if (step && heading && !step.contains(heading)) heading = null;
+    if (!step || !heading) return;
+
+    var stepRect = step.getBoundingClientRect();
+    var headingRect = heading.getBoundingClientRect();
+    var top = step.scrollTop + headingRect.top - stepRect.top - 20;
+    if (typeof step.scrollTo === 'function') {
+      step.scrollTo({ top: top, behavior: 'smooth' });
+    } else {
+      step.scrollTop = top;
+    }
+    updateActiveDrawerSection(codelab);
+  }
+
+  function updateActiveDrawerSection(root) {
+    var codelab = root || document.querySelector('google-codelab');
+    if (!codelab) return;
+
+    var step = selectedStep(codelab);
+    var selectedItem = codelab.querySelector('#drawer .steps ol li[selected]');
+    if (!step || !selectedItem) return;
+
+    var outlineRows = Array.prototype.slice.call(selectedItem.querySelectorAll('.claat-step-nav-heading'));
+    if (!outlineRows.length) return;
+
+    var headings = Array.prototype.slice.call(
+      step.querySelectorAll('.instructions [data-claat-source-heading-level="3"], .instructions [data-claat-source-heading-level="4"]')
+    ).filter(function (heading) {
+      return heading.id;
+    });
+    if (!headings.length) return;
+
+    var stepTop = step.getBoundingClientRect().top;
+    var activeHeading = headings[0];
+    headings.forEach(function (heading) {
+      if (heading.getBoundingClientRect().top - stepTop <= 72) activeHeading = heading;
+    });
+
+    outlineRows.forEach(function (row) {
+      row.classList.toggle('is-active', row.dataset.claatSectionId === activeHeading.id);
+    });
+  }
+
+  function attachStepScrollListeners(codelab) {
+    Array.prototype.slice.call(codelab.querySelectorAll('google-codelab-step')).forEach(function (step) {
+      if (step.dataset.claatSectionScrollObserver === 'true') return;
+      step.dataset.claatSectionScrollObserver = 'true';
+      step.addEventListener('scroll', function () {
+        window.requestAnimationFrame(function () {
+          updateActiveDrawerSection(codelab);
+        });
+      }, { passive: true });
+    });
+  }
+
+  function enhanceDrawerStepOutlines(root) {
+    var codelab = root || document.querySelector('google-codelab');
+    if (!codelab) return false;
+
+    var items = Array.prototype.slice.call(codelab.querySelectorAll('#drawer .steps ol li'));
+    var steps = Array.prototype.slice.call(codelab.querySelectorAll('google-codelab-step'));
+    if (!items.length || !steps.length) return false;
+
+    items.forEach(function (item, index) {
+      renderDrawerStepOutline(item, steps[index] ? headingOutlineForStep(steps[index], index) : []);
+    });
+    attachStepScrollListeners(codelab);
+    updateActiveDrawerSection(codelab);
+    return true;
+  }
+
+  function observeDrawerStepOutlines() {
+    var codelab = document.querySelector('google-codelab');
+    if (!codelab) return;
+
+    enhanceDrawerStepOutlines(codelab);
+
+    var drawer = codelab.querySelector('#drawer');
+    if (!drawer || drawer.dataset.claatHeadingObserver === 'true') return;
+    drawer.dataset.claatHeadingObserver = 'true';
+
+    var scheduled = false;
+    var observer = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        enhanceDrawerStepOutlines(codelab);
+      });
+    });
+    observer.observe(drawer, { attributes: true, attributeFilter: ['selected'], childList: true, subtree: true });
+  }
+
+  function startDrawerStepOutlineEnhancement() {
+    var attempts = 0;
+
+    function tryEnhance() {
+      attempts += 1;
+      observeDrawerStepOutlines();
+      if (attempts >= 12 || document.querySelector('google-codelab #drawer .steps ol li')) return;
+      window.setTimeout(tryEnhance, 200);
+    }
+
+    tryEnhance();
+  }
+
+  function activateDrawerSection(event) {
+    var section = event.currentTarget;
+    if (!section || !section.dataset) return;
+    event.preventDefault();
+    event.stopPropagation();
+    scrollSelectedStepToSection(section.dataset.claatSectionId);
+  }
+
   document.addEventListener('click', function (event) {
     var copyButton = event.target.closest('.claat-copy-code');
     var themeButton = event.target.closest('.claat-toggle-code-theme');
@@ -968,8 +1143,7 @@ Use case: [BGM / short jingle / full song / opening theme など]
       setTheme(block, block.dataset.codeTheme || 'light');
     });
     enhanceDiffCodeBlocks();
+    startDrawerStepOutlineEnhancement();
   });
 }());
-</script>
-</body>
-</html>
+</script></body></html>
