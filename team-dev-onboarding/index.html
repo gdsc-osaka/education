@@ -1,15 +1,11 @@
-
-<!doctype html>
-
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-  <meta name="theme-color" content="#4F7DC9">
-  <meta charset="UTF-8">
+<!DOCTYPE html><html><head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"/>
+  <meta name="theme-color" content="#4F7DC9"/>
+  <meta charset="UTF-8"/>
   <title>Web アプリ チーム開発 はじめの一歩</title>
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
-  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="libs/codelab-elements.css">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono"/>
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons"/>
+  <link rel="stylesheet" href="libs/codelab-elements.css"/>
   <style>
     .success {
       color: #1e8e3e;
@@ -18,19 +14,31 @@
       color: red;
     }
   </style>
-<meta id="claat-local-ogp-og-title" property="og:title" content="Web アプリ チーム開発 はじめの一歩">
-<meta id="claat-local-ogp-twitter-title" name="twitter:title" content="Web アプリ チーム開発 はじめの一歩">
-<meta id="claat-local-ogp-og-description" property="og:description" content="チーム開発に参加するための事前準備とハンズオン (clone → PR まで)">
-<meta id="claat-local-ogp-twitter-description" name="twitter:description" content="チーム開発に参加するための事前準備とハンズオン (clone → PR まで)">
-<meta id="claat-local-ogp-twitter-card" name="twitter:card" content="summary_large_image">
-<link id="claat-local-favicon" rel="icon" type="image/png" href="../assets/favicon.png">
-<style id="claat-local-preprocessor-style">
+<meta id="claat-local-ogp-og-title" property="og:title" content="Web アプリ チーム開発 はじめの一歩"/><meta id="claat-local-ogp-twitter-title" name="twitter:title" content="Web アプリ チーム開発 はじめの一歩"/><meta id="claat-local-ogp-og-description" property="og:description" content="チーム開発に参加するための事前準備とハンズオン (clone → PR まで)"/><meta id="claat-local-ogp-twitter-description" name="twitter:description" content="チーム開発に参加するための事前準備とハンズオン (clone → PR まで)"/><meta id="claat-local-ogp-twitter-card" name="twitter:card" content="summary_large_image"/><link id="claat-local-favicon" rel="icon" type="image/png" href="../assets/favicon.png"/><style id="claat-local-preprocessor-style">
   google-codelab-step .instructions .claat-code-block {
     position: relative;
     margin: 16px 0;
     background: #f1f3f4;
     border-radius: 0;
     overflow: hidden;
+  }
+
+  google-codelab-step .instructions .claat-code-filename {
+    display: inline-flex;
+    max-width: min(100%, 56ch);
+    min-height: 42px;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 10px 18px;
+    overflow: hidden;
+    color: #3c4043;
+    background: #e8eaed;
+    border-radius: 6px 6px 0 0;
+    font-family: "Roboto Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   google-codelab-step .instructions .claat-code-block pre {
@@ -112,6 +120,11 @@
 
   google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] {
     background: #28323f;
+  }
+
+  google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] .claat-code-filename {
+    color: #f1f3f4;
+    background: #3c4658;
   }
 
   google-codelab-step .instructions .claat-code-block[data-code-theme="dark"] pre {
@@ -229,7 +242,121 @@
     border-left-width: 4px;
   }
 
+  google-codelab #drawer ol li a {
+    transition:
+      color 300ms ease-in-out,
+      background 300ms ease-in-out,
+      border-color 300ms ease-in-out,
+      box-shadow 300ms ease-in-out;
+  }
+
+  google-codelab #drawer ol li .step {
+    width: 100%;
+    min-width: 0;
+  }
+
+  google-codelab #drawer ol li .step > span {
+    min-width: 0;
+  }
+
+  google-codelab #drawer .claat-step-nav-content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  google-codelab #drawer .claat-step-nav-title {
+    overflow-wrap: anywhere;
+  }
+
+  google-codelab #drawer .claat-step-nav-outline {
+    display: block;
+    max-height: 0;
+    margin: 0 6px 0 44px;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      max-height 260ms ease,
+      margin-bottom 260ms ease,
+      opacity 180ms ease,
+      transform 220ms ease,
+      padding-bottom 260ms ease;
+  }
+
+  google-codelab #drawer ol li[selected] .claat-step-nav-outline {
+    max-height: 360px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  google-codelab #drawer .claat-step-nav-heading {
+    display: block;
+    color: #5f6368;
+    font-weight: 400;
+    line-height: 18px;
+    margin: 1px 0;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading:hover,
+  google-codelab #drawer .claat-step-nav-heading:focus-visible {
+    background: #f1f3f4;
+    color: #202124;
+    outline: none;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading.is-active {
+    background: #e8eaed;
+    color: #202124;
+    font-weight: 500;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading-level-3 {
+    margin-left: 0;
+    font-size: 12px;
+  }
+
+  google-codelab #drawer .claat-step-nav-heading-level-4 {
+    margin-left: 14px;
+    font-size: 11px;
+  }
+
+  google-codelab-step .instructions table {
+    width: 100%;
+    border: 1px solid #cbdced;
+    border-collapse: collapse;
+  }
+
+  google-codelab-step .instructions table th,
+  google-codelab-step .instructions table td {
+    border: 1px solid #cbdced;
+  }
+
+  google-codelab-step .instructions table > thead > tr > th {
+    background: #e8f0fe;
+    font-weight: 700;
+    text-align: center;
+  }
+
   @media (max-width: 640px) {
+    google-codelab-step .instructions .claat-code-filename {
+      max-width: calc(100% - 72px);
+      min-height: 40px;
+      padding: 9px 14px;
+      font-size: 0.86rem;
+    }
+
     google-codelab-step .instructions .claat-code-block pre {
       padding: 56px 14px 16px;
     }
@@ -239,16 +366,10 @@
       padding: 0 14px;
     }
   }
-</style>
-</head>
+</style></head>
 <body>
   <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
-  <google-codelab codelab-gaid=""
-                  codelab-ga4id=""
-                  id="team-dev-onboarding"
-                  title="Web アプリ チーム開発 はじめの一歩"
-                  environment="web"
-                  feedback-link="">
+  <google-codelab codelab-gaid="" codelab-ga4id="" id="team-dev-onboarding" title="Web アプリ チーム開発 はじめの一歩" environment="web" feedback-link="">
     
       <google-codelab-step label="Codelab の概要" duration="5">
         <p>この Codelab では、Web アプリのチーム開発に<strong>初めて参加する人</strong>を対象に、開発に必要なツールのインストールから、実際に Pull Request（PR）を 1 回出すまでの流れを体験します。</p>
@@ -275,10 +396,13 @@
       <google-codelab-step label="STEP 1: 事前準備の全体像" duration="5">
         <p>ハンズオンを始める前に、以下のツール / アカウントを揃えておきます。<strong>できれば前日まで</strong>に終わらせておくと当日スムーズです。</p>
 <table>
-<tr><td colspan="1" rowspan="1"><p>#</p>
-</td><td colspan="1" rowspan="1"><p>準備するもの</p>
-</td><td colspan="1" rowspan="1"><p>確認コマンド</p>
-</td></tr>
+<thead>
+<tr><th colspan="1" rowspan="1"><p>#</p>
+</th><th colspan="1" rowspan="1"><p>準備するもの</p>
+</th><th colspan="1" rowspan="1"><p>確認コマンド</p>
+</th></tr>
+</thead>
+<tbody>
 <tr><td colspan="1" rowspan="1"><p>1</p>
 </td><td colspan="1" rowspan="1"><p>GitHub アカウント</p>
 </td><td colspan="1" rowspan="1"><p>ブラウザでログインできる</p>
@@ -299,6 +423,7 @@
 </td><td colspan="1" rowspan="1"><p>ターミナル</p>
 </td><td colspan="1" rowspan="1"><p>開いてコマンドが打てる</p>
 </td></tr>
+</tbody>
 </table>
 <p>それぞれのインストール手順を以下で詳しく説明します。</p>
 <aside class="special"><p><strong>Tip:</strong> すでにインストール済みの場合は、確認コマンドを打って表示されればスキップして構いません。バージョンが古い場合のみアップデートしてください。</p></aside>
@@ -308,7 +433,7 @@
     
       <google-codelab-step label="STEP 2: GitHub アカウントを準備する" duration="10">
         <p>チーム開発のコード共有・PR レビュー・履歴管理は GitHub を中心に行います。</p>
-<h2 is-upgraded>アカウントを作る（未作成の人）</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">アカウントを作る（未作成の人）</h2>
 <ol type="1">
 <li>ブラウザで <a href="https://github.com/signup" target="_blank">https://github.com/signup</a> を開きます。</li>
 <li>画面の指示に従って <strong>メールアドレス</strong>、<strong>パスワード</strong>、<strong>ユーザー名</strong> を入力します。 <ul>
@@ -318,12 +443,12 @@
 <li>登録したメールアドレスに 8 桁の認証コードが届くので、画面に入力します。</li>
 <li>プランは <strong>Free</strong> で OK です。</li>
 </ol>
-<h2 is-upgraded>ログインできることを確認する</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">ログインできることを確認する</h2>
 <ol type="1">
 <li>ブラウザで <a href="https://github.com/" target="_blank">https://github.com/</a> を開きます。</li>
 <li>右上にアイコンが表示されていれば、ログイン済みです。</li>
 </ol>
-<h2 is-upgraded>2 段階認証（2FA）を有効にする</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">2 段階認証（2FA）を有効にする</h2>
 <p>2023 年以降、GitHub では 2 段階認証が<strong>必須</strong>です。後で push のときに詰まらないように先に設定しておきましょう。</p>
 <ol type="1">
 <li>右上のアイコン → <strong>Settings</strong> をクリック。</li>
@@ -342,7 +467,7 @@
     
       <google-codelab-step label="STEP 3: Git をインストールする" duration="15">
         <p>Git はコードのバージョン管理ツールです。OS ごとに手順が違うので、自分の環境を選んで進めてください。</p>
-<h2 is-upgraded>Windows の場合</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">Windows の場合</h2>
 <ol type="1">
 <li><a href="https://git-scm.com/download/win" target="_blank">https://git-scm.com/download/win</a> にアクセスします。</li>
 <li>自動でインストーラのダウンロードが始まります（始まらなければページのリンクをクリック）。</li>
@@ -355,71 +480,31 @@
 </li>
 <li>残りは <strong>Next</strong> を押し続けて <strong>Install</strong> をクリック。</li>
 </ol>
-<h2 is-upgraded>macOS の場合</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">macOS の場合</h2>
 <p>macOS には Git が同梱されていますが、最新版を入れるには <strong>Homebrew</strong> がおすすめです。</p>
 <p><strong>Homebrew 未インストールの場合（先にこちら）:</strong></p>
 <ol type="1">
 <li>ターミナル（後述の STEP 6 で開き方を説明）を開きます。</li>
-<li>以下のコマンドを貼り付けて実行します。 <div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">/bin/bash -c &#34;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)&#34;
-</code></pre>
-</div>
+<li>以下のコマンドを貼り付けて実行します。 <div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">/bin/bash -c &#34;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)&#34;
+</code></pre></div>
 </li>
 <li>パスワードを聞かれたら、Mac のログインパスワードを入力（入力中は何も表示されませんが、ちゃんと入力されています）。</li>
-<li>完了後、画面の指示に従って <code>eval "$(/opt/homebrew/bin/brew shellenv)"</code> などの行をターミナルに貼り付けて実行します。</li>
+<li>完了後、画面の指示に従って <code>eval &#34;$(/opt/homebrew/bin/brew shellenv)&#34;</code> などの行をターミナルに貼り付けて実行します。</li>
 </ol>
 <p><strong>Git を入れる:</strong></p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">brew install git
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">brew install git
+</code></pre></div>
 <aside class="warning"><p><strong>Note:</strong> Homebrew を使わない場合、macOS に最初から入っている Git でも今日のハンズオンには十分です。コマンドラインで <code>git --version</code> が動けば OK。</p></aside>
-<h2 is-upgraded>インストール確認</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">インストール確認</h2>
 <p>ターミナル（Mac）または PowerShell / コマンドプロンプト（Windows）を開いて、以下を実行します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git --version
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git --version
+</code></pre></div>
 <p><code>git version 2.40.0</code> のように<strong>バージョン番号が表示されたら成功</strong>です。</p>
-<h2 is-upgraded>Git に名前とメールを設定する</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">Git に名前とメールを設定する</h2>
 <p>コミットの履歴に残る情報なので、最初に設定しておきましょう。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git config --global user.name &#34;Your Name&#34;
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git config --global user.name &#34;Your Name&#34;
 git config --global user.email &#34;your-email@example.com&#34;
-</code></pre>
-</div>
+</code></pre></div>
 <aside class="special"><p><strong>Tip:</strong> メールアドレスは GitHub に登録したものと<strong>同じ</strong>にしておくと、PR で「あなたのアイコン」がコミットに紐づきます。プライベートにしたい人は GitHub の Settings → Emails で <code>xxxxx+username@users.noreply.github.com</code> 形式のアドレスを取得できます。</p></aside>
 <aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>git: command not found</code> と出た場合、インストールが完了していないか、PATH が通っていません。ターミナルを一度閉じて開き直してから試してみてください。それでもダメなら経験者を呼びましょう。</p></aside>
 
@@ -428,43 +513,23 @@ git config --global user.email &#34;your-email@example.com&#34;
     
       <google-codelab-step label="STEP 4: Node.js をインストールする" duration="10">
         <p>Node.js は JavaScript を<strong>ブラウザ以外</strong>で動かすためのランタイムです。今日触る React のビルドや開発サーバー（<code>npm run dev</code>）で使います。</p>
-<h2 is-upgraded>バージョンの選び方</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">バージョンの選び方</h2>
 <p>2 種類のバージョンが配布されていますが、迷ったら <strong>LTS（Long Term Support）版</strong> を選んでください。</p>
-<h2 is-upgraded>Windows / macOS 共通の手順</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">Windows / macOS 共通の手順</h2>
 <ol type="1">
 <li><a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a> にアクセスします。</li>
 <li><strong>LTS</strong> と書かれた緑色のボタンをクリックしてインストーラをダウンロードします。</li>
 <li>ダウンロードしたファイルを開き、画面の指示通りに <strong>Next</strong> / <strong>続ける</strong> を押していきます。</li>
 <li>最後に <strong>Install</strong> / <strong>インストール</strong> をクリック。</li>
 </ol>
-<h2 is-upgraded>macOS で Homebrew を使う場合</h2>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">brew install node
-</code></pre>
-</div>
-<h2 is-upgraded>インストール確認</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">macOS で Homebrew を使う場合</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">brew install node
+</code></pre></div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">インストール確認</h2>
 <p>ターミナル / PowerShell を<strong>一度閉じて開き直して</strong>から、以下を実行します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">node --version
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">node --version
 npm --version
-</code></pre>
-</div>
+</code></pre></div>
 <p><code>v20.x.x</code> のような表示が両方とも出れば成功です。</p>
 <aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>node: command not found</code> が出るときは、ターミナルの再起動が一番効きます。それでもダメな場合は PC 自体を再起動してみてください。</p></aside>
 
@@ -473,7 +538,7 @@ npm --version
     
       <google-codelab-step label="STEP 5: VS Code をインストールする" duration="10">
         <p>コードを書くためのエディタです。チーム開発では拡張機能が豊富な VS Code が定番です。</p>
-<h2 is-upgraded>インストール手順</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">インストール手順</h2>
 <ol type="1">
 <li><a href="https://code.visualstudio.com/" target="_blank">https://code.visualstudio.com/</a> にアクセスします。</li>
 <li>自分の OS に合ったボタン（<strong>Download for Windows</strong> / <strong>Download for macOS</strong>）をクリックします。</li>
@@ -483,7 +548,7 @@ npm --version
 </ul>
 </li>
 </ol>
-<h2 is-upgraded>おすすめ拡張機能（任意）</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">おすすめ拡張機能（任意）</h2>
 <p>VS Code を起動して、左の四角アイコン（拡張機能）から以下を検索してインストールしておくと便利です。</p>
 <ul>
 <li><strong>Japanese Language Pack</strong> — メニューを日本語化</li>
@@ -498,21 +563,24 @@ npm --version
     
       <google-codelab-step label="STEP 6: ターミナルを開けるようにする" duration="5">
         <p>「ターミナル」とは、コマンドを打つための黒い画面のことです。Git / npm は基本的にここから操作します。</p>
-<h2 is-upgraded>macOS の場合</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">macOS の場合</h2>
 <ul>
 <li><strong>Spotlight</strong>（Cmd + Space）を開いて <code>Terminal</code> と入力 → Enter</li>
 <li>または <strong>Launchpad</strong> → <strong>その他</strong> → <strong>ターミナル</strong></li>
 </ul>
-<h2 is-upgraded>Windows の場合</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">Windows の場合</h2>
 <ul>
 <li><strong>スタートメニュー</strong> で <code>PowerShell</code> と検索して起動するのがおすすめ</li>
 <li>または <strong>Windows Terminal</strong>（Windows 11 では標準搭載）</li>
 </ul>
-<h2 is-upgraded>最低限のコマンド</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">最低限のコマンド</h2>
 <table>
-<tr><td colspan="1" rowspan="1"><p>コマンド</p>
-</td><td colspan="1" rowspan="1"><p>役割</p>
-</td></tr>
+<thead>
+<tr><th colspan="1" rowspan="1"><p>コマンド</p>
+</th><th colspan="1" rowspan="1"><p>役割</p>
+</th></tr>
+</thead>
+<tbody>
 <tr><td colspan="1" rowspan="1"><p><code>pwd</code></p>
 </td><td colspan="1" rowspan="1"><p>今いるフォルダの場所を表示</p>
 </td></tr>
@@ -528,6 +596,7 @@ npm --version
 <tr><td colspan="1" rowspan="1"><p><code>Ctrl + C</code></p>
 </td><td colspan="1" rowspan="1"><p>動いているコマンドを止める</p>
 </td></tr>
+</tbody>
 </table>
 <aside class="special"><p><strong>Tip: </strong><code>Ctrl + C</code> は<strong>最強の脱出ボタン</strong>です。何か変なコマンドを実行してしまったとき、固まったときは押せば大抵抜けられます。</p></aside>
 <p>これで事前準備は完了です！ここからは当日のハンズオンに入ります。</p>
@@ -537,52 +606,22 @@ npm --version
     
       <google-codelab-step label="STEP 7: リポジトリを clone する" duration="10">
         <p>ここからが当日のハンズオンです。まずは GitHub にあるリポジトリを自分の PC にコピー（clone）します。</p>
-<h2 is-upgraded>作業フォルダの場所を決める</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">作業フォルダの場所を決める</h2>
 <p>clone したリポジトリは PC のどこかに置かれます。<strong>自分が分かる場所</strong>に置きましょう（例: <code>~/dev</code> や Documents の中）。</p>
 <p>ターミナルで作業フォルダに移動しておきます。</p>
 <p><strong>macOS の例:</strong></p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">mkdir -p ~/dev
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">mkdir -p ~/dev
 cd ~/dev
-</code></pre>
-</div>
+</code></pre></div>
 <p><strong>Windows (PowerShell) の例:</strong></p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-powershell" class="language-powershell">mkdir $HOME\dev -Force
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-powershell" class="language-powershell">mkdir $HOME\dev -Force
 cd $HOME\dev
-</code></pre>
-</div>
-<h2 is-upgraded>clone する</h2>
+</code></pre></div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">clone する</h2>
 <p>以下のコマンドを実行します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git clone https://github.com/gdsc-osaka/react-example.git
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git clone https://github.com/gdsc-osaka/react-example.git
 cd react-example
-</code></pre>
-</div>
+</code></pre></div>
 <p>成功すると、<code>react-example</code> というフォルダが作られ、その中に移動できます。<code>ls</code>（または <code>dir</code>）でファイル一覧を見て、<code>package.json</code> や <code>src</code> フォルダがあれば成功です。</p>
 <aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>Permission denied</code> や <code>fatal: unable to access ...</code> が出る場合、ネットワーク（Wi-Fi）に繋がっているか確認してください。社内 / 学内ネットワークで proxy がある場合は経験者に相談しましょう。</p></aside>
 
@@ -591,46 +630,16 @@ cd react-example
     
       <google-codelab-step label="STEP 8: 自分のブランチを切る" duration="5">
         <p><code>main</code> ブランチで作業すると、チーム全員の作業がぶつかって大事故になります。<strong>作業前に必ず</strong>自分専用のブランチを作りましょう。</p>
-<h2 is-upgraded>ブランチを作る</h2>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git switch -c feature/add-&lt;your-name&gt;
-</code></pre>
-</div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">ブランチを作る</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git switch -c feature/add-&lt;your-name&gt;
+</code></pre></div>
 <p><code>&lt;your-name&gt;</code> の部分は自分の名前（半角英数字）に置き換えてください。</p>
 <p>例: 自分の名前が <code>taro</code> なら...</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git switch -c feature/add-taro
-</code></pre>
-</div>
-<h2 is-upgraded>今どのブランチにいるか確認する</h2>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git status
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git switch -c feature/add-taro
+</code></pre></div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">今どのブランチにいるか確認する</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git status
+</code></pre></div>
 <p>最初の行に <code>On branch feature/add-taro</code> のように表示されていれば成功です。</p>
 <aside class="warning"><p><strong>Note:</strong> ブランチ名は <code>feature/&lt;何をするか&gt;</code> の形が分かりやすいです。今日は名前を入れる作業なので <code>feature/add-&lt;名前&gt;</code> にしています。</p></aside>
 
@@ -639,52 +648,22 @@ cd react-example
     
       <google-codelab-step label="STEP 9: 開発サーバーを起動する" duration="10">
         <p>依存パッケージをインストールして、React の開発サーバーを立ち上げます。</p>
-<h2 is-upgraded>依存パッケージをインストールする</h2>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">npm install
-</code></pre>
-</div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">依存パッケージをインストールする</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">npm install
+</code></pre></div>
 <p><code>package.json</code> に書かれたライブラリをまとめてダウンロードします。1〜3 分かかります。</p>
 <p>途中で <code>WARN</code> がたくさん出ますが、最後に <code>npm warn</code> 以外のエラーで止まっていなければ OK です。</p>
-<h2 is-upgraded>開発サーバーを起動する</h2>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">npm run dev
-</code></pre>
-</div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">開発サーバーを起動する</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">npm run dev
+</code></pre></div>
 <p>成功すると、ターミナルに以下のような表示が出ます。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">  VITE v5.x.x  ready in 312 ms
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">  VITE v5.x.x  ready in 312 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
   ➜  press h + enter to show help
-</code></pre>
-</div>
-<h2 is-upgraded>ブラウザで開いてみる</h2>
+</code></pre></div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">ブラウザで開いてみる</h2>
 <p>ブラウザで <a href="http://localhost:5173" target="_blank">http://localhost:5173</a> にアクセスしてみましょう。<code>Participants</code> というタイトルと、<code>Alice</code> だけが表示されたリストが見えれば成功です。</p>
 <aside class="special"><p><strong>Tip: </strong><code>npm run dev</code> で起動した開発サーバーは<strong>起動したまま</strong>にしておきます。ファイルを保存すると自動的にブラウザが更新される（HMR）ので、編集中はずっと立ち上げておくのが便利です。</p></aside>
 <aside class="troubleshooting"><p><strong>Troubleshooting:</strong> ポート 5173 が既に使われているとエラーが出ることがあります。<code>Ctrl + C</code> でいったん止めて、他の <code>npm run dev</code> が動いていないか確認してください。</p></aside>
@@ -694,69 +673,49 @@ cd react-example
     
       <google-codelab-step label="STEP 10: コードを編集する" duration="10">
         <p>実際にコードを 1 行追加して、自分の名前を画面に出してみましょう。</p>
-<h2 is-upgraded>App.jsx を開く</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">App.jsx を開く</h2>
 <p>VS Code を起動して、先ほど clone した <code>react-example</code> フォルダを開きます。</p>
 <ul>
 <li><strong>File（ファイル）</strong> → <strong>Open Folder（フォルダーを開く）</strong> から <code>react-example</code> を選択</li>
 <li>または、ターミナルから <code>code .</code> を実行（VS Code のコマンドが PATH に通っていれば）</li>
 </ul>
 <p>開いたら、左のサイドバーから <code>src/App.jsx</code> を選んでください。</p>
-<h2 is-upgraded>自分の名前を追加する</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">自分の名前を追加する</h2>
 <p>以下のような <code>participants</code> 配列があります。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-jsx" class="language-jsx">function App() {
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-jsx" class="language-jsx">function App() {
   const participants = [
     &#39;Alice&#39;,
   ]
   // ...
 }
-</code></pre>
-</div>
+</code></pre></div>
 <p>ここに自分の名前を<strong>配列の要素として</strong>追加します。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-jsx" class="language-jsx">function App() {
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-jsx" class="language-jsx">function App() {
   const participants = [
     &#39;Alice&#39;,
     &#39;YOUR_NAME&#39;,  // ← この行を追加
   ]
   // ...
 }
-</code></pre>
-</div>
-<p><code>'YOUR_NAME'</code> の部分は自分の名前に書き換えてください。<strong>シングルクォート </strong></p>
-<p><strong><code>'</code></strong></p>
+</code></pre></div>
+<p><code>&#39;YOUR_NAME&#39;</code> の部分は自分の名前に書き換えてください。<strong>シングルクォート </strong></p>
+<p><strong><code>&#39;</code></strong></p>
 <p><strong> と末尾のカンマ </strong></p>
 <p><strong><code>,</code></strong></p>
 <p><strong> を忘れずに!</strong></p>
-<h2 is-upgraded>保存する</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">保存する</h2>
 <ul>
 <li>Windows: <code>Ctrl + S</code></li>
 <li>macOS: <code>Cmd + S</code></li>
 </ul>
-<h2 is-upgraded>ブラウザで確認する</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">ブラウザで確認する</h2>
 <p><code>npm run dev</code> を起動したままなら、ブラウザのタブに切り替えるだけで自動的にリロードされ、リストに自分の名前が増えているはずです。</p>
-<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> 画面が真っ白になった、エラー画面（赤い枠）が出た、という場合は、編集ミスの可能性が高いです。</p>
+<aside class="troubleshooting"><p><strong>Troubleshooting:</strong> 画面が真っ白になった、エラー画面（赤い枠）が出た、という場合は、編集ミスの可能性が高いです。</p></aside>
 <ul>
-<li>クォート <code>'</code> の閉じ忘れ</li>
+<li>クォート <code>&#39;</code> の閉じ忘れ</li>
 <li>カンマ <code>,</code> の位置ミス</li>
 <li>全角スペース・全角クォートの混入</li>
-</ul></aside>
+</ul>
 <p>ブラウザを開いた状態で <strong>F12</strong> を押して DevTools の <strong>Console</strong> タブを見ると、エラーの内容が赤文字で出ています。それをそのままコピーして AI に貼り付けると原因が分かりやすいです。</p>
 
 
@@ -764,55 +723,25 @@ cd react-example
     
       <google-codelab-step label="STEP 11: 変更を commit する" duration="5">
         <p>ここまでの変更を Git に記録（commit）します。</p>
-<h2 is-upgraded>変更内容を確認する</h2>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git status
-</code></pre>
-</div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">変更内容を確認する</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git status
+</code></pre></div>
 <p><code>modified: src/App.jsx</code> のように表示されれば、Git は「App.jsx が変わったよ」と認識しています。</p>
 <p>差分の中身を見たい場合は以下も使えます。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git diff
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git diff
+</code></pre></div>
 <p><code>Ctrl + C</code> ではなく <strong><code>q</code></strong> キーで抜けられます（<code>less</code> というコマンドが効いている状態のため）。</p>
-<h2 is-upgraded>ステージング → commit</h2>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git add src/App.jsx
+<h2 data-claat-source-heading-level="3" is-upgraded="">ステージング → commit</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git add src/App.jsx
 git commit -m &#34;feat: add &lt;your-name&gt; to participants&#34;
-</code></pre>
-</div>
+</code></pre></div>
 <p><code>&lt;your-name&gt;</code> は自分の名前に置き換えてください。</p>
-<aside class="special"><p><strong>Tip:</strong> コミットメッセージは「<strong>何をしたか</strong>」を短く書きます。</p>
+<aside class="special"><p><strong>Tip:</strong> コミットメッセージは「<strong>何をしたか</strong>」を短く書きます。</p></aside>
 <ul>
 <li><code>feat:</code> 新機能の追加</li>
 <li><code>fix:</code> バグ修正</li>
 <li><code>docs:</code> ドキュメントの修正</li>
-</ul></aside>
+</ul>
 <p>このプレフィックスは「Conventional Commits」と呼ばれる慣習で、多くのチームで使われています。</p>
 <aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>Please tell me who you are</code> というエラーが出た場合は、STEP 3 の <code>git config --global user.name / user.email</code> を実行し忘れています。設定してから再度 commit してください。</p></aside>
 
@@ -821,21 +750,11 @@ git commit -m &#34;feat: add &lt;your-name&gt; to participants&#34;
     
       <google-codelab-step label="STEP 12: GitHub に push する" duration="10">
         <p>自分の PC で作った commit を、GitHub のサーバーに送ります。</p>
-<h2 is-upgraded>初回 push</h2>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-bash" class="language-bash">git push -u origin feature/add-&lt;your-name&gt;
-</code></pre>
-</div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">初回 push</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-bash" class="language-bash">git push -u origin feature/add-&lt;your-name&gt;
+</code></pre></div>
 <p><code>-u origin &lt;ブランチ名&gt;</code> を最初の 1 回だけ付けます。これで「ローカルのブランチを GitHub のどのブランチと連携させるか」が記録され、2 回目以降は <code>git push</code> だけで OK になります。</p>
-<h2 is-upgraded>認証を求められたら</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">認証を求められたら</h2>
 <ul>
 <li>ブラウザが自動で開き、GitHub のログインを求められることがあります。表示に従って <strong>Authorize</strong> をクリックしてください。</li>
 <li>HTTPS + パスワード方式は 2021 年から廃止されています。<strong>Personal Access Token（PAT）</strong> または <strong>GitHub CLI / ブラウザ認証</strong> を使います。</li>
@@ -849,7 +768,7 @@ git commit -m &#34;feat: add &lt;your-name&gt; to participants&#34;
 <li><strong>Generate token</strong> をクリック → 表示されたトークンをコピー（<strong>この画面を閉じると二度と見れません</strong>）。</li>
 <li>push のときにパスワードを聞かれたら、このトークンを貼り付けます。</li>
 </ol>
-<h2 is-upgraded>確認</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">確認</h2>
 <p>ブラウザで <a href="https://github.com/gdsc-osaka/react-example" target="_blank">https://github.com/gdsc-osaka/react-example</a> を開いて、自分のブランチ（<code>feature/add-&lt;your-name&gt;</code>）が一覧に出ていれば成功です。</p>
 <aside class="troubleshooting"><p><strong>Troubleshooting: </strong><code>Permission denied</code> が出る場合、リポジトリに push する権限がない可能性があります。経験者に「コラボレーターに追加してください」と頼みましょう。</p></aside>
 
@@ -858,44 +777,24 @@ git commit -m &#34;feat: add &lt;your-name&gt; to participants&#34;
     
       <google-codelab-step label="STEP 13: Pull Request を作成する" duration="10">
         <p>いよいよ最後のステップ、Pull Request（PR）を作ります。PR は「自分のブランチの変更を main に取り込んでほしい」というリクエストです。</p>
-<h2 is-upgraded>PR 作成画面を開く</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">PR 作成画面を開く</h2>
 <p>push 直後、GitHub のリポジトリページを開くと、画面の上部に黄色いバナーで以下のような表示が出ます。</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code>feature/add-taro had recent pushes  [ Compare &amp; pull request ]
-</code></pre>
-</div>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code>feature/add-taro had recent pushes  [ Compare &amp; pull request ]
+</code></pre></div>
 <p><strong>Compare &amp; pull request</strong> ボタンをクリックしてください。</p>
 <aside class="warning"><p><strong>Note:</strong> バナーが出ない場合は、リポジトリ上部の <strong>Pull requests</strong> タブ → <strong>New pull request</strong> からも作成できます。<code>base: main</code> ← <code>compare: feature/add-&lt;your-name&gt;</code> を選びましょう。</p></aside>
-<h2 is-upgraded>タイトルと説明を書く</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">タイトルと説明を書く</h2>
 <ul>
 <li><strong>タイトル</strong>: コミットメッセージが自動で入りますが、必要なら短く分かりやすく直します（例: <code>Add taro to participants</code>）</li>
 <li><strong>Description（説明欄）</strong>: 以下のテンプレを参考に書いてみてください。</li>
 </ul>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-markdown" class="language-markdown">## やったこと
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-markdown" class="language-markdown">## やったこと
 - participants 配列に自分の名前を追加
 
 ## 動作確認
 - npm run dev でブラウザに自分の名前が表示されることを確認
-</code></pre>
-</div>
-<h2 is-upgraded>Create pull request をクリック</h2>
+</code></pre></div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">Create pull request をクリック</h2>
 <p>画面下の緑のボタンをクリックすれば PR 完成です！</p>
 <p>PR が作成されると、URL は <code>https://github.com/gdsc-osaka/react-example/pull/&lt;番号&gt;</code> のようになります。これを Discord / Slack でチームに共有してレビューを依頼しましょう。</p>
 <aside class="special"><p><strong>Tip:</strong> PR には「なぜその変更が必要だったか」が書かれていると、レビュアーがとても助かります。今日は練習なので簡単で OK ですが、本番では「目的」「変更内容」「動作確認」を書く習慣をつけましょう。</p></aside>
@@ -905,33 +804,23 @@ git commit -m &#34;feat: add &lt;your-name&gt; to participants&#34;
     
       <google-codelab-step label="STEP 14: お疲れさまでした！" duration="5">
         <p>ここまでで、チーム開発の基本的な 1 サイクルを体験できました！</p>
-<div class="claat-code-block" data-code-theme="light">
-<div class="claat-code-toolbar" aria-label="Code block actions">
-  <button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme">
-    <span class="material-icons" aria-hidden="true">dark_mode</span>
-  </button>
-  <button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code">
-    <span class="material-icons" aria-hidden="true">content_copy</span>
-  </button>
-</div>
-<pre><code language="language-text" class="language-text">clone → branch → 編集 → commit → push → PR
-</code></pre>
-</div>
-<h2 is-upgraded>今日身についたこと</h2>
+<div class="claat-code-block" data-code-theme="light"><div class="claat-code-toolbar" aria-label="Code block actions"><button class="claat-code-button claat-toggle-code-theme" type="button" aria-label="Use dark code theme" title="Use dark code theme"><span class="material-icons" aria-hidden="true">dark_mode</span></button><button class="claat-code-button claat-copy-code" type="button" aria-label="Copy code" title="Copy code"><span class="material-icons" aria-hidden="true">content_copy</span></button></div><pre><code language="language-text" class="language-text">clone → branch → 編集 → commit → push → PR
+</code></pre></div>
+<h2 data-claat-source-heading-level="3" is-upgraded="">今日身についたこと</h2>
 <ul>
 <li>✅ Git / Node.js / VS Code が動く環境</li>
 <li>✅ GitHub に自分のブランチを push できる</li>
 <li>✅ Pull Request を作れる</li>
 <li>✅ エラーが出たら DevTools / ターミナルを見るクセ</li>
 </ul>
-<h2 is-upgraded>次に学ぶと良いこと</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">次に学ぶと良いこと</h2>
 <ul>
 <li><strong>コードレビュー</strong>: 他の人の PR を読んでコメントしてみる</li>
 <li><strong>merge conflict の解消</strong>: 同じファイルを別の人が同時に編集したときの対処</li>
 <li><strong>git pull / fetch の違い</strong>: 最新を取ってくる正しい手順</li>
 <li><strong>React の基礎</strong>: コンポーネント / state / props</li>
 </ul>
-<h2 is-upgraded>困ったときの心得</h2>
+<h2 data-claat-source-heading-level="3" is-upgraded="">困ったときの心得</h2>
 <ol type="1">
 <li><strong>エラー文を読む</strong>（赤文字の 1 行目から）</li>
 <li><strong>スクショを撮る</strong>（要約しない、そのまま貼る）</li>
@@ -952,6 +841,8 @@ git commit -m &#34;feat: add &lt;your-name&gt; to participants&#34;
   <script src="libs/prettify.js"></script>
   <script src="libs/codelab-elements.js"></script>
   <script src="//support.google.com/inapp/api.js"></script>
+
+
 
 <script id="claat-local-preprocessor-script">
 (function () {
@@ -1063,6 +954,218 @@ git commit -m &#34;feat: add &lt;your-name&gt; to participants&#34;
     });
   }
 
+  function normalizeText(value) {
+    return (value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function headingOutlineForStep(step, stepIndex) {
+    var headings = Array.prototype.slice.call(
+      step.querySelectorAll('.instructions [data-claat-source-heading-level="3"], .instructions [data-claat-source-heading-level="4"]')
+    );
+
+    return headings.map(function (heading, index) {
+      var level = Number(heading.dataset.claatSourceHeadingLevel);
+      if (!heading.id) {
+        heading.id = 'claat-section-' + stepIndex + '-' + index;
+      }
+      return {
+        id: heading.id,
+        level: level,
+        text: normalizeText(heading.textContent)
+      };
+    }).filter(function (item) {
+      return item.text;
+    });
+  }
+
+  function prepareDrawerStepContent(item) {
+    var step = item.querySelector('.step');
+    if (!step) return null;
+
+    var content = step.querySelector('.claat-step-nav-content');
+    if (content) return content;
+
+    var titleSource = step.firstElementChild;
+    if (!titleSource) return null;
+
+    content = document.createElement('span');
+    content.className = 'claat-step-nav-content';
+
+    var title = document.createElement('span');
+    title.className = 'claat-step-nav-title';
+    while (titleSource.firstChild) {
+      title.appendChild(titleSource.firstChild);
+    }
+
+    content.appendChild(title);
+    step.replaceChild(content, titleSource);
+    return content;
+  }
+
+  function renderDrawerStepOutline(item, outline) {
+    prepareDrawerStepContent(item);
+
+    var outlineKey = JSON.stringify(outline);
+    if (item.dataset.claatStepNavOutline === outlineKey) return;
+    item.dataset.claatStepNavOutline = outlineKey;
+
+    var existing = item.querySelector('.claat-step-nav-outline');
+    if (existing) existing.remove();
+    if (!outline.length) return;
+
+    var container = document.createElement('span');
+    container.className = 'claat-step-nav-outline';
+
+    outline.forEach(function (heading) {
+      var row = document.createElement('span');
+      row.className = 'claat-step-nav-heading claat-step-nav-heading-level-' + heading.level;
+      row.dataset.claatSectionId = heading.id;
+      row.setAttribute('role', 'button');
+      row.setAttribute('tabindex', '0');
+      row.textContent = heading.text;
+      row.addEventListener('click', activateDrawerSection);
+      row.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        activateDrawerSection(event);
+      });
+      container.appendChild(row);
+    });
+
+    item.appendChild(container);
+  }
+
+  function selectedStepIndex(codelab) {
+    var selectedItem = codelab.querySelector('#drawer .steps ol li[selected]');
+    if (!selectedItem) return -1;
+    return Array.prototype.indexOf.call(selectedItem.parentNode.children, selectedItem);
+  }
+
+  function selectedStep(codelab) {
+    var index = selectedStepIndex(codelab);
+    var steps = codelab.querySelectorAll('google-codelab-step');
+    return index >= 0 ? steps[index] : null;
+  }
+
+  function scrollSelectedStepToSection(sectionId) {
+    var codelab = document.querySelector('google-codelab');
+    if (!codelab || !sectionId) return;
+
+    var step = selectedStep(codelab);
+    var heading = document.getElementById(sectionId);
+    if (step && heading && !step.contains(heading)) heading = null;
+    if (!step || !heading) return;
+
+    var stepRect = step.getBoundingClientRect();
+    var headingRect = heading.getBoundingClientRect();
+    var top = step.scrollTop + headingRect.top - stepRect.top - 20;
+    if (typeof step.scrollTo === 'function') {
+      step.scrollTo({ top: top, behavior: 'smooth' });
+    } else {
+      step.scrollTop = top;
+    }
+    updateActiveDrawerSection(codelab);
+  }
+
+  function updateActiveDrawerSection(root) {
+    var codelab = root || document.querySelector('google-codelab');
+    if (!codelab) return;
+
+    var step = selectedStep(codelab);
+    var selectedItem = codelab.querySelector('#drawer .steps ol li[selected]');
+    if (!step || !selectedItem) return;
+
+    var outlineRows = Array.prototype.slice.call(selectedItem.querySelectorAll('.claat-step-nav-heading'));
+    if (!outlineRows.length) return;
+
+    var headings = Array.prototype.slice.call(
+      step.querySelectorAll('.instructions [data-claat-source-heading-level="3"], .instructions [data-claat-source-heading-level="4"]')
+    ).filter(function (heading) {
+      return heading.id;
+    });
+    if (!headings.length) return;
+
+    var stepTop = step.getBoundingClientRect().top;
+    var activeHeading = headings[0];
+    headings.forEach(function (heading) {
+      if (heading.getBoundingClientRect().top - stepTop <= 72) activeHeading = heading;
+    });
+
+    outlineRows.forEach(function (row) {
+      row.classList.toggle('is-active', row.dataset.claatSectionId === activeHeading.id);
+    });
+  }
+
+  function attachStepScrollListeners(codelab) {
+    Array.prototype.slice.call(codelab.querySelectorAll('google-codelab-step')).forEach(function (step) {
+      if (step.dataset.claatSectionScrollObserver === 'true') return;
+      step.dataset.claatSectionScrollObserver = 'true';
+      step.addEventListener('scroll', function () {
+        window.requestAnimationFrame(function () {
+          updateActiveDrawerSection(codelab);
+        });
+      }, { passive: true });
+    });
+  }
+
+  function enhanceDrawerStepOutlines(root) {
+    var codelab = root || document.querySelector('google-codelab');
+    if (!codelab) return false;
+
+    var items = Array.prototype.slice.call(codelab.querySelectorAll('#drawer .steps ol li'));
+    var steps = Array.prototype.slice.call(codelab.querySelectorAll('google-codelab-step'));
+    if (!items.length || !steps.length) return false;
+
+    items.forEach(function (item, index) {
+      renderDrawerStepOutline(item, steps[index] ? headingOutlineForStep(steps[index], index) : []);
+    });
+    attachStepScrollListeners(codelab);
+    updateActiveDrawerSection(codelab);
+    return true;
+  }
+
+  function observeDrawerStepOutlines() {
+    var codelab = document.querySelector('google-codelab');
+    if (!codelab) return;
+
+    enhanceDrawerStepOutlines(codelab);
+
+    var drawer = codelab.querySelector('#drawer');
+    if (!drawer || drawer.dataset.claatHeadingObserver === 'true') return;
+    drawer.dataset.claatHeadingObserver = 'true';
+
+    var scheduled = false;
+    var observer = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        enhanceDrawerStepOutlines(codelab);
+      });
+    });
+    observer.observe(drawer, { attributes: true, attributeFilter: ['selected'], childList: true, subtree: true });
+  }
+
+  function startDrawerStepOutlineEnhancement() {
+    var attempts = 0;
+
+    function tryEnhance() {
+      attempts += 1;
+      observeDrawerStepOutlines();
+      if (attempts >= 12 || document.querySelector('google-codelab #drawer .steps ol li')) return;
+      window.setTimeout(tryEnhance, 200);
+    }
+
+    tryEnhance();
+  }
+
+  function activateDrawerSection(event) {
+    var section = event.currentTarget;
+    if (!section || !section.dataset) return;
+    event.preventDefault();
+    event.stopPropagation();
+    scrollSelectedStepToSection(section.dataset.claatSectionId);
+  }
+
   document.addEventListener('click', function (event) {
     var copyButton = event.target.closest('.claat-copy-code');
     var themeButton = event.target.closest('.claat-toggle-code-theme');
@@ -1094,8 +1197,7 @@ git commit -m &#34;feat: add &lt;your-name&gt; to participants&#34;
       setTheme(block, block.dataset.codeTheme || 'light');
     });
     enhanceDiffCodeBlocks();
+    startDrawerStepOutlineEnhancement();
   });
 }());
-</script>
-</body>
-</html>
+</script></body></html>

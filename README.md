@@ -14,13 +14,22 @@ Published codelabs:
 
 ## Setup
 
-Install [claat](https://github.com/googlecodelabs/tools/tree/main/claat) (requires Go):
+Install the [gdg-jp claat fork](https://github.com/gdg-jp/tools/tree/main/claat).
+Prebuilt Windows, macOS, and Linux binaries are published on its Releases page.
+With Go installed, you can also run:
 
 ```bash
-go install github.com/googlecodelabs/tools/claat@latest
+go install github.com/gdg-jp/tools/claat@latest
 ```
 
-Marp CLI runs via `npx` and needs no install. Python 3 is required for the claat post-processor.
+Marp CLI runs via `npx` and needs no install. Building codelabs requires only
+the forked `claat` binary; Python and POSIX-specific `sed`/`cp` commands are not used.
+
+On Windows, the Makefile wrapper is optional:
+
+```powershell
+claat build portfolio-2026
+```
 
 ## Build commands
 
@@ -56,6 +65,6 @@ Generated `index.html`, `libs/`, and slide HTML/PDFs are committed because GitHu
 
 ## Other directories
 
-- `.claat/fix-claat-codespans.py` — post-processor that escapes raw HTML inside inline `<code>` spans, restores `Note:` / `Tip:` callouts, enhances generated code blocks with copy/theme controls, linkifies bare URLs, injects OGP meta tags, and adds the shared favicon. Run automatically by `make claat`.
+- `.claat.json` — configuration read by the gdg-jp claat fork for the public URL, favicon, bundled assets, and root resource index.
 - `.marp/gdg.css` — shared Marp theme (registered as `gdg`). See `.marp/template.md` for the available layout classes.
 - `web/` — legacy 2025 content; new workshops should follow the directory structure above.

@@ -1,0 +1,27 @@
+{
+  "siteBaseURL": "https://edu.gdgoc-osaka.jp",
+  "favicon": "assets/favicon.png",
+  "libs": "libs",
+  "index": {
+    "enabled": true,
+    "output": "index.html",
+    "language": "ja",
+    "title": "GDG on Campus University of Osaka | Learning Resources",
+    "description": "GDG on Campus University of Osaka のコードラブ・スライド一覧",
+    "heroDescription": "GDG on Campus University of Osaka が提供するハンズオン・コードラブとスライド資料の一覧です。",
+    "skipDirectories": [
+      ".git",
+      ".claat",
+      ".marp",
+      ".vscode",
+      "assets",
+      "codelab-htmls",
+      "web",
+      "git-basics-onboarding",
+      "typescript-vs-js-talk",
+      "scripts",
+      "node_modules"
+    ],
+    "includeSlides": true
+  }
+}
