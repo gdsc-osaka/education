@@ -14,13 +14,15 @@ Published codelabs:
 
 ## Setup
 
-Install the [gdg-jp claat fork](https://github.com/gdg-jp/tools/tree/main/claat).
-Prebuilt Windows, macOS, and Linux binaries are published on its Releases page.
-With Go installed, you can also run:
+Install the latest [gdg-jp claat fork](https://github.com/gdg-jp/tools/tree/main/claat)
+with Go:
 
 ```bash
 go install github.com/gdg-jp/tools/claat@latest
 ```
+
+Prebuilt Windows, macOS, and Linux binaries are available on the
+[gdg-jp/tools Releases page](https://github.com/gdg-jp/tools/releases/latest).
 
 Marp CLI runs via `npx` and needs no install. Building codelabs requires only
 the forked `claat` binary; Python and POSIX-specific `sed`/`cp` commands are not used.
