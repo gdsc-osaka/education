@@ -4,19 +4,37 @@
 @charset "UTF-8";
 
 @font-face {
+  font-family: 'Google Sans Flex';
+  src: url('../../assets/GoogleSansFlex-Variable.ttf') format('truetype-variations'),
+       url('../../assets/GoogleSansFlex-Variable.ttf') format('truetype');
+  font-weight: 1 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Flex';
+  src: url('../../assets/GoogleSansFlex-Variable.ttf') format('truetype-variations'),
+       url('../../assets/GoogleSansFlex-Variable.ttf') format('truetype');
+  font-weight: 1 1000;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Google Sans';
-  src: url('../../assets/GoogleSans-Variable.ttf') format('truetype-variations'),
-       url('../../assets/GoogleSans-Variable.ttf') format('truetype');
-  font-weight: 100 900;
+  src: url('../../assets/GoogleSansFlex-Variable.ttf') format('truetype-variations'),
+       url('../../assets/GoogleSansFlex-Variable.ttf') format('truetype');
+  font-weight: 1 1000;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
   font-family: 'Google Sans';
-  src: url('../../assets/GoogleSans-Italic-Variable.ttf') format('truetype-variations'),
-       url('../../assets/GoogleSans-Italic-Variable.ttf') format('truetype');
-  font-weight: 100 900;
+  src: url('../../assets/GoogleSansFlex-Variable.ttf') format('truetype-variations'),
+       url('../../assets/GoogleSansFlex-Variable.ttf') format('truetype');
+  font-weight: 1 1000;
   font-style: italic;
   font-display: swap;
 }
@@ -56,7 +74,7 @@
 
 /* ---------- Base slide ---------- */
 section {
-  font-family: 'Google Sans', 'Noto Sans Japanese', 'Noto Sans JP',
+  font-family: 'Google Sans Flex', 'Google Sans', 'Noto Sans Japanese', 'Noto Sans JP',
                'Helvetica Neue', Arial, 'Hiragino Sans',
                'Yu Gothic UI', 'Meiryo', sans-serif;
   background-color: var(--gdg-bg);
