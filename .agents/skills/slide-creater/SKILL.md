@@ -108,8 +108,8 @@ There is no `card`, `quote`, `flow`, or `chart` class — build those with inlin
 
 ## Reusable assets
 
-- `.marp/assets/gdg_logo.png` — official logo. Either reference as `assets/gdg_logo.png` from `.marp/template.md`'s location, or copy into `<content-name>/img/` and reference as `img/gdg_logo.png` from `<content-name>/slide.md`.
-- `.marp/assets/GoogleSans-Variable.ttf` / `GoogleSans-Italic-Variable.ttf` — already loaded by `gdg.css`.
+- `assets/gdg_logo.png` — official logo. Either reference as `assets/gdg_logo.png` from `.marp/template.md`'s location, or copy into `<content-name>/img/` and reference as `img/gdg_logo.png` from `<content-name>/slide.md`.
+- `assets/GoogleSans-Variable.ttf` / `GoogleSans-Italic-Variable.ttf` / `NotoSansJP-Variable.ttf` — already loaded by `gdg.css`.
 
 ## Things that commonly break decks
 

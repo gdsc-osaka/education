@@ -21,6 +21,24 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Noto Sans Japanese';
+  src: url('../../assets/NotoSansJP-Variable.ttf') format('truetype-variations'),
+       url('../../assets/NotoSansJP-Variable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('../../assets/NotoSansJP-Variable.ttf') format('truetype-variations'),
+       url('../../assets/NotoSansJP-Variable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --gdg-blue:    #4285F4;
   --gdg-red:     #EA4335;
@@ -38,7 +56,8 @@
 
 /* ---------- Base slide ---------- */
 section {
-  font-family: 'Google Sans', 'Helvetica Neue', Arial, 'Hiragino Sans',
+  font-family: 'Google Sans', 'Noto Sans Japanese', 'Noto Sans JP',
+               'Helvetica Neue', Arial, 'Hiragino Sans',
                'Yu Gothic UI', 'Meiryo', sans-serif;
   background-color: var(--gdg-bg);
   color: var(--gdg-text);
